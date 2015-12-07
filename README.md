@@ -1,7 +1,7 @@
 <p align="center"><a href="http://mikser.io" target="_blank"><img src="http://almero.pro/mikser.png"></a></p>
 
-## Intro
-Mikser is a real-time static site generator. It designed for rapid web site development. It works equally well for small web sites and for large multi domain, multi language sites with thousands of pages and very complex generation logic. 
+## Mikser - real-time static site generator
+Mikser is designed for rapid web site development. It works equally well for small web sites and for large multi domain, multi language sites with thousands of pages and very complex generation logic. 
 
 - Multi-threaded cluster rendering with incredible performance
 - LiveReload with real-time preview no matter if the web site has 10 or 10'000 pages
