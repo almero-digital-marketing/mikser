@@ -16,7 +16,7 @@ Mikser is designed for rapid web site development. It works equally well for sma
 Mikser works well on Windows, Linux and OSX. It is installed as local npm module and comes with all contrib plugins build-in. It has some external dependencies that has to be installed in advance.
 
 1. Node.js &ge; 4.0 (Node.js &ge; 0.12 with --harmony flag)
-2. Mongodb &ge; 2.4 (If tou are using Windows you should add Mongo's `bin` folder to your `PATH` environment variable. Default location: `C:\Program Files\MongoDB\Server\3.0\bin`)
+2. MongoDB &ge; 2.4 (Under Windows you should add MongoDB's `bin` folder to your `PATH` environment variable. Default location: `C:\Program Files\MongoDB\Server\3.0\bin`)
 
 ## First run
 1. Create a folder for your project. After you run Mikser for the first time it will create all necessary folders inside.
