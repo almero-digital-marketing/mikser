@@ -11,3 +11,10 @@ Mikser is designed for rapid web site development. It works equally well for sma
 - Support for most popular layout engines - Jade, Eco, Ect, Ejs, Swig
 - Support for most popular markup languages - Markdown, Textile
 - Very easy plug-in system with straight forward interface and hot reload
+
+## Instalation
+Mikser works well on Windows, Linux and OSX. It is installed as local module and comes with all contrib plugins build-in. It has some external dependencies that has to be installed in advance.
+
+1. Node.js >= 4 (Node >= 0.12 with --harmony)
+2. Mongodb >= 2.4 (On Windows you should add Mongo bin folder to your PATH environment variable. Default location: C:\Program Files\MongoDB\Server\3.0\bin)
+3. Install mikser with `npm install --save mikser`
