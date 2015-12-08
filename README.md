@@ -22,4 +22,4 @@ Mikser works well on Windows, Linux and OSX. It is installed as local npm module
 1. Create a folder for your project. After you run Mikser for the first time it will create all necessary folders inside.
 2. Install Mikser inside this folder with `npm install mikser`
 3. Create `mikser.js` inside this folder and add this inside `require('mikser').run();`
-5. Start your first Mikser app with `node mikser`. Mikser will start watching your folder for changes and it will generate your web site.
+5. Start your first Mikser app with `node mikser`. Mikser will start watching your folder for changes and auto-generate your web site.
