@@ -12,7 +12,7 @@ Mikser is designed for rapid web site development. It works equally well for sma
 - Support for most popular markup languages - Markdown, Textile
 - Very easy plug-in system with straight forward interface and hot reload
 
-## Instalation
+## Installation
 Mikser works well on Windows, Linux and OSX. It is installed as local npm module and comes with all contrib plugins build-in. It has some external dependencies that has to be installed in advance.
 
 1. Node.js &ge; 4.0 (Node.js &ge; 0.12 with --harmony flag)
