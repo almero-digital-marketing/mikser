@@ -1,4 +1,4 @@
-<p align="center"><a href="http://mikser.io" target="_blank"><img src="http://almero.pro/mikser.png"></a></p>
+<p align="center"><a href="http://mikser.io" target="_blank"><img width="400" src="http://almero.pro/mikser-logo.png"></a></p>
 
 ## Mikser is a real-time static site generator
 Mikser is designed for rapid web site development. It works equally well for small web sites and for large multi domain, multi language sites with thousands of pages and very complex generation logic. 
