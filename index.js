@@ -15,11 +15,13 @@ var diagnostics = require('./lib/diagnostics');
 var server = require('./lib/server');
 var compilator = require('./lib/compilator');
 var debug = require('./lib/debug');
+var broker = require('./lib/broker');
 var _ = require('lodash');
 
 module.exports.run = function(options) {
 	mikser(options)
 		.then(debug)
+		.then(broker)
 		.then(config)
 		.then(runtime)
 		.then(databse)
@@ -44,8 +46,9 @@ module.exports.run = function(options) {
 						watch: mikser.cli.watch, 
 						server: mikser.cli.server
 					}, mikser.options);
-					mikser.debug.resetWatch();
-					mikser.filemanager.glob()
+					
+					mikser.debug.resetWatch()
+						.then(mikser.filemanager.glob)
 						.then(mikser.filemanager.clean)
 						.then(mikser.compilator.compile)
 						.then(mikser.filemanager.copy)

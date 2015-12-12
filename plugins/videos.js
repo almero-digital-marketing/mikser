@@ -178,8 +178,7 @@ module.exports = function (mikser, context) {
 
 			videoInfo.source = mikser.filemanager.findSource(source);
 			if (!videoInfo.source) {
-				mikser.diagnostics.log(context, 'warning', `[videos] File not found at: ${source}`);
-				return Promise.resolve();
+				return mikser.diagnostics.log(context, 'warning', `[videos] File not found at: ${source}`);
 			}
 
 			if ((videoInfo.source.indexOf(mikser.options.workingFolder) !== 0) && !destination) {

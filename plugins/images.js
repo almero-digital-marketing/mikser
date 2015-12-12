@@ -200,8 +200,7 @@ module.exports = function (mikser, context) {
 			let sourceFilePath = findSource(source);
 			// full path to file or undefined if file does not exist
 			if (!sourceFilePath) {
-				mikser.diagnostics.log(context, 'warning', `[images] File not found at: ${source}`);
-				return Promise.resolve();
+				return mikser.diagnostics.log(context, 'warning', `[images] File not found at: ${source}`);
 			}
 
 			if ((sourceFilePath.indexOf(mikser.options.workingFolder) !== 0) && !destination) {
