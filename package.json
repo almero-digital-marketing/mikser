@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "keywords": [],
@@ -67,5 +67,5 @@
     "url": "https://github.com/almero-digital-marketing/mikser/issues"
   },
   "homepage": "https://github.com/almero-digital-marketing/mikser",
-  "license": "ISC"
+  "license": "MIT"
 }
