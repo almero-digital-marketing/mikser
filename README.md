@@ -8,8 +8,7 @@ Mikser is designed for rapid web site development. It works equally well for sma
 - Built-in multi-language and multi-domain support
 - Pin-point diagnostics that provides accurate error messages
 - Easy integration with build systems like [Grunt](http://gruntjs.com/) and [Gulp](http://gulpjs.com/)
-- Support for most popular layout engines - [Jade](http://jade-lang.com/), [Eco](https://github.com/sstephenson/eco), [Ect](http://ectjs.com/), [Ejs](http://ejs.co/), [Swig](http://paularmstrong.github.io/swig/)
-- Support for most popular markup languages - [Markdown](http://daringfireball.net/projects/markdown/), [Textile](http://redcloth.org/textile/)
+- Support for most of the popular template and markup engines - [Jade](http://jade-lang.com/), [Eco](https://github.com/sstephenson/eco), [Ect](http://ectjs.com/), [Ejs](http://ejs.co/), [Swig](http://paularmstrong.github.io/swig/), [Markdown](http://daringfireball.net/projects/markdown/), [Textile](http://redcloth.org/textile/)
 - Very easy plug-in system with straight forward interface and hot reload
 
 ## Installation
