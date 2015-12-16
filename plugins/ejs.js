@@ -13,7 +13,7 @@ module.exports = function (mikser, context) {
 			return ejs.render(template, options);
 		}
 	} else {
-		mikser.renderengine.engines.push({
+		mikser.generator.engines.push({
 			pattern: '**/*.ejs',
 			render: function(context) {
 				try {

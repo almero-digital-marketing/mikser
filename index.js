@@ -7,8 +7,8 @@ var config = require('./lib/config');
 var runtime = require('./lib/runtime');
 var databse = require('./lib/database');
 var loader = require('./lib/loader');
-var renderengine = require('./lib/renderengine');
-var renderqueue = require('./lib/renderqueue');
+var generator = require('./lib/generator');
+var scheduler = require('./lib/scheduler');
 var filemanager = require('./lib/filemanager');
 var filewatcher = require('./lib/filewatcher');
 var diagnostics = require('./lib/diagnostics');
@@ -16,6 +16,7 @@ var server = require('./lib/server');
 var compilator = require('./lib/compilator');
 var debug = require('./lib/debug');
 var broker = require('./lib/broker');
+var parser = require('./lib/parser');
 var _ = require('lodash');
 
 module.exports.run = function(options) {
@@ -25,9 +26,10 @@ module.exports.run = function(options) {
 		.then(config)
 		.then(runtime)
 		.then(databse)
+		.then(parser)
 		.then(loader)
-		.then(renderengine)
-		.then(renderqueue)
+		.then(generator)
+		.then(scheduler)
 		.then(filemanager)
 		.then(compilator)
 		.then(filewatcher)
@@ -57,7 +59,7 @@ module.exports.run = function(options) {
 								mikser.server.listen();
 							}
 
-							mikser.renderqueue.process().then(() => {
+							mikser.scheduler.process().then(() => {
 								if (mikser.options.watch) {
 									mikser.filewatcher.watch();
 								} 

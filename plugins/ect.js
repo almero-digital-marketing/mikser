@@ -11,7 +11,7 @@ module.exports = function (mikser, context) {
 			return renderer.render(path.basename(source), options);
 		}
 	} else {
-		mikser.renderengine.engines.push({
+		mikser.generator.engines.push({
 			pattern: '**/*.+(ect|eco)', 
 			render: function(context) {
 				var renderer = ECT({ root : { page: context.layout.template } });

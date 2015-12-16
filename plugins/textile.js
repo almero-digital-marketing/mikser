@@ -8,7 +8,8 @@ module.exports = function (mikser, context) {
 			return textile(content);
 		}
 	} else {
-		mikser.renderengine.engines.push({
+		mikser.filemanager.extensions['.md'] = '.html';
+		mikser.generator.engines.push({
 			pattern: '**/*.textile',
 			render: function(context) {
 				return textile(context.content);

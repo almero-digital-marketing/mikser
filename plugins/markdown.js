@@ -21,7 +21,8 @@ module.exports = function (mikser, context) {
 			return removeMd(content);
 		}		
 	} else {
-		mikser.renderengine.engines.push({
+		mikser.filemanager.extensions['.md'] = '.html';
+		mikser.generator.engines.push({
 			pattern: '**/*.md',
 			render: function(context) {
 				return marked(context.content, { renderer: renderer });

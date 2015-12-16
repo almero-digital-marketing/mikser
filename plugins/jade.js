@@ -10,7 +10,7 @@ module.exports = function (mikser, context) {
 			return jade.renderFile(source, options);
 		}		
 	} else {
-		mikser.renderengine.engines.push({
+		mikser.generator.engines.push({
 			pattern: '**/*.jade',
 			render: function(context) {
 				try {

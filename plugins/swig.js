@@ -9,7 +9,7 @@ module.exports = function (mikser, context) {
 			return swig.renderFile(source, options);
 		}
 	} else {
-		mikser.renderengine.engines.push({
+		mikser.generator.engines.push({
 			pattern: '**/*.swig',
 			render: function(context) {
 				try {
