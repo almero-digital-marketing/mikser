@@ -1,4 +1,5 @@
 <p align="center"><a href="http://mikser.io" target="_blank"><img width="300" src="http://almero.pro/mikser.svg"></a></p>
+<p align="center"><a href="https://npmjs.org/package/mikser" title="View this project on NPM"><img src="https://img.shields.io/npm/l/mikser.svg" alt="License"></a> <a href="https://npmjs.org/package/mikser" title="View this project on NPM"><img src="https://img.shields.io/npm/v/mikser.svg" alt="NPM version" /></a> <a href="https://npmjs.org/package/mikser" title="View this project on NPM"><img src="https://img.shields.io/npm/dm/mikser.svg" alt="NPM downloads" /></a></p>
 
 ## Mikser is a real-time static site generator
 Mikser is designed for rapid web site development. It works equally well for small web sites and for large multi domain, multi language sites with thousands of pages and very complex generation logic. 
