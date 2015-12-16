@@ -8,7 +8,7 @@ Mikser is designed for rapid web site development. It works equally well for sma
 - Built-in multi-language and multi-domain support
 - Pin-point diagnostics that provides accurate error messages
 - Easy integration with build systems like [Grunt](http://gruntjs.com/) and [Gulp](http://gulpjs.com/) or CSS pre-processors like [Less](http://lesscss.org/) and [Sass](http://sass-lang.com/)
-- Support for most of the popular template and markup engines - [Jade](http://jade-lang.com/), [Eco](https://github.com/sstephenson/eco), [Ect](http://ectjs.com/), [Ejs](http://ejs.co/), [Swig](http://paularmstrong.github.io/swig/), [Markdown](http://daringfireball.net/projects/markdown/), [Textile](http://redcloth.org/textile/), [Yaml](http://www.yaml.org/), [Toml](https://github.com/toml-lang/toml), [ArchieML](http://archieml.org/), [CSON](https://github.com/bevry/cson), [JSON5](http://json5.org/)
+- Support for most of the popular template and markup engines - [Jade](http://jade-lang.com/), [Eco](https://github.com/sstephenson/eco), [Ect](http://ectjs.com/), [Ejs](http://ejs.co/), [Swig](http://paularmstrong.github.io/swig/), [Markdown](http://daringfireball.net/projects/markdown/), [Textile](http://redcloth.org/textile/), [Yaml](http://www.yaml.org/), [Toml](https://github.com/toml-lang/toml), [ArchieML](http://archieml.org/), [CSON](https://github.com/bevry/cson), [JSON5](http://json5.org/), support for new engines through plug-ins
 - Very easy plug-in system with straight forward interface and hot reload
 
 ## Installation
