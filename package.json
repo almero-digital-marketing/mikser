@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "1.5.8",
+  "version": "1.5.9",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -26,6 +26,7 @@
     "fluent-ffmpeg": "^2.0.1",
     "fs-extra": "^0.26.2",
     "fs-extra-promise": "^0.3.1",
+    "github-webhook-handler": "^0.5.0",
     "glob": "^6.0.1",
     "glob-promise": "^1.0.4",
     "gm": "^1.21.1",
