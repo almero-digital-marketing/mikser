@@ -9,8 +9,8 @@ var databse = require('./lib/database');
 var loader = require('./lib/loader');
 var generator = require('./lib/generator');
 var scheduler = require('./lib/scheduler');
-var filemanager = require('./lib/filemanager');
-var filewatcher = require('./lib/filewatcher');
+var manager = require('./lib/manager');
+var watcher = require('./lib/watcher');
 var diagnostics = require('./lib/diagnostics');
 var server = require('./lib/server');
 var compilator = require('./lib/compilator');
@@ -30,9 +30,9 @@ module.exports.run = function(options) {
 		.then(loader)
 		.then(generator)
 		.then(scheduler)
-		.then(filemanager)
+		.then(manager)
 		.then(compilator)
-		.then(filewatcher)
+		.then(watcher)
 		.then(server)
 		.then(diagnostics)
 		.then((mikser) => {
@@ -50,10 +50,10 @@ module.exports.run = function(options) {
 					}, mikser.options);
 					
 					mikser.debug.resetWatch()
-						.then(mikser.filemanager.glob)
-						.then(mikser.filemanager.clean)
+						.then(mikser.manager.glob)
+						.then(mikser.manager.clean)
 						.then(mikser.compilator.compile)
-						.then(mikser.filemanager.copy)
+						.then(mikser.manager.copy)
 						.then(() => {
 							if (mikser.options.server) {
 								mikser.server.listen();
@@ -61,7 +61,7 @@ module.exports.run = function(options) {
 
 							mikser.scheduler.process().then(() => {
 								if (mikser.options.watch) {
-									mikser.filewatcher.watch();
+									mikser.watcher.watch();
 								} 
 								if (!mikser.options.server && !mikser.options.watch) {
 									mikser.exit();

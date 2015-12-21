@@ -5,7 +5,7 @@ var swig = require('swig');
 module.exports = function (mikser, context) {
 	if (context) {
 		context.swig = function (source, options) {
-			source = mikser.filemanager.findSource(source);
+			source = mikser.manager.findSource(source);
 			return swig.renderFile(source, options);
 		}
 	} else {

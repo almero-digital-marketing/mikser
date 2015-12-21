@@ -1,9 +1,8 @@
 {
   "name": "mikser",
-  "version": "1.5.0",
+  "version": "1.5.5",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
-  "keywords": [],
   "repository": {
     "type": "git",
     "url": "https://github.com/almero-digital-marketing/mikser"
@@ -64,6 +63,42 @@
     "toml": "^2.3.0",
     "ws": "^0.8.0"
   },
+  "keywords": [
+    "document management system",
+    "dms",
+    "content management system",
+    "cms",
+    "static site generator",
+    "generator",
+    "static file server",
+    "server",
+    "web",
+    "web framework",
+    "framework",
+    "web development",
+    "development",
+    "dev",
+    "build and deployment",
+    "builder",
+    "build",
+    "compiler",
+    "compile",
+    "parser",
+    "parse",
+    "renderer",
+    "render",
+    "templating",
+    "templates",
+    "language agnostic",
+    "website",
+    "blog",
+    "cli",
+    "tool",
+    "utility",
+    "scaffold",
+    "realtime",
+    "livereload"
+  ],
   "main": "./index.js",
   "bugs": {
     "url": "https://github.com/almero-digital-marketing/mikser/issues"

@@ -14,9 +14,9 @@ module.exports = function (mikser, context) {
 				let source = path.join(cwd, file)
 				let stats = fs.statSync(source);
 				if (urlFlag) {
-					let destination = mikser.filemanager.predictDestination(source);
-					destination = mikser.filemanager.resolveDestination(destination, context.document.destination);
-					stats.url = mikser.filemanager.getUrl(destination);
+					let destination = mikser.manager.predictDestination(source);
+					destination = mikser.manager.resolveDestination(destination, context.document.destination);
+					stats.url = mikser.manager.getUrl(destination);
 				}
 				result.push(stats);
 			});
@@ -42,7 +42,7 @@ module.exports = function (mikser, context) {
 		optional = optional || false;
 		encoding = encoding || 'utf8';
 
-		let source = mikser.filemanager.findSource(file);
+		let source = mikser.manager.findSource(file);
 		if (optional && !fs.existsSync(source)) return '';
 		let content = fs.readFileSync(source, {
 			encoding: encoding
@@ -51,12 +51,12 @@ module.exports = function (mikser, context) {
 	}
 
 	context.stat = function (file) {
-		let source = mikser.filemanager.findSource(file);
+		let source = mikser.manager.findSource(file);
 		if (source) {
 			let stats = fs.statSync(source);
-			let destination = mikser.filemanager.predictDestination(source);
-			destination = mikser.filemanager.resolveDestination(destination, context.document.destination);
-			let url = mikser.filemanager.getUrl(destination);
+			let destination = mikser.manager.predictDestination(source);
+			destination = mikser.manager.resolveDestination(destination, context.document.destination);
+			let url = mikser.manager.getUrl(destination);
 			if (url) {
 				stats.url = url;
 			}

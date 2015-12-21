@@ -64,7 +64,7 @@ module.exports = function (mikser, context) {
 				cacheInfo.fromCache = true;
 				return;
 			}
-			let source = mikser.filemanager.findSource(cacheInfo.source);
+			let source = mikser.manager.findSource(cacheInfo.source);
 			if (!source) {
 				cacheInfo.fromCache = false;
 			} else {
@@ -96,23 +96,23 @@ module.exports = function (mikser, context) {
 
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) != 0) {
-				cacheInfo.destination = mikser.filemanager.resolveDestination(destination, context.document.destination);
+				cacheInfo.destination = mikser.manager.resolveDestination(destination, context.document.destination);
 			}
 			else {
 				cacheInfo.destination = destination;
 			}
 		} else {
-			cacheInfo.destination = mikser.filemanager.predictDestination(source);
-			cacheInfo.destination = mikser.filemanager.resolveDestination(cacheInfo.destination, context.document.destination);
+			cacheInfo.destination = mikser.manager.predictDestination(source);
+			cacheInfo.destination = mikser.manager.resolveDestination(cacheInfo.destination, context.document.destination);
 		}
 
-		if (!mikser.filemanager.isPathToFile(cacheInfo.destination)) {
+		if (!mikser.manager.isPathToFile(cacheInfo.destination)) {
 			cacheInfo.destination = path.join(destination, path.basename(source));
 		}
 
 		cacheInfo.source = source;
 		updateCache(cacheInfo);
-		cacheInfo.toString = () => mikser.filemanager.getUrl(cacheInfo.destination);
+		cacheInfo.toString = () => mikser.manager.getUrl(cacheInfo.destination);
 
 		context.pending = context.pending.then(() => {
 			updateCache(cacheInfo);
@@ -137,7 +137,7 @@ module.exports = function (mikser, context) {
 			}
 			else {
 				if (!cacheInfo.fromCache) {
-					let sourcePath = mikser.filemanager.findSource(source);
+					let sourcePath = mikser.manager.findSource(source);
 					return fs.existsAsync(sourcePath).then((exists) => {
 						if (exists) {
 							return deleteFile(cacheInfo.destination).then(() => {

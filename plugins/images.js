@@ -10,9 +10,9 @@ let _ = require('lodash');
 
 module.exports = function (mikser, context) {
 	let debug = mikser.debug('images');
-	let predictDestination = mikser.filemanager.predictDestination;
-	let findSource = mikser.filemanager.findSource;
-	let isPathToFile = mikser.filemanager.isPathToFile;
+	let predictDestination = mikser.manager.predictDestination;
+	let findSource = mikser.manager.findSource;
+	let isPathToFile = mikser.manager.isPathToFile;
 	let config = {
 
 		images: '**/*.{jpg,JPG,jpeg,JPEG,png,PNG,ico,bmp,BMP}',
@@ -63,7 +63,7 @@ module.exports = function (mikser, context) {
 					.crop(width, height)
 			},
 			watermark: (info, watermark, alpha) => {
-				let source = mikser.filemanager.findSource(watermark);
+				let source = mikser.manager.findSource(watermark);
 				info.command('composite')
 					.gravity('Center')
 					.in(source);
@@ -169,7 +169,7 @@ module.exports = function (mikser, context) {
 
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) != 0) {
-				imageInfo.destination = mikser.filemanager.resolveDestination(destination, context.document.destination);
+				imageInfo.destination = mikser.manager.resolveDestination(destination, context.document.destination);
 			}
 			else {
 				imageInfo.destination = destination;
@@ -181,7 +181,7 @@ module.exports = function (mikser, context) {
 			}
 		} else {
 			imageInfo.destination = predictDestination(source);
-			imageInfo.destination = mikser.filemanager.resolveDestination(imageInfo.destination, context.document.destination);
+			imageInfo.destination = mikser.manager.resolveDestination(imageInfo.destination, context.document.destination);
 		}
 
 		if (isNotAllowedExtension(imageInfo.destination)) {
@@ -192,7 +192,7 @@ module.exports = function (mikser, context) {
 		}
 
 		imageInfo.outFolder = path.dirname(imageInfo.destination);
-		imageInfo.toString = () => mikser.filemanager.getUrl(imageInfo.destination);
+		imageInfo.toString = () => mikser.manager.getUrl(imageInfo.destination);
 		pushTransforms(imageInfo);
 
 		context.pending = context.pending.then(() => {

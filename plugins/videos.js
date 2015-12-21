@@ -150,24 +150,24 @@ module.exports = function (mikser, context) {
 
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) != 0) {
-				videoInfo.destination = mikser.filemanager.resolveDestination(destination, context.document.destination);
+				videoInfo.destination = mikser.manager.resolveDestination(destination, context.document.destination);
 			}
 			else {
 				videoInfo.destination = destination;
 			}
-			if (mikser.filemanager.isPathToFile(videoInfo.destination)) {
+			if (mikser.manager.isPathToFile(videoInfo.destination)) {
 				videoInfo.keepDestination = true;
 			}
 		} else {
-			videoInfo.destination = mikser.filemanager.predictDestination(source);
-			videoInfo.destination = mikser.filemanager.resolveDestination(videoInfo.destination, context.document.destination);
+			videoInfo.destination = mikser.manager.predictDestination(source);
+			videoInfo.destination = mikser.manager.resolveDestination(videoInfo.destination, context.document.destination);
 		}
 
-		if (!mikser.filemanager.isPathToFile(videoInfo.destination)) {
+		if (!mikser.manager.isPathToFile(videoInfo.destination)) {
 			videoInfo.destination = path.join(videoInfo.destination, videoInfo.base);
 		}
 
-		videoInfo.toString = () => mikser.filemanager.getUrl(videoInfo.destination);
+		videoInfo.toString = () => mikser.manager.getUrl(videoInfo.destination);
 		videoInfo.outFolder = path.dirname(videoInfo.destination);
 		videoInfo.video = ffmpeg();
 
@@ -176,7 +176,7 @@ module.exports = function (mikser, context) {
 
 		context.pending = context.pending.then(() => {
 
-			videoInfo.source = mikser.filemanager.findSource(source);
+			videoInfo.source = mikser.manager.findSource(source);
 			if (!videoInfo.source) {
 				return mikser.diagnostics.log(context, 'warning', `[videos] File not found at: ${source}`);
 			}

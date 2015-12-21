@@ -6,7 +6,7 @@ let fs = require('fs-extra');
 module.exports = function (mikser, context) {
 	if (context) {
 		context.ejs = function (source, options) {
-			source = mikser.filemanager.findSource(source);
+			source = mikser.manager.findSource(source);
 			let template = fs.readFileSync(source, {
 				encoding: 'utf8'
 			});

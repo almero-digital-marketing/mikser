@@ -7,12 +7,12 @@ var removeMd = require('remove-markdown');
 
 module.exports = function (mikser, context) {
 	let renderer = new marked.Renderer();
-	if (context) {
-		renderer.heading = function (text, level) {
-			var escapedText = S(text.toLowerCase()).replaceAll(' ','-').s;
-			return '<h' + level + ' id="' + escapedText + '">' + text + '</h' + level + '>';
-		};
+	renderer.heading = function (text, level) {
+		var escapedText = S(text.toLowerCase()).replaceAll(' ','-').s;
+		return '<h' + level + ' id="' + escapedText + '">' + text + '</h' + level + '>';
+	};
 
+	if (context) {
 		context.markdown = function (content) {
 			return marked(content, { renderer: renderer });
 		}
@@ -21,7 +21,7 @@ module.exports = function (mikser, context) {
 			return removeMd(content);
 		}		
 	} else {
-		mikser.filemanager.extensions['.md'] = '.html';
+		mikser.manager.extensions['.md'] = '.html';
 		mikser.generator.engines.push({
 			pattern: '**/*.md',
 			render: function(context) {
