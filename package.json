@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "1.6.3",
+  "version": "1.7.2",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -8,7 +8,10 @@
     "url": "https://github.com/almero-digital-marketing/mikser"
   },
   "engines": {
-    "node": ">=0.12"
+    "node": ">=4.0.0"
+  },
+  "bin": {
+    "mikser": "./mikser.js"
   },
   "dependencies": {
     "archieml": "^0.3.1",
