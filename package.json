@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -29,7 +29,6 @@
     "glob": "^6.0.1",
     "glob-promise": "^1.0.4",
     "gm": "^1.21.1",
-    "guid": "0.0.12",
     "hasha": "^2.0.2",
     "indent-string": "^2.1.0",
     "install": "^0.4.0",
@@ -61,6 +60,7 @@
     "textile": "0.0.1",
     "textile-js": "^1.0.3",
     "toml": "^2.3.0",
+    "uuid": "^2.0.1",
     "ws": "^0.8.0"
   },
   "keywords": [
