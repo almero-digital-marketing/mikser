@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "1.7.7",
+  "version": "1.7.9",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -66,6 +66,7 @@
     "ws": "^0.8.0"
   },
   "keywords": [
+    "mikser",
     "document management system",
     "dms",
     "content management system",
