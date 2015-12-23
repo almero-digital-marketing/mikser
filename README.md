@@ -32,4 +32,4 @@ mikser.run();
 ```
 
 ## Fist run
-After you run Mikser for the first time it will create all the necessary folders inside and then start watching your folder for changes and auto-generate your web site.
+After you run Mikser for the first time it will create all the necessary folders inside your project folder and then start watching for changes and auto-generate your web site.
