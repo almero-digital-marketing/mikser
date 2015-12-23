@@ -17,11 +17,11 @@ Mikser works well on Windows, Linux and OSX. It can be installed both globally a
 1. Node.js &ge; 4.0
 2. MongoDB &ge; 2.4 (Under Windows you should add MongoDB's `bin` folder to your `PATH` environment variable. Default location: `C:\Program Files\MongoDB\Server\3.0\bin`)
 
-## Using mikser as a command line tool
+### Using mikser as a command line tool
 1. Install Mikser with `npm install -g mikser`
 2. Create a folder for your project, run `mikser` inside it
 
-## Using mikser from inside a script
+### Using mikser from inside a script
 1. Install mikser as local dependency of mikser inside this folder with `npm install mikser`
 2. Create `mikser.js` and put those lines inside 
 3. Start your first Mikser app with `node mikser`
@@ -31,4 +31,5 @@ var mikser = require('mikser');
 mikser.run();
 ```
 
+## Fist run
 After you run Mikser for the first time it will create all the necessary folders inside and then start watching your folder for changes and auto-generate your web site.
