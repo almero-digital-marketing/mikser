@@ -19,8 +19,7 @@ Mikser works well on Windows, Linux and OSX. It can be installed both globally a
 
 ## Using mikser as a command line tool
 1. Install Mikser with `npm install -g mikser`
-2. Create a folder for your project, inside it run `mikser`
-3. After you run Mikser for the first time it will create all the necessary folders inside
+2. Create a folder for your project, run `mikser` inside it
 
 ## Using mikser from inside a script
 1. Install mikser as local dependency of mikser inside this folder with `npm install mikser`
