@@ -36,12 +36,12 @@ After you run Mikser for the first time it will create all the necessary folders
 
 ## Mikser documentation
 
-* [Folder structure](https://github.com/almero-digital-marketing/mikser-docs/folder-structure.md)
-* [Documents](https://github.com/almero-digital-marketing/mikser-docs/documents.md)
-	* [Structured data documents](https://github.com/almero-digital-marketing/mikser-docs/documents.md#structured-data-documents)
-	* [Documents with front matter](https://github.com/almero-digital-marketing/mikser-docs/documents.md#documents-with-front-matter)
-	* [Anything with front matter](https://github.com/almero-digital-marketing/mikser-docs/documents.md#anything-with-front-matter)
-	* [Metadata routing](https://github.com/almero-digital-marketing/mikser-docs/documents.md#meta-data-routing)
+* [Folder structure](https://github.com/almero-digital-marketing/mikser-docs/blob/master/folder-structure.md)
+* [Documents](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md)
+	* [Structured data documents](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#structured-data-documents)
+	* [Documents with front matter](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#documents-with-front-matter)
+	* [Anything with front matter](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#anything-with-front-matter)
+	* [Metadata routing](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#meta-data-routing)
 * Layouts
 	* Basic layout usage
 		* Master layout
