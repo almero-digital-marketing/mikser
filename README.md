@@ -44,20 +44,19 @@ After you run Mikser for the first time it will create all the necessary folders
 	* [Meta data routing](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#meta-data-routing)
 * Layouts
 	* Basic layout usage
-		* Master layout
-		* Child layout
-		* Referring meta data
-		* Referring documents from layouts
-		* Using auto layouts
-	* Using blocks
-		* Using plain blocks
-		* Using blocks with options
+	* Referring meta data
+	* Layout inheritance
+	* Referring other documents from layouts
 	* Using data
 		* By layout
 		* By layout with sorting
 		* Data queries
+	* Using blocks
+		* Using plain blocks
+		* Using blocks with options
 	* Using short codes
 	* Using paging
+	* Using auto layouts
 * Integrating external tools
 	* CSS preprocessors
 	* Using build systems
