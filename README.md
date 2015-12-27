@@ -8,7 +8,7 @@ Mikser is designed for rapid web site development. It works equally well for sma
 - Built-in multi-language and multi-domain support
 - Pin-point diagnostics that provides accurate error messages
 - Easy integration with build systems like [Grunt](http://gruntjs.com/) and [Gulp](http://gulpjs.com/) or CSS pre-processors like [Less](http://lesscss.org/) and [Sass](http://sass-lang.com/)
-- Support for most of the popular template and markup engines - [Jade](http://jade-lang.com/), [Eco](https://github.com/sstephenson/eco), [Ect](http://ectjs.com/), [Ejs](http://ejs.co/), [Swig](http://paularmstrong.github.io/swig/), [Markdown](http://daringfireball.net/projects/markdown/), [Textile](http://redcloth.org/textile/), [Yaml](http://www.yaml.org/), [Toml](https://github.com/toml-lang/toml), [ArchieML](http://archieml.org/), [CSON](https://github.com/bevry/cson), [JSON5](http://json5.org/), support for new engines through plug-ins
+- Support for most of the popular template and markup engines - [Jade](http://jade-lang.com/), [Eco](https://github.com/sstephenson/eco), [Ect](http://ectjs.com/), [Ejs](http://ejs.co/), [Swig](http://paularmstrong.github.io/swig/), [Markdown](http://daringfireball.net/projects/markdown/), [Textile](http://redcloth.org/textile/), [YAML](http://www.yaml.org/), [TOML](https://github.com/toml-lang/toml), [ArchieML](http://archieml.org/), [CSON](https://github.com/bevry/cson), [JSON5](http://json5.org/), support for new engines through plug-ins
 - Very easy plug-in system with straight forward interface and hot reload
 
 ## Installation
@@ -39,14 +39,14 @@ After you run Mikser for the first time it will create all the necessary folders
 * [Folder structure](https://github.com/almero-digital-marketing/mikser-docs/blob/master/folder-structure.md)
 * [Documents](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md)
 	* [Structured data documents](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#structured-data-documents)
-	* [Documents with front matter](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#documents-with-front-matter)
+	* [Markup documents with front matter](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#markup-documents-with-front-matter)
 	* [Anything with front matter](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#anything-with-front-matter)
 	* [Meta data routing](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#meta-data-routing)
 * Layouts
 	* Basic layout usage
 		* Master layout
 		* Child layout
-		* Referring metadata
+		* Referring meta data
 		* Referring documents from layouts
 		* Using auto layouts
 	* Using blocks
@@ -56,7 +56,7 @@ After you run Mikser for the first time it will create all the necessary folders
 		* By layout
 		* By layout with sorting
 		* Data queries
-	* Using shortcodes
+	* Using short codes
 	* Using paging
 * Integrating external tools
 	* CSS preprocessors
@@ -66,13 +66,18 @@ After you run Mikser for the first time it will create all the necessary folders
 * Reference tracking
 * Debugging
 	* Error diagnostics
-	* Debugging mikser
-* Plugins
-	* Collections plugin
-	* Markup and template plugins
-	* Images plugin
-	* Videos plugin
-	* Caching plugin
+	* Debug information
+* Extending with plugins
+	* Plugins used in layouts
+	* Plugins used in mikser
+	* Build-in plugins
+		* Collections plugin
+		* Markup and template plugins
+		* Images plugin
+		* Videos plugin
+		* Caching plugin
+	* Third-party plugins
+	* Custom plugins
 * Multi language
 	* Referring documents from different languages
 	* Alternates
@@ -82,9 +87,5 @@ After you run Mikser for the first time it will create all the necessary folders
 * Mikser configuration
 * Mikser life cycle
 * Command line arguments
-* Extending with plugins
-	* Finding plugins
-	* Plugins used in layouts
-	* Plugins used in mikser
 * Continuous integration
 * Large site optimizations
