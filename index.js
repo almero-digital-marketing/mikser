@@ -13,7 +13,7 @@ var manager = require('./lib/manager');
 var watcher = require('./lib/watcher');
 var diagnostics = require('./lib/diagnostics');
 var server = require('./lib/server');
-var compilator = require('./lib/compilator');
+var automation = require('./lib/automation');
 var debug = require('./lib/debug');
 var broker = require('./lib/broker');
 var parser = require('./lib/parser');
@@ -31,7 +31,7 @@ module.exports.run = function(options) {
 	.then(generator)
 	.then(scheduler)
 	.then(manager)
-	.then(compilator)
+	.then(automation)
 	.then(watcher)
 	.then(server)
 	.then(diagnostics)
@@ -43,7 +43,7 @@ module.exports.run = function(options) {
 				mikser.debug.resetWatch()
 				.then(mikser.manager.glob)
 				.then(mikser.manager.clean)
-				.then(mikser.compilator.compile)
+				.then(mikser.automation.compile)
 				.then(mikser.manager.copy)
 				.then(mikser.server.listen)
 				.then(mikser.scheduler.process)
