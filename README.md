@@ -77,10 +77,10 @@ After you run Mikser for the first time it will create all the necessary folders
 		* Caching
 	* Third-party plug-ins
 	* Custom plug-ins
-* Multi language web sites
+* Multi-language web sites
 	* Referring documents from different languages
 	* Alternates
-* Multi domain web sites
+* Multi-domain web sites
 	* Shared resources
 	* Asset replication
 * Configuration
