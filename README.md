@@ -46,44 +46,43 @@ After you run Mikser for the first time it will create all the necessary folders
 	* Referring meta data
 	* Layout inheritance
 	* Referring other documents from layouts
-	* Using data
-		* By layout
-		* By layout with sorting
-		* Data queries
-	* Using blocks
+	* Using data queries
+		* Layout queries
+		* Context queries
+		* Sorting
+	* Blocks/Partials
 		* Using plain blocks
 		* Using blocks with options
-	* Using short codes
-	* Using paging
+	* Short codes
+	* Paging
 	* Using auto layouts
-* Integrating external tools
-	* CSS preprocessors
+* Tools
+	* Preprocessors and complicators
 	* Using build systems
-* Live reload
-* Watching folders
-* Reference tracking
+* Server
+	* Live reload
+	* Watching folders
+	* Real-time preview
 * Debugging
 	* Error diagnostics
 	* Debug information
-* Extending with plugins
-	* Plugins used in layouts
-	* Plugins used in mikser
-	* Build-in plugins
-		* Collections plugin
-		* Markup and template plugins
-		* Images plugin
-		* Videos plugin
-		* Caching plugin
-	* Third-party plugins
-	* Custom plugins
-* Multi language
+* Plug-ins
+	* Layout plug-ins
+	* Mikser plug-ins
+	* Build-in plug-ins
+		* Collections
+		* Markup and template engines plug-ins
+		* Images
+		* Videos
+		* Caching
+	* Third-party plug-ins
+	* Custom plug-ins
+* Multi language web sites
 	* Referring documents from different languages
 	* Alternates
 * Multi domain web sites
 	* Shared resources
 	* Asset replication
-* Mikser configuration
-* Mikser life cycle
+* Configuration
 * Command line arguments
 * Continuous integration
-* Large site optimizations
