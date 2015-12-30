@@ -58,7 +58,7 @@ After you run Mikser for the first time it will create all the necessary folders
 	* Using auto layouts
 * Tools
 	* Preprocessors and complicators
-	* Using build systems
+	* Build systems
 * Server
 	* Live reload
 	* Watching folders
