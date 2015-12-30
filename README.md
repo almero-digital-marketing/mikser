@@ -68,13 +68,13 @@ After you run Mikser for the first time it will create all the necessary folders
 	* Debug information
 * Plug-ins
 	* Layout plug-ins
-	* Mikser plug-ins
+	* System plug-ins
 	* Build-in plug-ins
-		* Collections
-		* Markup and template engines plug-ins
-		* Images
-		* Videos
-		* Caching
+		* Markup and template plug-ins
+		* Collections plug-in
+		* Images plug-in
+		* Videos plug-in
+		* Caching plug-in
 	* Third-party plug-ins
 	* Custom plug-ins
 * Multi-language web sites
