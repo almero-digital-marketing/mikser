@@ -8,7 +8,7 @@ Mikser is designed for rapid web site development. It works equally well for sma
 - Built-in multi-language and multi-domain support
 - Pin-point diagnostics that provides accurate error messages
 - Easy integration with build systems like [Grunt](http://gruntjs.com/) and [Gulp](http://gulpjs.com/), CSS pre-processors like [Less](http://lesscss.org/) and [Sass](http://sass-lang.com/) or compilators like [CoffeeScript](http://coffeescript.org/) and [TypeScript](http://www.typescriptlang.org/)
-- Support for most of the popular template and markup engines - [Jade](http://jade-lang.com/), [Eco](https://github.com/sstephenson/eco), [Ect](http://ectjs.com/), [Ejs](http://ejs.co/), [Swig](http://paularmstrong.github.io/swig/), [Markdown](http://daringfireball.net/projects/markdown/), [Textile](http://redcloth.org/textile/), [YAML](http://www.yaml.org/), [TOML](https://github.com/toml-lang/toml), [ArchieML](http://archieml.org/), [CSON](https://github.com/bevry/cson), [JSON5](http://json5.org/), support for new engines through plug-ins
+- Support for most of the popular template and markup engines - [Jade](http://jade-lang.com/), [Eco](https://github.com/sstephenson/eco), [Ect](http://ectjs.com/), [Ejs](http://ejs.co/), [Swig](http://paularmstrong.github.io/swig/), [Nunjucks](http://mozilla.github.io/nunjucks/), [Twig](http://twig.sensiolabs.org/), [Markdown](http://daringfireball.net/projects/markdown/), [Textile](http://redcloth.org/textile/), [YAML](http://www.yaml.org/), [TOML](https://github.com/toml-lang/toml), [ArchieML](http://archieml.org/), [CSON](https://github.com/bevry/cson), [JSON5](http://json5.org/), support for new engines through plug-ins
 - Very easy plug-in system with straight forward interface and hot reload
 
 ## Installation
@@ -41,21 +41,20 @@ After you run Mikser for the first time it will create all the necessary folders
 	* [Markup documents with front matter](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#markup-documents-with-front-matter)
 	* [Anything with front matter](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#anything-with-front-matter)
 	* [Meta data routing](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#meta-data-routing)
-* Layouts
-	* Basic layout usage
-	* Referring meta data
-	* Layout inheritance
-	* Referring other documents from layouts
-	* Using data queries
-		* Layout queries
-		* Context queries
-		* Sorting
-	* Blocks/Partials
-		* Using plain blocks
-		* Using blocks with options
-	* Short codes
-	* Paging
-	* Using auto layouts
+* [Layouts](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md)
+	* [Basic layout usage](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#basic-layout-usage)
+	* [Referring meta data](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#referring-meta-data)
+	* [Layout inheritance](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#layout-inheritance)
+	* [Using data queries](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-data-queries)
+		* [Layout queries](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#layout-queries)
+		* [Context queries](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#context-queries)
+	* [Referring other documents from layouts](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#referring-other-documents-from-layouts)
+	* [Blocks (Partials)](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#blocks-partials)
+		* [Using plain blocks](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-plain-blocks)
+		* [Using blocks with options](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-blocks-with-options)
+	* [Short codes](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#short-codes)
+	* [Paging](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#paging)
+	* [Using auto layouts](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-auto-layouts)
 * Tools
 	* Preprocessors and complicators
 	* Build systems

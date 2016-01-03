@@ -45,6 +45,7 @@
     "mongodb": "^2.0.49",
     "node-constants": "0.0.2",
     "node.extend": "^1.1.5",
+    "nunjucks": "^2.2.0",
     "parse-spawn-args": "^1.0.2",
     "prettysize": "0.0.3",
     "remove-markdown": "0.0.6",
@@ -60,6 +61,7 @@
     "textile": "0.0.1",
     "textile-js": "^1.0.3",
     "toml": "^2.3.0",
+    "twig": "^0.8.5",
     "uuid": "^2.0.1",
     "ws": "^0.8.0"
   },
