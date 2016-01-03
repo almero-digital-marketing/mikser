@@ -56,7 +56,7 @@ After you run Mikser for the first time it will create all the necessary folders
 	* [Paging](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#paging)
 	* [Using auto layouts](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-auto-layouts)
 * Tools
-	* Preprocessors and complicators
+	* Preprocessors and compilators
 	* Build systems
 * Server
 	* Live reload
