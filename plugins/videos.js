@@ -18,7 +18,7 @@ module.exports = function (mikser, context) {
 			'720p': { width: 1280, height: 720 },
 			'1080p': { width: 1920, height: 1080 },
 			'mp4': { video: 'libx264', audio: 'aac' },
-			'webm': { video: 'libvpx' }
+			'webm': { video: 'libvpx', videoBitrate: 1000 }
 		},
 
 		transforms: {
@@ -33,6 +33,9 @@ module.exports = function (mikser, context) {
 				audioCodec = audioCodec || info.preset.audio;
 				if (audioCodec) {
 					info.video.audioCodec(audioCodec);
+				}
+				if (info.preset.name == 'webm') {
+					info.video.videoBitrate(info.preset.videoBitrate);
 				}
 			},
 			resize: (info, width, height) => {
