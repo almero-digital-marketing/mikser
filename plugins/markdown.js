@@ -6,14 +6,12 @@ var fs = require('fs-extra');
 var removeMd = require('remove-markdown');
 
 module.exports = function (mikser, context) {
-	let renderer = new marked.Renderer();
-	renderer.heading = function (text, level) {
-		var escapedText = S(text.toLowerCase()).replaceAll(' ','-').s;
-		return '<h' + level + ' id="' + escapedText + '">' + text + '</h' + level + '>';
-	};
-
 	if (context) {
 		context.markdown = function (content) {
+			let renderer = new marked.Renderer();
+			renderer.heading = function (text, level) {
+				return '<h' + level + '>' + text + '</h' + level + '>';
+			};
 			return marked(content, { renderer: renderer });
 		}
 
@@ -25,6 +23,18 @@ module.exports = function (mikser, context) {
 		mikser.generator.engines.push({
 			pattern: '**/*.md',
 			render: function(context) {
+				let renderer = new marked.Renderer();
+				let idMap = {};
+				renderer.heading = function (text, level) {
+					let id = S(text.toLowerCase()).stripTags().replaceAll(' ','-').s;
+					let globalId = id;
+					let globalCounter = 1;
+					while (idMap[globalId]) {
+						globalId = id + '-' + globalCounter++;
+					}
+					idMap[globalId] = true;
+					return '<h' + level + ' id="' + globalId + '">' + text + '</h' + level + '>';
+				};
 				return marked(context.content, { renderer: renderer });
 			}
 		});		
