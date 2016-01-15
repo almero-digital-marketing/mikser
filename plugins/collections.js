@@ -54,7 +54,7 @@ module.exports = function (mikser, context) {
 
 			sample: function (number) {
 				number = number || 1;
-				context.data[destination] = [].concat(_.sample(context.data[destination], number));
+				context.data[destination] = [].concat(_.sampleSize(context.data[destination], number));
 				return this;
 			},
 
