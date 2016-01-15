@@ -74,8 +74,8 @@ module.exports = function (mikser, context) {
 				return this;
 			},
 
-			unique: function () {
-				context.data[destination] = _.unique(context.data[destination]);
+			uniq: function () {
+				context.data[destination] = _.uniq(context.data[destination]);
 				return this;
 			},
 		}

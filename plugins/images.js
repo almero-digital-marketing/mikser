@@ -112,7 +112,7 @@ module.exports = function (mikser, context) {
 
 	function exposeTransforms (imageInfo) {
 		let notForExpose = ['write', 'stream', 'toBuffer', 'addListener', 'addSrcFormatter', 'args', 'emit', 'on', 'format', 'identify', 'compare'];
-		let commands = _.functions(imageInfo.image);
+		let commands = _.functionsIn(imageInfo.image);
 		_.remove(commands, (command) => {
 			return command.charAt(0) === '_' || _.includes(notForExpose, command);
 		});

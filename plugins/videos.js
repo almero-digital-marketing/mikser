@@ -98,7 +98,7 @@ module.exports = function (mikser, context) {
 
 	function exposeTransforms (videoInfo) {
 		let notForExpose = ['screenshots', 'save', 'run', 'saveToFile', 'pipe', 'exec', 'execute', 'stream', 'writeToStream', 'ffprobe', 'input', 'addInput', 'output', 'addOutput', 'addListener', 'addOutput', 'emit', 'on', 'getAvailableFormats', 'getAvailableCodecs', 'getAvailableEncoders', 'getAvailableFilters'];
-		let commands = _.functions(videoInfo.video);
+		let commands = _.functionsIn(videoInfo.video);
 		_.remove(commands, (command) => {
 			return command.charAt(0) === '_' || _.includes(notForExpose, command);
 		});
