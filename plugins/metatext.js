@@ -13,8 +13,8 @@ module.exports = function (mikser, context) {
 			.replaceAll(')','')
 			.replaceAll('[','')
 			.replaceAll(']','')
-			.replaceAll('|','')
-			.replaceAll('_','').s;
+			.replaceAll('|',' ')
+			.replaceAll('_',' ').s;
 	};
 	context.metatext = function(content) {
 		return S(content)
