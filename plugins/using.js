@@ -18,11 +18,17 @@ module.exports = function (mikser, context) {
 		if (fs.existsSync(packagePath)) {
 			context[use] = require(packagePath);
 			return false;
+		} else {
+			packagePath = path.join(mikser.options.workingFolder, 'node_modules', use);
+			if (fs.existsSync(packagePath)) {
+				context[use] = require(packagePath);
+				return false;
+			}
 		}
 		return true;
 	});
 	if (!using.length) return Promise.resolve();
-	
+
 	debug('Installing packages:', using);
 	let npm = 'npm i --prefix ' + mikser.config.runtimeFolder + ' ' + using.join(' ');
 	return exec(npm).then(() => {
