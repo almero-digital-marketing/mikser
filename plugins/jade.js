@@ -19,6 +19,7 @@ module.exports = function (mikser, context) {
 						options.cache = false;
 						return jade.render(context.layout.template, options);
 					}
+					return context.content;
 				} catch (err) {
 					let re = /(?:on line\s|Jade:)(\d+)/;
 					let result = re.exec(err.message);

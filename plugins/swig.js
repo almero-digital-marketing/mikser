@@ -16,6 +16,7 @@ module.exports = function (mikser, context) {
 					if (context.layout && context.layout.template) {
 						return swig.render(context.layout.template, { locals: context });
 					}
+					return context.content;
 				} catch (err) {
 					let re = /on line\s(\d+)/;
 					let result = re.exec(err.message);

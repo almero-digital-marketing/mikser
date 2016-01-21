@@ -20,6 +20,7 @@ module.exports = function (mikser, context) {
 					if (context.layout && context.layout.template) {
 						return ejs.render(context.layout.template, context);
 					}
+					return context.content;
 				} catch (err) {
 					let re = /(?:on line\s|ejs:)(\d+)/;
 					let result = re.exec(err.message);

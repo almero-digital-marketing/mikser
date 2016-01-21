@@ -19,6 +19,7 @@ module.exports = function (mikser, context) {
 					if (context.layout && context.layout.template) {
 						return renderer.render('page', context);
 					}
+					return context.content;
 				} catch (err) {
 					let re = /on line\s(\d+)/;
 					let result = re.exec(err.message);

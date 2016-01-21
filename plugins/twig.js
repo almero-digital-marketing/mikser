@@ -24,6 +24,7 @@ module.exports = function (mikser, context) {
 					let result = template.render(context);
 					return result;
 				}
+				return context.content;
 			}
 		});
 	}
