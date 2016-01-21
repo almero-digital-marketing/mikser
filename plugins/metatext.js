@@ -14,7 +14,8 @@ module.exports = function (mikser, context) {
 			.replaceAll('[','')
 			.replaceAll(']','')
 			.replaceAll('|',' ')
-			.replaceAll('_',' ').s;
+			.replaceAll('_',' ')
+			.replaceAll('~',' ').s;
 	};
 	context.metatext = function(content) {
 		return S(content)
@@ -29,6 +30,7 @@ module.exports = function (mikser, context) {
 			.replaceAll('[','<i>')
 			.replaceAll(']','</i>')
 			.replaceAll('|','<br>')
-			.replaceAll('_','<hr>').s;
+			.replaceAll('_','<hr>')
+			.replaceAll('~','&nbsp;').s;
 	};
 };
