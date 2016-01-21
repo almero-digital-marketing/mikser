@@ -13,7 +13,9 @@ module.exports = function (mikser, context) {
 			pattern: '**/*.swig',
 			render: function(context) {
 				try {
-					return swig.render(context.layout.template, { locals: context });
+					if (context.layout && context.layout.template) {
+						return swig.render(context.layout.template, { locals: context });
+					}
 				} catch (err) {
 					let re = /on line\s(\d+)/;
 					let result = re.exec(err.message);

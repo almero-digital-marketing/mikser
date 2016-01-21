@@ -17,7 +17,9 @@ module.exports = function (mikser, context) {
 			pattern: '**/*.ejs',
 			render: function(context) {
 				try {
-					return ejs.render(context.layout.template, context);
+					if (context.layout && context.layout.template) {
+						return ejs.render(context.layout.template, context);
+					}
 				} catch (err) {
 					let re = /(?:on line\s|ejs:)(\d+)/;
 					let result = re.exec(err.message);

@@ -14,9 +14,11 @@ module.exports = function (mikser, context) {
 			pattern: '**/*.jade',
 			render: function(context) {
 				try {
-					let options = extend({}, context);
-					options.cache = false;
-					return jade.render(context.layout.template, options);
+					if (context.layout && context.layout.template) {
+						let options = extend({}, context);
+						options.cache = false;
+						return jade.render(context.layout.template, options);
+					}
 				} catch (err) {
 					let re = /(?:on line\s|Jade:)(\d+)/;
 					let result = re.exec(err.message);

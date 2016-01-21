@@ -16,7 +16,9 @@ module.exports = function (mikser, context) {
 			render: function(context) {
 				var renderer = ECT({ root : { page: context.layout.template } });
 				try {
-					return renderer.render('page', context);
+					if (context.layout && context.layout.template) {
+						return renderer.render('page', context);
+					}
 				} catch (err) {
 					let re = /on line\s(\d+)/;
 					let result = re.exec(err.message);

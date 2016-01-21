@@ -17,8 +17,10 @@ module.exports = function (mikser, context) {
 			pattern: '**/*.+(nj|nunjucks)',
 			render: function(context) {
 				try {
-					let result = engine.renderString(context.layout.template, context);
-					return result;
+					if (context.layout && context.layout.template) {
+						let result = engine.renderString(context.layout.template, context);
+						return result;
+					}
 				} catch (err) {
 					let re = /\[Line\s(\d+)/;
 					let result = re.exec(err.message);

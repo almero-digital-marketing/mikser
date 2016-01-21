@@ -17,11 +17,13 @@ module.exports = function (mikser, context) {
 		mikser.generator.engines.push({
 			pattern: '**/*.twig',
 			render: function(context) {
-				var template = twig({
-					data: context.layout.template
-				});
-				let result = template.render(context);
-				return result;
+				if (context.layout && context.layout.template) {
+					var template = twig({
+						data: context.layout.template
+					});
+					let result = template.render(context);
+					return result;
+				}
 			}
 		});
 	}
