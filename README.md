@@ -58,13 +58,13 @@ After you run Mikser for the first time it will create all the necessary folders
 * [External tools](https://github.com/almero-digital-marketing/mikser-docs/blob/master/tools.md)
 	* [Preprocessors and compilators](https://github.com/almero-digital-marketing/mikser-docs/blob/master/tools.md#preprocessors-and-compilators)
 	* [Build systems](https://github.com/almero-digital-marketing/mikser-docs/blob/master/tools.md#build-systems)
-* Server
-	* Live reload
-	* Watching folders
-	* Real-time preview
-* Debugging
-	* Error diagnostics
-	* Debug information
+* [Development server](https://github.com/almero-digital-marketing/mikser-docs/blob/master/server.md)
+	* [Live reload](https://github.com/almero-digital-marketing/mikser-docs/blob/master/server.md#live-reload)
+	* [Real-time preview](https://github.com/almero-digital-marketing/mikser-docs/blob/master/server.md#real-time-preview)
+	* [Watching folders](https://github.com/almero-digital-marketing/mikser-docs/blob/master/server.md#watching-folders)
+* [Debugging](https://github.com/almero-digital-marketing/mikser-docs/blob/master/debugging.md)
+	* [Error diagnostics](https://github.com/almero-digital-marketing/mikser-docs/blob/master/debugging.md#error-diagnostics)
+	* [Debug information](https://github.com/almero-digital-marketing/mikser-docs/blob/master/debugging.md#debug-information)
 * Plug-ins
 	* Layout plug-ins
 	* System plug-ins
