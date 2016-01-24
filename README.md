@@ -35,7 +35,7 @@ After you run Mikser for the first time it will create all the necessary folders
 
 ## Mikser documentation
 
-* [Folder structure](https://github.com/almero-digital-marketing/mikser-docs/blob/master/folder-structure.md)
+* [Folder structure](https://github.com/almero-digital-marketing/mikser-docs/blob/master/folders.md)
 * [Documents](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md)
 	* [Structured data documents](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#structured-data-documents)
 	* [Markup documents with front matter](https://github.com/almero-digital-marketing/mikser-docs/blob/master/documents.md#markup-documents-with-front-matter)
@@ -55,9 +55,9 @@ After you run Mikser for the first time it will create all the necessary folders
 	* [Short codes](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#short-codes)
 	* [Paging](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#paging)
 	* [Using auto layouts](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-auto-layouts)
-* Tools
-	* Preprocessors and compilators
-	* Build systems
+* [External tools](https://github.com/almero-digital-marketing/mikser-docs/blob/master/tools.md)
+	* [Preprocessors and compilators](https://github.com/almero-digital-marketing/mikser-docs/blob/master/tools.md#preprocessors-and-compilators)
+	* [Build systems](https://github.com/almero-digital-marketing/mikser-docs/blob/master/tools.md#build-systems)
 * Server
 	* Live reload
 	* Watching folders
@@ -73,6 +73,7 @@ After you run Mikser for the first time it will create all the necessary folders
 		* Collections plug-in
 		* Images plug-in
 		* Videos plug-in
+		* Versions plug-in
 		* Caching plug-in
 	* Third-party plug-ins
 	* Custom plug-ins
