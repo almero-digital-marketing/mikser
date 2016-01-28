@@ -50,6 +50,14 @@ module.exports = function (mikser, context) {
 		return content;
 	}
 
+	context.write = function(file, content) {
+		context.pending = context.pending.then(() => {
+			return fs.createFileAsync(file).then(() => {
+				return fs.writeFileAsync(file, content);							
+			});
+		});
+	}
+
 	context.stat = function (file) {
 		let source = mikser.manager.findSource(file);
 		if (source) {
