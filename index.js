@@ -17,6 +17,7 @@ var tools = require('./lib/tools');
 var debug = require('./lib/debug');
 var broker = require('./lib/broker');
 var parser = require('./lib/parser');
+var queue = require('./lib/queue');
 var _ = require('lodash');
 
 module.exports.run = function(options) {
@@ -27,6 +28,7 @@ module.exports.run = function(options) {
 	.then(runtime)
 	.then(databse)
 	.then(parser)
+	.then(queue)
 	.then(loader)
 	.then(generator)
 	.then(scheduler)

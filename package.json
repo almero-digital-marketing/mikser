@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -16,7 +16,6 @@
   "dependencies": {
     "archieml": "^0.3.1",
     "bluebird": "^3.1.1",
-    "bluebird-queue": "0.0.8",
     "chained-emitter": "^0.1.4",
     "chalk": "^1.1.1",
     "chokidar": "^1.4.2",
