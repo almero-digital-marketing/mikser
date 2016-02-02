@@ -114,7 +114,7 @@ module.exports = function (mikser, context) {
 		updateCache(cacheInfo);
 		cacheInfo.toString = () => mikser.manager.getUrl(cacheInfo.destination);
 
-		context.pending = context.pending.then(() => {
+		context.process(() => {
 			updateCache(cacheInfo);
 			if (isUrl(source)) {
 				if (!cacheInfo.fromCache) {

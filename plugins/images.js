@@ -202,7 +202,7 @@ module.exports = function (mikser, context) {
 		imageInfo.toString = () => mikser.manager.getUrl(imageInfo.destination);
 		pushTransforms(imageInfo);
 
-		context.pending = context.pending.then(() => {
+		context.process(() => {
 
 			let sourceFilePath = findSource(source);
 			// full path to file or undefined if file does not exist

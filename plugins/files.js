@@ -51,7 +51,7 @@ module.exports = function (mikser, context) {
 	}
 
 	context.write = function(file, content) {
-		context.pending = context.pending.then(() => {
+		context.process(() => {
 			return fs.createFileAsync(file).then(() => {
 				return fs.writeFileAsync(file, content);							
 			});

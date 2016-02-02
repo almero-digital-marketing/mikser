@@ -177,7 +177,7 @@ module.exports = function (mikser, context) {
 		exposeTransforms(videoInfo);
 		wrapTransforms(videoInfo);
 
-		context.pending = context.pending.then(() => {
+		context.process(() => {
 
 			videoInfo.source = mikser.manager.findSource(source);
 			if (!videoInfo.source) {

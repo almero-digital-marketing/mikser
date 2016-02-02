@@ -35,7 +35,7 @@ module.exports = function (mikser, context) {
 				throw err;
 			}
 		} else {
-			context.pending = context.pending.then(() => {
+			context.process(() => {
 				mikser.diagnostics.log(context, 'info', `[execute] ${command}`);
 				return execAsync(command, {cwd: process.cwd(), encoding: 'utf8'}).catch((err) => {
 					mikser.diagnostics.log(context, 'error', `[execute] ${err}`);
