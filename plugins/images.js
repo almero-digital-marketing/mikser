@@ -45,6 +45,8 @@ module.exports = function (mikser, context) {
 					let ext = path.extname(info.destination);
 					info.destination = info.destination.replace(ext, `-${width}x${height}${ext}`);
 				}
+				width = width == 'auto' ? null : width;
+				height = height == 'auto' ? null : height;
 				info.image
 					.quality(info.preset.quality)
 					.resize(width, height)
@@ -56,6 +58,8 @@ module.exports = function (mikser, context) {
 					let ext = path.extname(info.destination);
 					info.destination = info.destination.replace(ext, `-${width}x${height}${ext}`);
 				}
+				width = width == 'auto' ? null : width;
+				height = height == 'auto' ? null : height;
 				info.image
 					.quality(info.preset.quality)
 					.gravity('Center')
