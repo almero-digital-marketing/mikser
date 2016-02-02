@@ -7,6 +7,7 @@ let extend = require('node.extend');
 let Promise = require('bluebird');
 let minimatch = require('minimatch');
 let _ = require('lodash');
+let S = require('string');
 
 module.exports = function (mikser, context) {
 	let debug = mikser.debug('images');
@@ -103,7 +104,9 @@ module.exports = function (mikser, context) {
 					}
 					let ext = path.extname(imageInfo.destination);
 					// update destination and url
-					imageInfo.destination = imageInfo.destination.replace(ext, '-' + newName + ext);
+					if (!S(imageInfo.destination).endsWith(newName + ext)) {
+						imageInfo.destination = imageInfo.destination.replace(ext, '-' + newName + ext);
+					}
 				}
 
 				// remove the preset from args
