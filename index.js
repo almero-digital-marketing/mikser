@@ -49,7 +49,6 @@ module.exports.run = function(options) {
 				.then(mikser.manager.copy)
 				.then(mikser.server.listen)
 				.then(mikser.scheduler.process)
-				.then(mikser.server.refresh)
 				.then(mikser.watcher.start)
 				.then(() => {
 					if (!mikser.options.server && !mikser.options.watch) {
