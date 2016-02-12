@@ -16,6 +16,8 @@
   "dependencies": {
     "archieml": "^0.3.1",
     "bluebird": "^3.2.1",
+    "browser-request": "^0.3.3",
+    "browserify-middleware": "^7.0.0",
     "chained-emitter": "^0.1.4",
     "chalk": "^1.1.1",
     "chokidar": "^1.4.2",
@@ -36,6 +38,7 @@
     "js-yaml": "^3.5.2",
     "json5": "^0.4.0",
     "jsonfile": "^2.2.3",
+    "livereload-js": "^2.2.2",
     "lodash": "^4.2.1",
     "marked": "^0.3.5",
     "minimatch": "^3.0.0",
