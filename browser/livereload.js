@@ -1,15 +1,13 @@
 'use strict'
 
-var Promise = require('bluebird');
-
-module.exports = function(mikser) {
+module.exports = function (mikser) {
 	if (mikser.config.livereload) {
 		window.LiveReloadOptions = { 
 			host: location.host.split(':')[0], 
 			port: mikser.config.serverPort,
 			snipver: 1
 		};
-		require('livereload-js');		
+		require('livereload-js');
+		console.log('FUCK');	
 	}
-	return Promise.resolve(mikser);
-}
+};
