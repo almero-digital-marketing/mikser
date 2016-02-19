@@ -8,6 +8,5 @@ module.exports = function (mikser) {
 			snipver: 1
 		};
 		require('livereload-js');
-		console.log('FUCK');	
 	}
 };
