@@ -1,7 +1,7 @@
 'use strict'
 let glob = require('glob');
 let path = require('path');
-let fs = require('fs-extra');
+let fs = require('fs-extra-promise');
 
 module.exports = function (mikser, context) {
 
