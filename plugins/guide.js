@@ -59,13 +59,11 @@ module.exports = function (mikser, context) {
 				dataUrl = urlParts[1];
 
 			if (!mikser.state.contentMap) {
-				mikser.diagnostics.log('warning', 'Guide: ' + 'state not found');
-				return;
+				return mikser.diagnostics.log('warning', 'Guide: ' + 'state not found');
 			}
 
 			if (!mikser.state.contentMap.hasOwnProperty(id)) {
-				mikser.diagnostics.log('warning', 'Guide: ' + 'Document not found-> ' + id);
-				return;
+				return mikser.diagnostics.log('warning', 'Guide: ' + 'Document not found-> ' + id);
 			}
 
 			return navigate(mikser.state.contentMap[id], dataUrl);
