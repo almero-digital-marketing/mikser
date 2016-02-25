@@ -18,6 +18,7 @@ var debug = require('./lib/debug');
 var broker = require('./lib/broker');
 var parser = require('./lib/parser');
 var queue = require('./lib/queue');
+var backports = require('./lib/backports');
 var _ = require('lodash');
 
 module.exports.run = function(options) {
@@ -37,6 +38,7 @@ module.exports.run = function(options) {
 	.then(watcher)
 	.then(server)
 	.then(diagnostics)
+	.then(backports)
 	.then((mikser) => {
 		if (cluster.isMaster) {
 			console.log('Mikser: Loaded');
@@ -46,7 +48,7 @@ module.exports.run = function(options) {
 				.then(mikser.manager.glob)
 				.then(mikser.manager.clean)
 				.then(mikser.tools.compile)
-				.then(mikser.manager.copy)
+				.then(mikser.manager.sync)
 				.then(mikser.server.listen)
 				.then(mikser.scheduler.process)
 				.then(mikser.watcher.start)
