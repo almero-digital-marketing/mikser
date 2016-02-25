@@ -16,20 +16,18 @@ module.exports = function (mikser, context) {
 
 		if (value === undefined) {
 			if (context) {
-				mikser.diagnostics.log(context, 'warning', `Value for key: ${dataUrl} is undefined`);
+				return mikser.diagnostics.log(context, 'warning', `Value for key: ${dataUrl} is undefined`);
 			} else {
-				mikser.diagnostics.log('warning', `Value for key: ${dataUrl} is undefined`);
+				return returnmikser.diagnostics.log('warning', `Value for key: ${dataUrl} is undefined`);
 			}
-			return;
 		}
 
 		if (value !==null && (typeof value == 'object' || typeof value == 'function')) {
 			if (context) {
-				mikser.diagnostics.log(context, 'warning', `Unsupported type for value: ${typeof value}`);
+				return mikser.diagnostics.log(context, 'warning', `Unsupported type for value: ${typeof value}`);
 			} else {
-				mikser.diagnostics.log('warning', `Unsupported type for value: ${typeof value}`);
+				return mikser.diagnostics.log('warning', `Unsupported type for value: ${typeof value}`);
 			}
-			return;
 		}
 
 		// update contentMap and assign file content to data;
