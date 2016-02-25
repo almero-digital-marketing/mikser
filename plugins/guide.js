@@ -42,9 +42,9 @@ module.exports = function (mikser, context) {
 		}
 
 		let uuidContent = data.replace(new RegExp(value, "g"), () => uuid.v1()),
-				uuidContentObject = mikser.parser.parse(document.source, uuidContent),
-				uuidValue = _.get(uuidContentObject, keyArgs, undefined),
-				uuidContentParts = uuidContent.split('\n');
+			uuidContentObject = mikser.parser.parse(document.source, uuidContent),
+			uuidValue = _.get(uuidContentObject, keyArgs, undefined),
+			uuidContentParts = uuidContent.split('\n');
 
 		for (let row = 0, len = uuidContentParts.length; row < len; row++) {
 			let col = uuidContentParts[row].indexOf(uuidValue);
@@ -55,8 +55,8 @@ module.exports = function (mikser, context) {
 	let plugin = {
 		navigate: (contentUrl) => {
 			let ulrParts = contentUrl.split('#'),
-					id = urlParts[0],
-					dataUrl = urlParts[1];
+				id = urlParts[0],
+				dataUrl = urlParts[1];
 
 			if (!mikser.state.contentMap) {
 				mikser.diagnostics.log('warning', 'Guide: ' + 'state not found');
@@ -75,21 +75,21 @@ module.exports = function (mikser, context) {
 	if (context) {
 		context.guide = function() {
 			let args = Array.from(arguments),
-					dataUrl = args.pop(),
-					document = context.href.apply(null, args);
+				dataUrl = args.pop(),
+				document = context.href.apply(null, args);
 			return navigate(document, dataUrl);
 		}
 	} else {
-			mikser.state.contentMap = mikser.state.contentMap || {};
+		mikser.state.contentMap = mikser.state.contentMap || {};
 
-			mikser.on('mikser.runtime.link', (document) => {
-				mikser.state.contentMap[document._id] = document;
-			});
+		mikser.on('mikser.runtime.link', (document) => {
+			mikser.state.contentMap[document._id] = document;
+		});
 
-			mikser.on('mikser.runtime.unlink', (document) => {
-				delete mikser.state.contentMap[document._id];
-			});
+		mikser.on('mikser.runtime.unlink', (document) => {
+			delete mikser.state.contentMap[document._id];
+		});
 
-			return plugin;
-		}
+		return plugin;
 	}
+}
