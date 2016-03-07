@@ -43,7 +43,12 @@
     "marked": "^0.3.5",
     "minimatch": "^3.0.0",
     "moment": "^2.11.2",
+<<<<<<< HEAD
     "mongodb": "^2.1.7",
+=======
+    "mongodb": "^2.1.6",
+    "mousetrap": "^1.5.3",
+>>>>>>> master
     "node-constants": "0.0.2",
     "node.extend": "^1.1.5",
     "nunjucks": "^2.3.0",
