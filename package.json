@@ -63,9 +63,12 @@
     "textile": "0.0.1",
     "textile-js": "^1.1.0",
     "toml": "^2.3.0",
+    "traverse": "^0.6.6",
     "twig": "^0.8.8",
+    "unicode-8.0.0": "^0.1.5",
     "uuid": "^2.0.1",
-    "ws": "^1.0.1"
+    "ws": "^1.0.1",
+    "xregexp": "^3.1.0"
   },
   "keywords": [
     "mikser",

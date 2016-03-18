@@ -4,88 +4,147 @@ let uuid = require('uuid');
 let Promise = require('bluebird');
 let fs = require('fs-extra-promise');
 let path = require('path');
+let traverse = require('traverse');
+let letters = require('unicode-8.0.0/categories/L/symbols').join('');
+let XRegExp = require('xregexp');
 
-module.exports = function (mikser, context) {
 
-	let contentMap = { content: undefined, lastId: undefined };
-	let debug = mikser.debug('guide');
+module.exports = function(mikser, context) {
 
-	function navigate(document, dataUrl) {
-		let keyArgs = dataUrl.split('/');
-		let value = _.get(document, keyArgs, undefined);
+	function guide(document, documentContent, keyArgs, value, documentKeys) {
 
-		if (value === undefined) {
-			if (context) {
-				return mikser.diagnostics.log(context, 'warning', `Value for key: ${dataUrl} is undefined`);
-			} else {
-				return returnmikser.diagnostics.log('warning', `Value for key: ${dataUrl} is undefined`);
+		let valueWrapRegex = new RegExp('([^' + letters + '0-9])' + XRegExp.escape(value) + '(?!['+ letters +'0-9])', 'g');
+		let uuidKeys = [];
+		let uuidContent = documentContent.replace(valueWrapRegex, (match, p1) => {
+			return p1 + uuidKeys[uuidKeys.push('_' + uuid.v1().replace(/-/g, '')) - 1];
+		});
+
+		// when content is passed, document source is not used
+		let uuidContentObject = mikser.parser.parse(document.source, uuidContent);
+
+		if (documentKeys && documentKeys.indexOf(value) > -1) {
+			traverse(uuidContentObject.meta).forEach(function(node) {
+				if (uuidKeys.indexOf(this.key) > -1) {
+					this.delete();
+					this.key = value;
+					this.update(node);
+				}
+			});
+		}
+
+		let uuidValue = _.get(uuidContentObject, keyArgs, undefined),
+				uuidContentParts = uuidContent.split('\n');
+
+		if (uuidKeys.indexOf(uuidValue) > -1 ){
+			for (let row = 0, len = uuidContentParts.length; row < len; row++) {
+				let col = uuidContentParts[row].indexOf(uuidValue);
+				if (col > -1) {
+					return 'guide:/' + document._id + '#' + (row+1) + '-' + col;
+				}
 			}
 		}
-
-		if (value !==null && (typeof value == 'object' || typeof value == 'function')) {
-			if (context) {
-				return mikser.diagnostics.log(context, 'warning', `Unsupported type for value: ${typeof value}`);
-			} else {
-				return mikser.diagnostics.log('warning', `Unsupported type for value: ${typeof value}`);
-			}
-		}
-
-		// update contentMap and assign file content to data;
-		let data;
-		if (contentMap.lastId !== document._id) {
-			contentMap.lastId = document._id;
-			data = contentMap.lastContent = fs.readFileSync(document.source, 'utf-8');
-		} else {
-			data = contentMap.lastContent;
-		}
-
-		let uuidContent = data.replace(new RegExp(value, "g"), () => uuid.v1()),
-			uuidContentObject = mikser.parser.parse(document.source, uuidContent),
-			uuidValue = _.get(uuidContentObject, keyArgs, undefined),
-			uuidContentParts = uuidContent.split('\n');
-
-		for (let row = 0, len = uuidContentParts.length; row < len; row++) {
-			let col = uuidContentParts[row].indexOf(uuidValue);
-			if (col > -1 ) return document._id + ':' + (row+1) + ',' + col;
-		}
-	}
-
-	let plugin = {
-		navigate: (contentUrl) => {
-			let ulrParts = contentUrl.split('#'),
-				id = urlParts[0],
-				dataUrl = urlParts[1];
-
-			if (!mikser.state.contentMap) {
-				return mikser.diagnostics.log('warning', 'Guide: ' + 'state not found');
-			}
-
-			if (!mikser.state.contentMap.hasOwnProperty(id)) {
-				return mikser.diagnostics.log('warning', 'Guide: ' + 'Document not found-> ' + id);
-			}
-
-			return navigate(mikser.state.contentMap[id], dataUrl);
-		}
+		return 'guide:/' + document._id;
 	}
 
 	if (context) {
-		context.guide = function() {
-			let args = Array.from(arguments),
-				dataUrl = args.pop(),
-				document = context.href.apply(null, args);
-			return navigate(document, dataUrl);
+
+		function guider(data) {
+			let documents = Array.isArray(data) ? data : [data];
+
+			for (let document of documents) {
+
+				if (document.$content) {
+					return;
+				}
+				if (document.guide) {
+					traverse(document.guide).forEach(function(node){
+						if (this.isLeaf) {
+							if (this.parent.isRoot) {
+								Object.defineProperty(document, '$' + this.key, {
+									get: function(){
+										return node;
+									}
+								});
+							} else {
+								let leafParent = _.get(document, this.parent.path);
+								Object.defineProperty(leafParent, '$' + this.key, {
+									get: function(){
+										return node;
+									}
+								});
+							}
+						}
+					});
+				}
+			}
 		}
+
+		let _href = context.href;
+		function href() {
+			let document = _href.apply(null, arguments);
+			if (document.guide) {
+				guider(document);
+			}
+			return document;
+		}
+
+		context.href = href;
+		guider(context. document);
+
+		for (let collection in context.data) {
+			if (context.data.hasOwnProperty(collection) && context.data[collection].length) {
+				if (context.data[collection][0].guide) {
+					context.data[collection].forEach(guider);
+				}
+			}
+		}
+
 	} else {
-		mikser.state.contentMap = mikser.state.contentMap || {};
 
-		mikser.on('mikser.runtime.link', (document) => {
-			mikser.state.contentMap[document._id] = document;
+		function buildGuide(document) {
+			// extract keys from node paths
+			let keys = _.union.apply(this, traverse(document.meta).paths());
+			// remove indexes from keys
+			keys = keys.filter((key) => isNaN(key));
+			let data = fs.readFileSync(document.source, 'utf-8');
+
+			mikser.diagnostics.log('info', 'Guide:', document._id);
+			let contentGuide = !!document.content ? guide(document, data, ['content'], document.content) : 'guide:/' + document._id;
+			contentGuide = contentGuide.replace('guide:', 'guide@content:');
+			let documentGuide = {
+				meta: traverse(_.cloneDeep(document.meta)).forEach(function(node){
+					if (this.isLeaf) {
+						let metaGuide = guide(document, data, ['meta'].concat(this.path), node, keys);
+						metaGuide = metaGuide.replace('guide:', 'guide@meta:');
+						this.update(metaGuide);
+					}
+				}),
+				content: contentGuide
+			};
+			return documentGuide;
+		}
+
+		mikser.on('mikser.manager.importDocument', (document) => {
+
+			let guidePath = path.join(mikser.config.runtimeFolder, 'guide', document._id + '.json');
+			return fs.existsAsync(guidePath).then((exist) => {
+				if (exist) {
+					return fs.statAsync(guidePath).then((stats) =>{
+						if (document.mtime > stats.mtime) {
+							document.guide = buildGuide(document);
+							return fs.outputJsonAsync(guidePath, document.guide);
+						} else {
+							return fs.readJsonAsync(guidePath).then((data) => {
+								document.guide = data;
+							});
+						}
+					})
+				} else {
+					document.guide = buildGuide(document);
+					return fs.outputJsonAsync(guidePath, document.guide);
+				}
+			});
+
 		});
-
-		mikser.on('mikser.runtime.unlink', (document) => {
-			delete mikser.state.contentMap[document._id];
-		});
-
-		return plugin;
 	}
 }
