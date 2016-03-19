@@ -7,11 +7,11 @@ let path = require('path');
 let traverse = require('traverse');
 let letters = require('unicode-8.0.0/categories/L/symbols').join('');
 let XRegExp = require('xregexp');
-
+var cluster = require('cluster');
 
 module.exports = function(mikser, context) {
 
-	function guide(document, documentContent, keyArgs, value, documentKeys) {
+	function parseGuide(document, documentContent, keyArgs, value, documentKeys) {
 
 		let valueWrapRegex = new RegExp('([^' + letters + '0-9])' + XRegExp.escape(value) + '(?!['+ letters +'0-9])', 'g');
 		let uuidKeys = [];
@@ -47,15 +47,11 @@ module.exports = function(mikser, context) {
 	}
 
 	if (context) {
-
 		function guider(data) {
 			let documents = Array.isArray(data) ? data : [data];
 
 			for (let document of documents) {
-
-				if (document.$content) {
-					return;
-				}
+				if (document.$content) return;
 				if (document.guide) {
 					traverse(document.guide).forEach(function(node){
 						if (this.isLeaf) {
@@ -98,53 +94,61 @@ module.exports = function(mikser, context) {
 				}
 			}
 		}
-
 	} else {
-
-		function buildGuide(document) {
-			// extract keys from node paths
-			let keys = _.union.apply(this, traverse(document.meta).paths());
-			// remove indexes from keys
-			keys = keys.filter((key) => isNaN(key));
-			let data = fs.readFileSync(document.source, 'utf-8');
-
-			mikser.diagnostics.log('info', 'Guide:', document._id);
-			let contentGuide = !!document.content ? guide(document, data, ['content'], document.content) : 'guide:/' + document._id;
-			contentGuide = contentGuide.replace('guide:', 'guide@content:');
-			let documentGuide = {
-				meta: traverse(_.cloneDeep(document.meta)).forEach(function(node){
-					if (this.isLeaf) {
-						let metaGuide = guide(document, data, ['meta'].concat(this.path), node, keys);
-						metaGuide = metaGuide.replace('guide:', 'guide@meta:');
-						this.update(metaGuide);
-					}
-				}),
-				content: contentGuide
-			};
-			return documentGuide;
-		}
-
-		mikser.on('mikser.manager.importDocument', (document) => {
-
-			let guidePath = path.join(mikser.config.runtimeFolder, 'guide', document._id + '.json');
-			return fs.existsAsync(guidePath).then((exist) => {
-				if (exist) {
-					return fs.statAsync(guidePath).then((stats) =>{
-						if (document.mtime > stats.mtime) {
-							document.guide = buildGuide(document);
-							return fs.outputJsonAsync(guidePath, document.guide);
+		if (cluster.isMaster) {
+			let cursor = 0;
+			mikser.on('mikser.manager.importDocument', (document) => {
+				return mikser.startWorkers().then(() => {
+					let guidePath = path.join(mikser.config.runtimeFolder, 'guide', document._id + '.json');
+					return fs.existsAsync(guidePath).then((exist) => {
+						if (exist) {
+							return fs.statAsync(guidePath).then((stats) =>{
+								if (document.mtime > stats.mtime) {
+									return mikser.broker.call('mikser.plugins.guide.buildGuide', mikser.workers[++cursor % mikser.config.workers], document).then((guide) => {
+										document.guide = guide;
+										return fs.outputJsonAsync(guidePath, document.guide);
+									});
+								} else {
+									return fs.readJsonAsync(guidePath).then((data) => {
+										document.guide = data;
+									});
+								}
+							})
 						} else {
-							return fs.readJsonAsync(guidePath).then((data) => {
-								document.guide = data;
+							return mikser.broker.call('mikser.plugins.guide.buildGuide', mikser.workers[++cursor % mikser.config.workers], document).then((guide) => {
+								document.guide = guide;
+								return fs.outputJsonAsync(guidePath, document.guide);
 							});
 						}
-					})
-				} else {
-					document.guide = buildGuide(document);
-					return fs.outputJsonAsync(guidePath, document.guide);
-				}
+					});
+				});
 			});
+		}
+		let plugin = {
+			buildGuide: (document) => {
+				// extract keys from node paths
+				let keys = _.union.apply(this, traverse(document.meta).paths());
+				// remove indexes from keys
+				keys = keys.filter((key) => isNaN(key));
+				let data = fs.readFileSync(document.source, 'utf-8');
 
-		});
+				mikser.diagnostics.log('info', 'Guide:', document._id);
+				let contentGuide = !!document.content ? parseGuide(document, data, ['content'], document.content) : 'guide:/' + document._id;
+				contentGuide = contentGuide.replace('guide:', 'guide@content:');
+				let guide = {
+					meta: traverse(_.cloneDeep(document.meta)).forEach(function(node){
+						if (this.isLeaf) {
+							let metaGuide = parseGuide(document, data, ['meta'].concat(this.path), node, keys);
+							metaGuide = metaGuide.replace('guide:', 'guide@meta:');
+							this.update(metaGuide);
+						}
+					}),
+					content: contentGuide
+				};
+				return Promise.resolve(guide);
+			}
+		}
+		return plugin;
+
 	}
 }
