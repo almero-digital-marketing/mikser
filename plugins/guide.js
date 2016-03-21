@@ -98,29 +98,29 @@ module.exports = function(mikser, context) {
 		if (cluster.isMaster) {
 			let cursor = 0;
 			mikser.on('mikser.manager.importDocument', (document) => {
-				return mikser.startWorkers().then(() => {
-					let guidePath = path.join(mikser.config.runtimeFolder, 'guide', document._id + '.json');
-					return fs.existsAsync(guidePath).then((exist) => {
-						if (exist) {
-							return fs.statAsync(guidePath).then((stats) =>{
-								if (document.mtime > stats.mtime) {
-									return mikser.broker.call('mikser.plugins.guide.buildGuide', mikser.workers[++cursor % mikser.config.workers], document).then((guide) => {
-										document.guide = guide;
-										return fs.outputJsonAsync(guidePath, document.guide);
-									});
-								} else {
-									return fs.readJsonAsync(guidePath).then((data) => {
-										document.guide = data;
-									});
-								}
-							})
-						} else {
-							return mikser.broker.call('mikser.plugins.guide.buildGuide', mikser.workers[++cursor % mikser.config.workers], document).then((guide) => {
-								document.guide = guide;
-								return fs.outputJsonAsync(guidePath, document.guide);
-							});
-						}
+				let guidePath = path.join(mikser.config.runtimeFolder, 'guide', document._id + '.json');
+				let buildGuide = () => {
+					return mikser.startWorkers().then(() => {
+						return mikser.broker.call('mikser.plugins.guide.buildGuide', mikser.workers[++cursor % mikser.config.workers], document).then((guide) => {
+							document.guide = guide;
+							return fs.outputJsonAsync(guidePath, document.guide);
+						});
 					});
+				}
+				return fs.existsAsync(guidePath).then((exist) => {
+					if (exist) {
+						return fs.statAsync(guidePath).then((stats) => {
+							if (document.mtime > stats.mtime) {
+								return buildGuide();
+							} else {
+								return fs.readJsonAsync(guidePath).then((data) => {
+									document.guide = data;
+								});
+							}
+						})
+					} else {
+						return buildGuide();
+					}
 				});
 			});
 		}
