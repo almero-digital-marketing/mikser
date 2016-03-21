@@ -12,6 +12,9 @@ var cluster = require('cluster');
 module.exports = function(mikser, context) {
 
 	function parseGuide(document, documentContent, keyArgs, value, documentKeys) {
+		let documentGuide = 'guide:/' + document._id;
+
+		if (value == null || value == undefined || value == '') return documentGuide;
 
 		let valueWrapRegex = new RegExp('([^' + letters + '0-9])' + XRegExp.escape(value) + '(?!['+ letters +'0-9])', 'g');
 		let uuidKeys = [];
@@ -39,11 +42,11 @@ module.exports = function(mikser, context) {
 			for (let row = 0, len = uuidContentParts.length; row < len; row++) {
 				let col = uuidContentParts[row].indexOf(uuidValue);
 				if (col > -1) {
-					return 'guide:/' + document._id + '#' + (row+1) + '-' + col;
+					return documentGuide + '#' + (row+1) + '-' + col;
 				}
 			}
 		}
-		return 'guide:/' + document._id;
+		return documentGuide;
 	}
 
 	if (context) {
