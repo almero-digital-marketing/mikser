@@ -50,7 +50,7 @@ module.exports = function(mikser, context) {
 	}
 
 	if (context) {
-		function guider(data) {
+		context.guide = function(data) {
 			let documents = Array.isArray(data) ? data : [data];
 
 			for (let document of documents) {
@@ -82,18 +82,18 @@ module.exports = function(mikser, context) {
 		function href() {
 			let document = _href.apply(null, arguments);
 			if (document.guide) {
-				guider(document);
+				context.guide(document);
 			}
 			return document;
 		}
 
 		context.href = href;
-		guider(context. document);
+		context.guide(context. document);
 
 		for (let collection in context.data) {
 			if (context.data.hasOwnProperty(collection) && context.data[collection].length) {
 				if (context.data[collection][0].guide) {
-					context.data[collection].forEach(guider);
+					context.data[collection].forEach(context.guide);
 				}
 			}
 		}
