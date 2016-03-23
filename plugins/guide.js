@@ -135,7 +135,6 @@ module.exports = function(mikser, context) {
 				keys = keys.filter((key) => isNaN(key));
 				let data = fs.readFileSync(document.source, 'utf-8');
 
-				mikser.diagnostics.log('info', 'Guide:', document._id);
 				let contentGuide = !!document.content ? parseGuide(document, data, ['content'], document.content) : 'guide:/' + document._id;
 				contentGuide = contentGuide.replace('guide:', 'guide@content:');
 				let guide = {
@@ -148,6 +147,7 @@ module.exports = function(mikser, context) {
 					}),
 					content: contentGuide
 				};
+				mikser.diagnostics.log('info', 'Guide:', document._id);
 				return Promise.resolve(guide);
 			}
 		}
