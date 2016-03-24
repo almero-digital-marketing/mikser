@@ -5,7 +5,7 @@ let Promise = require('bluebird');
 let fs = require('fs-extra-promise');
 let path = require('path');
 let traverse = require('traverse');
-let letters = require('unicode-8.0.0/categories/L/symbols').join('');
+let letters = require('unicode-8.0.0/categories/L/regex').source;
 let XRegExp = require('xregexp');
 var cluster = require('cluster');
 
@@ -13,37 +13,44 @@ module.exports = function(mikser, context) {
 
 	function parseGuide(document, documentContent, keyArgs, value, documentKeys) {
 		let documentGuide = 'guide:/' + document._id;
+		
+		try {
 
-		if (value == null || value == undefined || value == '') return documentGuide;
+			if (value == null || value == undefined || value == '') return documentGuide;
 
-		let valueWrapRegex = new RegExp('([^' + letters + '0-9])' + XRegExp.escape(value) + '(?!['+ letters +'0-9])', 'g');
-		let uuidKeys = [];
-		let uuidContent = documentContent.replace(valueWrapRegex, (match, p1) => {
-			return p1 + uuidKeys[uuidKeys.push('_' + uuid.v1().replace(/-/g, '')) - 1];
-		});
-
-		// when content is passed, document source is not used
-		let uuidContentObject = mikser.parser.parse(document.source, uuidContent);
-
-		if (documentKeys && documentKeys.indexOf(value) > -1) {
-			traverse(uuidContentObject.meta).forEach(function(node) {
-				if (uuidKeys.indexOf(this.key) > -1) {
-					this.delete();
-					this.key = value;
-					this.update(node);
-				}
+			let valueWrapRegex = new RegExp('([^' + letters + '0-9])' + XRegExp.escape(value) + '(?!['+ letters +'0-9])', 'g');
+			let uuidKeys = [];
+			let uuidContent = documentContent.replace(valueWrapRegex, (match, p1) => {
+				return p1 + uuidKeys[uuidKeys.push('_' + uuid.v1().replace(/-/g, '')) - 1];
 			});
-		}
 
-		let uuidValue = _.get(uuidContentObject, keyArgs, undefined),
-				uuidContentParts = uuidContent.split('\n');
+			// when content is passed, document source is not used
+			let uuidContentObject = mikser.parser.parse(document.source, uuidContent);
 
-		if (uuidKeys.indexOf(uuidValue) > -1 ){
-			for (let row = 0, len = uuidContentParts.length; row < len; row++) {
-				let col = uuidContentParts[row].indexOf(uuidValue);
-				if (col > -1) {
-					return documentGuide + '#' + (row+1) + '-' + col;
+			if (documentKeys && documentKeys.indexOf(value) > -1) {
+				traverse(uuidContentObject.meta).forEach(function(node) {
+					if (uuidKeys.indexOf(this.key) > -1) {
+						this.delete();
+						this.key = value;
+						this.update(node);
+					}
+				});
+			}
+
+			let uuidValue = _.get(uuidContentObject, keyArgs, undefined),
+					uuidContentParts = uuidContent.split('\n');
+
+			if (uuidKeys.indexOf(uuidValue) > -1 ){
+				for (let row = 0, len = uuidContentParts.length; row < len; row++) {
+					let col = uuidContentParts[row].indexOf(uuidValue);
+					if (col > -1) {
+						return documentGuide + '#' + (row+1) + '-' + col;
+					}
 				}
+			}
+		} catch(err) {
+			if (!err.message.endsWith('RegExp too big')) {
+				throw err;
 			}
 		}
 		return documentGuide;
