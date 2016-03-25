@@ -4,12 +4,6 @@ let $ = require('jquery');
 // let Clipboard = require('clipboard');
 let GUIDE_PREFIX = 'guide';
 
-function insertData(element, guide) {
-	element
-		.data({'mikser-guide': guide})
-		.addClass('mikser-guide');
-}
-
 function filter(node) {
 	let text = node.nodeValue.trim();
 	if (text.substring(0, GUIDE_PREFIX.length) !== GUIDE_PREFIX) {
@@ -22,13 +16,13 @@ function filter(node) {
 $(function() {
 	if (!document.createTreeWalker) return;
 
-	// create element for guide content and append it to body
 	$('<a id="mikser-guide"><a/>')
 		.css({
 			'pointer-events': 'none',
-			'position': 'absolute',
-			'margin-top': '55px',
-			'z-index': '1'
+			'position': 'fixed',
+			'bottom': '0',
+			'right': '0',
+			'z-index': '999'
 		})
 		.hide()
 		.prependTo('body');
@@ -41,20 +35,21 @@ $(function() {
 	);
 
 	while(treeWalker.nextNode()) {
-		let prevChild = $(treeWalker.currentNode).prev(),
-				holder;
-
+		var holder = $(treeWalker.currentNode).parent();
 		if (prevChild.is('img')) {
-			holder = prevChild;
-		} else {
-			holder = $(treeWalker.currentNode).parent();
+			holder = $(treeWalker.currentNode).prev();
 		}
 
-		insertData(holder, treeWalker.currentNode.nodeValue.trim());
-		holder.hover(function(){
-			$('#mikser-guide').text($(this).data('mikser-guide'));
-			$('#mikser-guide').show();
-		}, function(){ $('#mikser-guide').hide(); });
+		let guide = treeWalker.currentNode.nodeValue.trim();
+		holder
+			.data('mikser-guide', guide)
+			.addClass('mikser-guide')
+			.hover(function(){
+				$('#mikser-guide').text($(this).data('mikser-guide'));
+				$('#mikser-guide').show();
+			}, function(){ 
+				$('#mikser-guide').hide(); 
+			});
 	}
 
 });
