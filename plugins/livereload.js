@@ -7,6 +7,7 @@ var Promise = require('bluebird');
 
 module.exports = function (mikser) {
 	if (mikser.config.livereload == undefined) mikser.config.livereload = true;
+	mikser.config.livereloadPort = mikser.config.livereloadPort || 35729;
 	mikser.config.browser.push('livereload');
 
 	let debug = mikser.debug('livereload');
@@ -90,7 +91,7 @@ module.exports = function (mikser) {
 
 	mikser.on('mikser.server.ready', () => {
 		if (mikser.config.livereload) {
-			let liveReloadServer = new WebSocketServer({ server: mikser.server.httpServer });
+			let liveReloadServer = new WebSocketServer({ port: mikser.config.livereloadPort });
 			liveReloadServer.on('connection', (socket) => {
 				let clientId = lastClientId++;
 				livereload.clients[clientId] = {
