@@ -22,3 +22,13 @@
 	cursor: -webkit-grab;
 	cursor: -moz-grab;
 }
+
+.mikser-guide-github {
+	padding-left: 8px;
+	color: #AAA;
+	transition: color .2s;
+}
+
+.mikser-guide-github:hover {
+	color: #FFF;
+}

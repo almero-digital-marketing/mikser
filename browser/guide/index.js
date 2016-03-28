@@ -84,7 +84,10 @@ module.exports = function (mikser) {
 					clipboardHtml += guideHtml + '</a>'
 					var githubHtml = '';
 					if (mikser.config.package && mikser.config.package.repository) {
-						var branch =  mikser.config.guide.branch || 'master'
+						var branch = 'master'
+						if (mikser.config.guide && mikser.config.guide.branch) {
+							branch =  mikser.config.guide.branch;
+						}
 						if (typeof mikser.config.package.repository == 'object' && 
 							mikser.config.package.repository.url.indexOf('github.com') > -1) {
 							
@@ -92,7 +95,7 @@ module.exports = function (mikser) {
 						} else if (typeof mikser.config.package.repository == 'string' &&
 							mikser.config.package.repository.indexOf(':') === -1) {
 
-							githubHtml += '<a href="https://github.com/' + mikser.config.package.repository;
+							githubHtml += '<a class="mikser-guide-github" target="_blank" href="https://github.com/' + mikser.config.package.repository;
 						} else {
 							githubHtml = '';
 						}
