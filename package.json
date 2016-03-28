@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "3.2.3",
+  "version": "3.3.0",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -28,6 +28,7 @@
     "ejs": "^2.4.1",
     "express": "^4.13.4",
     "fluent-ffmpeg": "^2.0.1",
+    "font-awesome": "^4.5.0",
     "fs-extra": "^0.26.5",
     "fs-extra-promise": "^0.3.1",
     "glob": "^7.0.0",
@@ -64,6 +65,7 @@
     "syntax-error": "^1.1.5",
     "textile": "0.0.1",
     "textile-js": "^1.1.0",
+    "tipso": "^1.0.8",
     "toml": "^2.3.0",
     "traverse": "^0.6.6",
     "twig": "^0.8.8",

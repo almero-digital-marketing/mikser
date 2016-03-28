@@ -5,6 +5,7 @@ var S = require('string');
 var config = require('./config');
 
 let mikser = {
+	resources: [],
 	isBrowser: true,
 	loadPlugins: function() {
 		mikser.plugins = {};
@@ -18,6 +19,26 @@ let mikser = {
 			});
 		});
 		return Promise.resolve();
+	},
+	loadResource: function(resource, resourceType){
+		if (mikser.resources.indexOf(resource) == -1) {
+			resourceType = resourceType || resource.split('.').pop();
+			if (resourceType=="js") { 
+				var fileref=document.createElement('script')
+					fileref.setAttribute("type","text/javascript")
+					fileref.setAttribute("src", resource);
+			}
+			else if (resourceType=="css") { 
+				var fileref=document.createElement("link")
+					fileref.setAttribute("rel", "stylesheet")
+					fileref.setAttribute("type", "text/css")
+					fileref.setAttribute("href", resource);
+			}
+			if (typeof fileref!="undefined") {
+				document.getElementsByTagName("head")[0].appendChild(fileref);
+				mikser.resources.push(resource);
+			}		
+		}
 	}
 }
 Promise.resolve(mikser)

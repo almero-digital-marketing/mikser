@@ -4,10 +4,10 @@ var WebSocketServer = require('ws').Server;
 var S = require('string');
 var path = require('path');
 var Promise = require('bluebird');
+var net = require('net');
 
 module.exports = function (mikser) {
 	if (mikser.config.livereload == undefined) mikser.config.livereload = true;
-	mikser.config.livereloadPort = mikser.config.livereloadPort || 35729;
 	mikser.config.browser.push('livereload');
 
 	let debug = mikser.debug('livereload');
@@ -137,6 +137,21 @@ module.exports = function (mikser) {
 	mikser.on('mikser.scheduler.renderedDocument', (documentId) => {
 		return livereload.refresh(documentId);
 	});
+
+	if (!mikser.config.livereloadPort) {
+		let freeport = new Promise((resolve, reject) => {
+			var server = net.createServer();
+			server.listen(0, '127.0.0.1', () => {
+				let port = server.address().port;
+				server.close(() => {
+					resolve(port);
+				});
+			});
+		});
+		return freeport.then((port) => {
+			mikser.config.livereloadPort = port
+		});
+	}
 
 	return Promise.resolve(livereload);
 };
