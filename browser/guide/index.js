@@ -41,6 +41,8 @@ $(function() {
 
 module.exports = function (mikser) {
 	mikser.loadResource('/mikser/browser/guide/style.css');
+	mikser.loadResource('/mikser/node_modules/font-awesome/css/font-awesome.min.css');
+
 	var clipboard = new Clipboard('.mikser-guide-copy');
 	clipboard.on('success', function(e) {
 		$('.mikser-guide-copy').removeClass('mikser-guide-copy');
@@ -80,7 +82,30 @@ module.exports = function (mikser) {
 					clipboardHtml += '">'
 					guideHtml += '</code>';
 					clipboardHtml += guideHtml + '</a>'
-					$element.tipso('update', 'content', clipboardHtml);
+					var githubHtml = '';
+					if (mikser.config.package && mikser.config.package.repository) {
+						var branch =  mikser.config.guide.branch || 'master'
+						if (typeof mikser.config.package.repository == 'object' && 
+							mikser.config.package.repository.url.indexOf('github.com') > -1) {
+							
+							githubHtml += '<a href="' + mikser.config.package.repository.url;
+						} else if (typeof mikser.config.package.repository == 'string' &&
+							mikser.config.package.repository.indexOf(':') === -1) {
+
+							githubHtml += '<a href="https://github.com/' + mikser.config.package.repository;
+						} else {
+							githubHtml = '';
+						}
+
+						if (githubHtml) {
+							githubHtml += '/blob/' + branch + file;
+							if (line) {
+								githubHtml += ('#L' + line);
+							}
+							githubHtml += '"><i class="' + 'fa fa-github"' + '></i></a>';
+						}
+					}
+					$element.tipso('update', 'content', clipboardHtml + githubHtml);
 				}
 			});
 		} else {

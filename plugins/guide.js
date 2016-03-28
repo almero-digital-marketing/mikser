@@ -12,7 +12,7 @@ var cluster = require('cluster');
 module.exports = function(mikser, context) {
 
 	function parseGuide(document, documentContent, keyArgs, value, documentKeys) {
-		let documentGuide = 'guide:/' + document._id;
+		let documentGuide = 'guide:/' + document.source.replace(mikser.options.workingFolder, '');
 		
 		try {
 
