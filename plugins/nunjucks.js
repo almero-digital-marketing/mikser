@@ -14,7 +14,7 @@ module.exports = function (mikser, context) {
 		}
 	} else {
 		mikser.generator.engines.push({
-			pattern: '**/*.+(nj|nunjucks)',
+			pattern: '**/*.njk',
 			render: function(context) {
 				try {
 					if (context.layout && context.layout.template) {
