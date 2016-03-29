@@ -20,17 +20,17 @@ module.exports = function (mikser, context) {
 				try {
 					if (context.layout && context.layout.template) {
 						let cached = cache[context.layout._id];
-						let fn; 
+						let template; 
 						if (cached && cached.mtime == context.layout.mtime) {
-							fn = cached.fn;
+							template = cached.template;
 						} else {
-							fn = nunjucks.compile(context.layout.template, env, context.layout.source);
+							template = nunjucks.compile(context.layout.template, env, context.layout.source);
 							cache[context.layout._id] = {
 								mtime: context.layout.mtime,
-								fn: fn
+								template: template
 							}
 						}
-						return fn(context);
+						return template.render(context);
 					}
 					return context.content;
 				} catch (err) {
