@@ -34,7 +34,6 @@ module.exports = function (mikser, context) {
 							}
 						}
 						return fn(context);
-						// return ejs.render(context.layout.template, context);
 					}
 					return context.content;
 				} catch (err) {

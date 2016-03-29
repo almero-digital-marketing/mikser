@@ -31,9 +31,6 @@ module.exports = function (mikser, context) {
 							}
 						}
 						return fn(context);
-						// let options = extend({}, context);
-						// options.cache = false;
-						// return jade.render(context.layout.template, options);
 					}
 					return context.content;
 				} catch (err) {

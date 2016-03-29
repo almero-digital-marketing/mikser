@@ -31,8 +31,6 @@ module.exports = function (mikser, context) {
 							}
 						}
 						return fn(context);
-						// let result = env.renderString(context.layout.template, context);
-						// return result;
 					}
 					return context.content;
 				} catch (err) {
