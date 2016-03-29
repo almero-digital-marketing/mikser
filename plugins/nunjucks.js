@@ -4,6 +4,7 @@ var nunjucks = require('nunjucks');
 module.exports = function (mikser, context) {
 	var loader = new nunjucks.FileSystemLoader(mikser.config.layoutsFolder, {watch: false});
 	var env = new nunjucks.Environment(loader, {autoescape: false});
+	env.addFilter('apply', () => undefined);
 
 	if (context) {
 		context.nunjucks = function (source, options) {
@@ -21,12 +22,12 @@ module.exports = function (mikser, context) {
 					if (context.layout && context.layout.template) {
 						let cached = cache[context.layout._id];
 						let template; 
-						if (cached && cached.mtime == context.layout.mtime) {
+						if (cached && cached.importDate.getTime() == context.layout.importDate.getTime()) {
 							template = cached.template;
 						} else {
 							template = nunjucks.compile(context.layout.template, env, context.layout.source);
 							cache[context.layout._id] = {
-								mtime: context.layout.mtime,
+								importDate: context.layout.importDate,
 								template: template
 							}
 						}
@@ -34,6 +35,7 @@ module.exports = function (mikser, context) {
 					}
 					return context.content;
 				} catch (err) {
+					delete cache[context.layout._id];
 					let re = /\[Line\s(\d+)/;
 					let result = re.exec(err.message);
 					if (result) {

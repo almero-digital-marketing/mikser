@@ -21,7 +21,7 @@ module.exports = function (mikser, context) {
 					if (context.layout && context.layout.template) {
 						let cached = cache[context.layout._id];
 						let fn; 
-						if (cached && cached.mtime == context.layout.mtime) {
+						if (cached && cached.importDate.getTime() == context.layout.importDate.getTime()) {
 							fn = cached.fn;
 						} else {
 							fn = ejs.compile(context.layout.template, {
@@ -29,7 +29,7 @@ module.exports = function (mikser, context) {
 								cache: false
 							});
 							cache[context.layout._id] = {
-								mtime: context.layout.mtime,
+								importDate: context.layout.importDate,
 								fn: fn
 							}
 						}
@@ -37,6 +37,7 @@ module.exports = function (mikser, context) {
 					}
 					return context.content;
 				} catch (err) {
+					delete cache[context.layout._id];
 					let re = /(?:on line\s|ejs:)(\d+)/;
 					let result = re.exec(err.message);
 					if (result) {
