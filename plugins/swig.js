@@ -3,6 +3,7 @@
 var swig = require('swig');
 
 module.exports = function (mikser, context) {
+	swig.setFilter('apply', () => undefined);
 	if (context) {
 		context.swig = function (source, options) {
 			source = mikser.manager.findSource(source);

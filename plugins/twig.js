@@ -4,6 +4,7 @@ var Twig = require('twig');
 var twig = Twig.twig;
 
 module.exports = function (mikser, context) {
+	Twig.extendFilter('apply', () => undefined);
 	if (context) {
 		context.twig = function (source, options) {
 			source = mikser.manager.findSource(source);
