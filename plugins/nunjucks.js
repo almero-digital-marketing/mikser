@@ -3,24 +3,38 @@ var nunjucks = require('nunjucks');
 
 module.exports = function (mikser, context) {
 	var loader = new nunjucks.FileSystemLoader(mikser.config.layoutsFolder, {watch: false});
-	var engine = new nunjucks.Environment(loader, {autoescape: false});
+	var env = new nunjucks.Environment(loader, {autoescape: false});
 
 	if (context) {
 		context.nunjucks = function (source, options) {
 			source = mikser.manager.findSource(source);
 			let template = fs.readFileSync(source, { encoding: 'utf8' });
-			let result = engine.renderString(template, options);
+			let result = env.renderString(template, options);
 			return result;
 		}
 	} else {
+		var cache = {}
 		mikser.generator.engines.push({
 			pattern: '**/*.njk',
 			render: function(context) {
 				try {
 					if (context.layout && context.layout.template) {
-						let result = engine.renderString(context.layout.template, context);
-						return result;
+						let cached = cache[context.layout._id];
+						let fn; 
+						if (cached && cached.mtime == context.layout.mtime) {
+							fn = cached.fn;
+						} else {
+							fn = nunjucks.compile(context.layout.template, env, context.layout.source);
+							cache[context.layout._id] = {
+								mtime: context.layout.mtime,
+								fn: fn
+							}
+						}
+						return fn(context);
+						// let result = env.renderString(context.layout.template, context);
+						// return result;
 					}
+					return context.content;
 				} catch (err) {
 					let re = /\[Line\s(\d+)/;
 					let result = re.exec(err.message);

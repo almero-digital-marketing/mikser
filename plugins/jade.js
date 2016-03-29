@@ -10,14 +10,30 @@ module.exports = function (mikser, context) {
 			return jade.renderFile(source, options);
 		}		
 	} else {
+		var cache = {}
 		mikser.generator.engines.push({
 			pattern: '**/*.jade',
 			render: function(context) {
 				try {
 					if (context.layout && context.layout.template) {
-						let options = extend({}, context);
-						options.cache = false;
-						return jade.render(context.layout.template, options);
+						let cached = cache[context.layout._id];
+						let fn; 
+						if (cached && cached.mtime == context.layout.mtime) {
+							fn = cached.fn;
+						} else {
+							fn = jade.compile(context.layout.template, {
+								filename: context.layout.source,
+								cache: false
+							});
+							cache[context.layout._id] = {
+								mtime: context.layout.mtime,
+								fn: fn
+							}
+						}
+						return fn(context);
+						// let options = extend({}, context);
+						// options.cache = false;
+						// return jade.render(context.layout.template, options);
 					}
 					return context.content;
 				} catch (err) {

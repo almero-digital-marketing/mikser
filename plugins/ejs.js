@@ -13,12 +13,28 @@ module.exports = function (mikser, context) {
 			return ejs.render(template, options);
 		}
 	} else {
+		var cache = {}
 		mikser.generator.engines.push({
 			pattern: '**/*.ejs',
 			render: function(context) {
 				try {
 					if (context.layout && context.layout.template) {
-						return ejs.render(context.layout.template, context);
+						let cached = cache[context.layout._id];
+						let fn; 
+						if (cached && cached.mtime == context.layout.mtime) {
+							fn = cached.fn;
+						} else {
+							fn = ejs.compile(context.layout.template, {
+								filename: context.layout.source,
+								cache: false
+							});
+							cache[context.layout._id] = {
+								mtime: context.layout.mtime,
+								fn: fn
+							}
+						}
+						return fn(context);
+						// return ejs.render(context.layout.template, context);
 					}
 					return context.content;
 				} catch (err) {
