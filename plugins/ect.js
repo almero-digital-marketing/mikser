@@ -11,12 +11,28 @@ module.exports = function (mikser, context) {
 			return renderer.render(path.basename(source), options);
 		}
 	} else {
+		var cache = {}
 		mikser.generator.engines.push({
 			pattern: '**/*.+(ect|eco)', 
 			render: function(context) {
-				var renderer = ECT({ root : { page: context.layout.template } });
 				try {
 					if (context.layout && context.layout.template) {
+						let cached = cache[context.layout._id];
+						let renderer; 
+						if (cached && cached.importDate.getTime() == context.layout.importDate.getTime()) {
+							renderer = cached.renderer;
+						} else {
+							renderer = ECT({ 
+								cache: true,
+								root: { 
+									page: context.layout.template 
+								} 
+							});
+							cache[context.layout._id] = {
+								importDate: context.layout.importDate,
+								renderer: renderer
+							}
+						}
 						return renderer.render('page', context);
 					}
 					return context.content;

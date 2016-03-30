@@ -190,7 +190,6 @@ module.exports = function (mikser, context) {
 				throw err;
 			}
 			videoInfo.mtime = fs.statSync(videoInfo.source).mtime;
-			fs.ensureDirSync(videoInfo.outFolder);
 
 			if (fs.existsSync(videoInfo.destination)) {
 				let destinationMtime = fs.statSync(videoInfo.destination).mtime;
@@ -201,6 +200,7 @@ module.exports = function (mikser, context) {
 				}
 			}
 
+			fs.ensureDirSync(videoInfo.outFolder);
 			videoInfo.video.input(videoInfo.source);
 			return outputAndSaveAsync(videoInfo);
 		});

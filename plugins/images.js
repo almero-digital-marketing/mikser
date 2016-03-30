@@ -203,7 +203,6 @@ module.exports = function (mikser, context) {
 		pushTransforms(imageInfo);
 
 		context.process(() => {
-
 			let sourceFilePath = findSource(source);
 			// full path to file or undefined if file does not exist
 			if (!sourceFilePath) {
@@ -218,7 +217,6 @@ module.exports = function (mikser, context) {
 
 			let sourceStats = fs.statSync(sourceFilePath);
 			// let destinationExists = fs.existsSync(imageInfo.destination);
-			fs.ensureDirSync(imageInfo.outFolder);
 
 			if (fs.existsSync(imageInfo.destination) && source != imageInfo.destination) {
 				let destinationStats = fs.statSync(imageInfo.destination);
@@ -231,6 +229,7 @@ module.exports = function (mikser, context) {
 			}
 
 			console.log('Image:', imageInfo.destination.replace(mikser.options.workingFolder, ''));
+			fs.ensureDirSync(imageInfo.outFolder);
 
 			let transforms = Promise.resolve();
 			for (let i = 0; i < imageInfo.images.length; i++) {

@@ -5,9 +5,10 @@ var S = require('string');
 var path = require('path');
 var Promise = require('bluebird');
 var net = require('net');
+var minimatch = require("minimatch");
 
 module.exports = function (mikser) {
-	if (mikser.config.livereload == undefined) mikser.config.livereload = true;
+	if (mikser.config.livereload == undefined) mikser.config.livereload = '**/*.+(css|js)';
 	mikser.config.browser.push('livereload');
 
 	let debug = mikser.debug('livereload');
@@ -131,7 +132,9 @@ module.exports = function (mikser) {
 	});
 
 	mikser.on('mikser.watcher.outputAction', (event, file) => {
-		return livereload.reload(file);
+		if (minimatch(file, mikser.config.livereload)) {
+			return livereload.reload(file);
+		}
 	});
 
 	mikser.on('mikser.scheduler.renderedDocument', (documentId) => {
