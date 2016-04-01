@@ -8,6 +8,9 @@ var removeMd = require('remove-markdown');
 module.exports = function (mikser, context) {
 	if (context) {
 		context.markdown = function (content) {
+			if (typeof content != 'string') {
+				throw new Error('Argument is not a string');
+			}
 			let renderer = new marked.Renderer();
 			renderer.heading = function (text, level) {
 				return '<h' + level + '>' + text + '</h' + level + '>';
