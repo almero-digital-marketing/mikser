@@ -2,7 +2,7 @@
 
 var Promise = require('bluebird');
 var S = require('string');
-var config = require('./config');
+var config = require('mikser-config');
 
 let mikser = {
 	resources: [],
