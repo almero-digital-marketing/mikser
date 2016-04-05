@@ -7,40 +7,49 @@ let swig = require('swig');
 
 module.exports = function (mikser, context) {
 	let debug = mikser.debug('execute');
-	context.execute = function (command, options) {
+	
+	if (context) {
+		context.execute = function (command, options) {
 
-		let config = extend({}, mikser.options.execute);
+			let config = extend({}, mikser.options.execute);
 
-		if (!command) return;
+			if (!command) return;
 
-		let defaultOptions = {
-			async: false,
-		};
+			let defaultOptions = {
+				async: false,
+			};
 
-		options = extend({}, defaultOptions, options);
-		if (config[command]) {
-			command = config[command];
-		} else {
-			command = swig.render(command, {locals: context});
-		}
-
-		debug(command, 'async:', options.async);
-		if (!options.async) {
-			try {
-				mikser.diagnostics.log(context, 'info', `[execute] ${command}`);
-				return execSync(command, {cwd: process.cwd(), encoding: 'utf8'});
-			} catch (err) {
-				let err = new Error('Execute command failed\n' + err);
-				err.origin = 'excute';
-				throw err;
+			options = extend({}, defaultOptions, options);
+			if (config[command]) {
+				command = config[command];
+			} else {
+				command = swig.render(command, {locals: context});
 			}
-		} else {
-			context.process(() => {
-				mikser.diagnostics.log(context, 'info', `[execute] ${command}`);
-				return execAsync(command, {cwd: process.cwd(), encoding: 'utf8'}).catch((err) => {
-					mikser.diagnostics.log(context, 'error', `[execute] ${err}`);
+
+			debug(command, 'async:', options.async);
+			if (!options.async) {
+				try {
+					mikser.diagnostics.log(context, 'info', `[execute] ${command}`);
+					return execSync(command, {cwd: process.cwd(), encoding: 'utf8'});
+				} catch (err) {
+					let err = new Error('Execute command failed\n' + err);
+					err.origin = 'excute';
+					throw err;
+				}
+			} else {
+				context.process(() => {
+					mikser.diagnostics.log(context, 'info', `[execute] ${command}`);
+					return mikser.broker.call('mikser.plugins.execute.exec', command).catch((err) => {
+						mikser.diagnostics.log(context, 'error', `[execute] ${err}`);
+					});
 				});
-			});
+			}
+		}
+	} else {
+		return {
+			exec: (command) => {
+				return execSync(command, {cwd: process.cwd(), encoding: 'utf8'});
+			}
 		}
 	}
 }

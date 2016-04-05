@@ -162,6 +162,12 @@ module.exports = function (mikser, context) {
 			throw err;
 		}
 
+		if(!destination && !context) {
+			let err = new Error('Undefined destination');
+			err.origin = 'images';
+			throw err;
+		}
+
 		let imageInfo = path.parse(source);
 		Object.defineProperty(imageInfo, 'image', {
 			get: function () {
@@ -176,8 +182,12 @@ module.exports = function (mikser, context) {
 		}
 
 		if (destination) {
-			if (destination.indexOf(mikser.options.workingFolder) != 0) {
-				imageInfo.destination = mikser.manager.resolveDestination(destination, document.destination);
+			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
+				if (context) {
+					imageInfo.destination = mikser.manager.resolveDestination(destination, document.destination);
+				} else {
+					imageInfo.destination = path.join(mikser.options.workingFolder, destination);
+				}
 			}
 			else {
 				imageInfo.destination = destination;
@@ -275,103 +285,4 @@ module.exports = function (mikser, context) {
 	}
 
 	return plugin;
-
-	// context.image = function (source, destination) {
-	// 	if(!source || typeof source !== 'string') {
-	// 		let err = new Error('Undefined source');
-	// 		err.origin = 'images';
-	// 		throw err;
-	// 	}
-
-	// 	let imageInfo = path.parse(source);
-	// 	Object.defineProperty(imageInfo, 'image', {
-	// 		get: function () {
-	// 			return imageInfo.images[imageInfo.images.length - 1];
-	// 		}
-	// 	});
-	// 	// if source extension is not valid
-	// 	if (isNotAllowedExtension(source)) {
-	// 		let err = new Error(`Source file extension ${imageInfo.ext} not recognised`);
-	// 		err.origin = 'images';
-	// 		throw err;
-	// 	}
-
-	// 	if (destination) {
-	// 		if (destination.indexOf(mikser.options.workingFolder) != 0) {
-	// 			imageInfo.destination = mikser.manager.resolveDestination(destination, context.document.destination);
-	// 		}
-	// 		else {
-	// 			imageInfo.destination = destination;
-	// 		}
-	// 		if (isPathToFile(destination)) {
-	// 			imageInfo.keepDestination = true;
-	// 		} else {
-	// 			imageInfo.destination = path.join(imageInfo.destination, imageInfo.base);
-	// 		}
-	// 	} else {
-	// 		imageInfo.destination = predictDestination(source);
-	// 		imageInfo.destination = mikser.manager.resolveDestination(imageInfo.destination, context.document.destination);
-	// 	}
-
-	// 	if (isNotAllowedExtension(imageInfo.destination)) {
-	// 		let ext = path.extname(imageInfo.destination).substring(1);
-	// 		let err = new Error(`Destination file extension ${ext} not recognised`);
-	// 		err.origin = 'images';
-	// 		throw err;
-	// 	}
-
-	// 	imageInfo.outFolder = path.dirname(imageInfo.destination);
-	// 	imageInfo.toString = () => mikser.manager.getUrl(imageInfo.destination);
-	// 	pushTransforms(imageInfo);
-
-	// 	context.process(() => {
-	// 		let sourceFilePath = findSource(source);
-	// 		// full path to file or undefined if file does not exist
-	// 		if (!sourceFilePath) {
-	// 			return mikser.diagnostics.log(context, 'warning', `[images] File not found at: ${source}`);
-	// 		}
-
-	// 		if ((sourceFilePath.indexOf(mikser.options.workingFolder) !== 0) && !destination) {
-	// 			let err = new Error(`Destination is missing for file ${imageInfo.base}`);
-	// 			err.origin = 'images';
-	// 			throw err;
-	// 		}
-
-	// 		let sourceStats = fs.statSync(sourceFilePath);
-	// 		// let destinationExists = fs.existsSync(imageInfo.destination);
-
-	// 		if (fs.existsSync(imageInfo.destination) && source != imageInfo.destination) {
-	// 			let destinationStats = fs.statSync(imageInfo.destination);
-	// 			if (destinationStats.mtime < sourceStats.mtime) {
-	// 				fs.unlinkSync(imageInfo.destination);
-	// 			} else {
-	// 				debug(imageInfo.destination.replace(mikser.options.workingFolder, ''), 'is newer than', sourceFilePath.replace(mikser.options.workingFolder, ''));
-	// 				return Promise.resolve();
-	// 			}
-	// 		}
-
-	// 		console.log('Image:', imageInfo.destination.replace(mikser.options.workingFolder, ''));
-	// 		fs.ensureDirSync(imageInfo.outFolder);
-
-	// 		let transforms = Promise.resolve();
-	// 		for (let i = 0; i < imageInfo.images.length; i++) {
-	// 			transforms = transforms.then(() => {
-	// 				if (i == 0) {
-	// 					imageInfo.images[i].source = sourceFilePath;
-	// 				} else {
-	// 					imageInfo.images[i].source = imageInfo.destination;
-	// 				}
-	// 				imageInfo.images[i].noProfile();
-	// 				let writeAsync = Promise.promisify(imageInfo.images[i].write, {context: imageInfo.images[i]});
-	// 				// debug(imageInfo.images[i], 'DEBUG INFO FOR IMAGE INSTANCE');
-	// 				debug(imageInfo.images[i]._subCommand, imageInfo.images[i]._in.join(' '), imageInfo.images[i]._out.join(' '));
-	// 				return writeAsync(imageInfo.destination);
-	// 			});
-	// 		}
-	// 		return transforms;
-	// 	});
-
-	// 	return imageInfo;
-	// }
-
 }
