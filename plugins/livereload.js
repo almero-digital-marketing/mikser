@@ -8,6 +8,11 @@ var net = require('net');
 var minimatch = require("minimatch");
 
 module.exports = function (mikser) {
+	if (mikser.config.livereload === false) {
+		console.log('Live reload: disabled');
+		return Promise.resolve();
+	}
+
 	if (mikser.config.livereload == undefined) mikser.config.livereload = '**/*.+(css|js)';
 	mikser.config.browser.push('livereload');
 
@@ -90,45 +95,41 @@ module.exports = function (mikser) {
 		return Promise.resolve();
 	});
 
-	mikser.on('mikser.server.ready', () => {
-		if (mikser.config.livereload) {
-			let liveReloadServer = new WebSocketServer({ port: mikser.config.livereloadPort });
-			liveReloadServer.on('connection', (socket) => {
-				let clientId = lastClientId++;
-				livereload.clients[clientId] = {
-					socket: socket
-				};
+	mikser.on('mikser.server.ready', () => {	
+		let liveReloadServer = new WebSocketServer({ port: mikser.config.livereloadPort });
+		liveReloadServer.on('connection', (socket) => {
+			let clientId = lastClientId++;
+			livereload.clients[clientId] = {
+				socket: socket
+			};
 
-				socket.on('close', (socket) => {
-					if (livereload.clients[clientId]) {
-						debug('Live reload disconnected:', livereload.clients[clientId].url);
-						delete livereload.clients[clientId];								
-					}
-				});
-
-				socket.on('message', (message) => {
-					message = JSON.parse(message);
-					if (message.command === 'hello') {
-						socket.send(JSON.stringify({
-							command: 'hello',
-							protocols: ['http://livereload.com/protocols/official-7'],
-							serverName: path.basename(mikser.options.workingFolder)
-						}));
-					}
-					else if (message.command === 'info') {
-						let url = message.url.split('#')[0].split('?')[0];
-						if (S(url).endsWith('/')) {
-							url = url + 'index.html';
-						}
-						url = '/' + decodeURI(url).split('/').slice(3).join('/');
-						livereload.clients[clientId].url = url;
-						debug('Live reload connected:', url);
-					}
-				});
+			socket.on('close', (socket) => {
+				if (livereload.clients[clientId]) {
+					debug('Live reload disconnected:', livereload.clients[clientId].url);
+					delete livereload.clients[clientId];								
+				}
 			});
-		} else {
-			console.log('Live reload: disabled');
-		}
+
+			socket.on('message', (message) => {
+				message = JSON.parse(message);
+				if (message.command === 'hello') {
+					socket.send(JSON.stringify({
+						command: 'hello',
+						protocols: ['http://livereload.com/protocols/official-7'],
+						serverName: path.basename(mikser.options.workingFolder)
+					}));
+				}
+				else if (message.command === 'info') {
+					let url = message.url.split('#')[0].split('?')[0];
+					if (S(url).endsWith('/')) {
+						url = url + 'index.html';
+					}
+					url = '/' + decodeURI(url).split('/').slice(3).join('/');
+					livereload.clients[clientId].url = url;
+					debug('Live reload connected:', url);
+				}
+			});
+		});
 	});
 
 	mikser.on('mikser.watcher.outputAction', (event, file) => {
