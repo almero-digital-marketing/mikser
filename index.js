@@ -9,6 +9,7 @@ var databse = require('./lib/database');
 var loader = require('./lib/loader');
 var generator = require('./lib/generator');
 var scheduler = require('./lib/scheduler');
+var utils = require('./lib/utils');
 var manager = require('./lib/manager');
 var watcher = require('./lib/watcher');
 var diagnostics = require('./lib/diagnostics');
@@ -33,6 +34,7 @@ module.exports.run = function(options) {
 	.then(loader)
 	.then(generator)
 	.then(scheduler)
+	.then(utils)
 	.then(manager)
 	.then(tools)
 	.then(watcher)
