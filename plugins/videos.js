@@ -26,15 +26,22 @@ module.exports = function (mikser, context) {
 				if (!info.keepDestination && info.preset) {
 					info.destination = info.destination.replace(path.extname(info.destination), '.' + info.preset.name);
 				}
-				videoCodec = videoCodec || info.preset.video;
-				if (videoCodec) {
-					info.video.videoCodec(videoCodec);					
+
+				if (info.preset && !videoCodec) {
+					videoCodec = info.preset.video;
 				}
-				audioCodec = audioCodec || info.preset.audio;
+				if (videoCodec) {
+					info.video.videoCodec(videoCodec);
+				}
+
+				if (info.preset && !audioCodec) {
+					audioCodec = info.preset.audio;
+				}
 				if (audioCodec) {
 					info.video.audioCodec(audioCodec);
 				}
-				if (info.preset.name == 'webm') {
+
+				if (info.preset && info.preset.name == 'webm') {
 					info.video.videoBitrate(info.preset.videoBitrate);
 				}
 			},
@@ -142,9 +149,16 @@ module.exports = function (mikser, context) {
 	}
 	let outputAndSaveAsync = Promise.promisify(outputAndSave);
 
-	context.video = function (source, destination) {
+	function transform(document, source, destination) {
+		
 		if (!source) {
 			let err = new Error('Undefined source');
+			err.origin = 'videos';
+			throw err;
+		}
+
+		if (!destination && !context) {
+			let err = new Error('Undefined destination');
 			err.origin = 'videos';
 			throw err;
 		}
@@ -152,8 +166,12 @@ module.exports = function (mikser, context) {
 		let videoInfo = path.parse(source);
 
 		if (destination) {
-			if (destination.indexOf(mikser.options.workingFolder) != 0) {
-				videoInfo.destination = mikser.manager.resolveDestination(destination, context.document.destination);
+			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
+				if (context) {
+					imageInfo.destination = mikser.manager.resolveDestination(destination, document.destination);
+				} else {
+					imageInfo.destination = path.join(mikser.options.workingFolder, destination);
+				}
 			}
 			else {
 				videoInfo.destination = destination;
@@ -177,33 +195,48 @@ module.exports = function (mikser, context) {
 		exposeTransforms(videoInfo);
 		wrapTransforms(videoInfo);
 
-		context.process(() => {
-
-			videoInfo.source = mikser.manager.findSource(source);
-			if (!videoInfo.source) {
-				return mikser.diagnostics.log(context, 'warning', `[videos] File not found at: ${source}`);
-			}
-
-			if ((videoInfo.source.indexOf(mikser.options.workingFolder) !== 0) && !destination) {
-				let err = new Error(`Destination is missing for file ${videoInfo.base}`);
-				err.origin = 'videos';
-				throw err;
-			}
-			videoInfo.mtime = fs.statSync(videoInfo.source).mtime;
-
-			if (fs.existsSync(videoInfo.destination)) {
-				let destinationMtime = fs.statSync(videoInfo.destination).mtime;
-				if (destinationMtime < videoInfo.mtime) {
-					fs.unlinkSync(videoInfo.destination);
-				} else {
-					return Promise.resolve();
+		return {
+			process: () => {
+				videoInfo.source = mikser.manager.findSource(source);
+				if (!videoInfo.source) {
+					return mikser.diagnostics.log(context, 'warning', `[videos] File not found at: ${source}`);
 				}
-			}
 
-			fs.ensureDirSync(videoInfo.outFolder);
-			videoInfo.video.input(videoInfo.source);
-			return outputAndSaveAsync(videoInfo);
-		});
-		return videoInfo;
+				if ((videoInfo.source.indexOf(mikser.options.workingFolder) !== 0) && !destination) {
+					let err = new Error(`Destination is missing for file ${videoInfo.base}`);
+					err.origin = 'videos';
+					throw err;
+				}
+				videoInfo.mtime = fs.statSync(videoInfo.source).mtime;
+
+				if (fs.existsSync(videoInfo.destination)) {
+					let destinationMtime = fs.statSync(videoInfo.destination).mtime;
+					if (destinationMtime < videoInfo.mtime) {
+						fs.unlinkSync(videoInfo.destination);
+					} else {
+						return Promise.resolve();
+					}
+				}
+
+				fs.ensureDirSync(videoInfo.outFolder);
+				videoInfo.video.input(videoInfo.source);
+				return outputAndSaveAsync(videoInfo);
+			},
+			videoInfo: videoInfo
+		}
 	}
+
+	if (context) {
+		context.video = function(source, destination) {
+			let videoTransform = transform(context.document, source, destination);
+			context.process(() => videoTransform.process());
+			return videoTransform.videoInfo;
+		}
+	}
+
+	let plugin = {
+		transform: transform
+	}
+
+	return plugin;
 }
