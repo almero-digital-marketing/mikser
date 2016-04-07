@@ -53,6 +53,7 @@ module.exports.run = function(options) {
 				.then(mikser.manager.sync)
 				.then(mikser.server.listen)
 				.then(mikser.scheduler.process)
+				.then(mikser.tools.build)
 				.then(mikser.watcher.start)
 				.then(() => {
 					if (!mikser.options.server && !mikser.options.watch) {
