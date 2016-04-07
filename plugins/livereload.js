@@ -70,7 +70,7 @@ module.exports = function (mikser) {
 						command: 'reload',
 						path: file,
 						liveCSS: true,
-						liveImg: true
+						liveImg: false
 					}), (err) => {
 						if (err) {
 							if (livereload.clients[clientId]) {

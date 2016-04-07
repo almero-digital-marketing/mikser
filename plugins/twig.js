@@ -7,7 +7,7 @@ module.exports = function (mikser, context) {
 	Twig.extendFilter('apply', () => undefined);
 	if (context) {
 		context.twig = function (source, options) {
-			source = mikser.manager.findSource(source);
+			source = mikser.utils.findSource(source);
 			var template = twig({
 				data: fs.readFileSync(source, { encoding: 'utf8' })
 			});

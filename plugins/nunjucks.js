@@ -8,7 +8,7 @@ module.exports = function (mikser, context) {
 
 	if (context) {
 		context.nunjucks = function (source, options) {
-			source = mikser.manager.findSource(source);
+			source = mikser.utils.findSource(source);
 			let template = fs.readFileSync(source, { encoding: 'utf8' });
 			let result = env.renderString(template, options);
 			return result;

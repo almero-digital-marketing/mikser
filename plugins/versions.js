@@ -35,7 +35,7 @@ module.exports = function (mikser, context) {
 			}
 			version.meta.layout = versions[name];
 			version.canonical = context.document.meta.href;
-			version.url = mikser.manager.getUrl(version.destination);
+			version.url = mikser.utils.getUrl(version.destination);
 			debug('Adding', '[' + name + ']', 'version for:', context.document._id);
 			return mikser.runtime.importDocument(version, context.strategy, context.database);
 		});

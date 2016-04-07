@@ -64,7 +64,7 @@ module.exports = function (mikser, context) {
 				cacheInfo.fromCache = true;
 				return;
 			}
-			let source = mikser.manager.findSource(cacheInfo.source);
+			let source = mikser.utils.findSource(cacheInfo.source);
 			if (!source) {
 				cacheInfo.fromCache = false;
 			} else {
@@ -103,7 +103,7 @@ module.exports = function (mikser, context) {
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
 				if (context) {
-					cacheInfo.destination = mikser.manager.resolveDestination(destination, document.destination);
+					cacheInfo.destination = mikser.utils.resolveDestination(destination, document.destination);
 				} else {
 					cacheInfo.destination = path.join(mikser.options.workingFolder, destination);
 				}
@@ -112,17 +112,17 @@ module.exports = function (mikser, context) {
 				cacheInfo.destination = destination;
 			}
 		} else {
-			cacheInfo.destination = mikser.manager.predictDestination(source);
-			cacheInfo.destination = mikser.manager.resolveDestination(cacheInfo.destination, document.destination);
+			cacheInfo.destination = mikser.utils.predictDestination(source);
+			cacheInfo.destination = mikser.utils.resolveDestination(cacheInfo.destination, document.destination);
 		}
 
-		if (!mikser.manager.isPathToFile(cacheInfo.destination)) {
+		if (!mikser.utils.isPathToFile(cacheInfo.destination)) {
 			cacheInfo.destination = path.join(destination, path.basename(source));
 		}
 
 		cacheInfo.source = source;
 		updateCache(cacheInfo);
-		cacheInfo.toString = () => mikser.manager.getUrl(cacheInfo.destination);
+		cacheInfo.toString = () => mikser.utils.getUrl(cacheInfo.destination);
 
 		return {
 			process: () => {
@@ -148,7 +148,7 @@ module.exports = function (mikser, context) {
 				}
 				else {
 					if (!cacheInfo.fromCache) {
-						let sourcePath = mikser.manager.findSource(source);
+						let sourcePath = mikser.utils.findSource(source);
 						return fs.existsAsync(sourcePath).then((exists) => {
 							if (exists) {
 								return deleteFile(cacheInfo.destination).then(() => {

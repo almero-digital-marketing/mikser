@@ -6,7 +6,7 @@ var extend = require('node.extend');
 module.exports = function (mikser, context) {
 	if (context) {
 		context.jade = function (source, options) {
-			source = mikser.manager.findSource(source);
+			source = mikser.utils.findSource(source);
 			return jade.renderFile(source, options);
 		}		
 	} else {

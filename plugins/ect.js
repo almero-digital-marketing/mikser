@@ -6,7 +6,7 @@ var path = require('path');
 module.exports = function (mikser, context) {
 	if (context) {
 		context.ect = function (source, options) {
-			source = mikser.manager.findSource(source);
+			source = mikser.utils.findSource(source);
 			var renderer = ECT({ root : path.dirname(source) });
 			return renderer.render(path.basename(source), options);
 		}

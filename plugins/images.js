@@ -11,9 +11,9 @@ let S = require('string');
 
 module.exports = function (mikser, context) {
 	let debug = mikser.debug('images');
-	let predictDestination = mikser.manager.predictDestination;
-	let findSource = mikser.manager.findSource;
-	let isPathToFile = mikser.manager.isPathToFile;
+	let predictDestination = mikser.utils.predictDestination;
+	let findSource = mikser.utils.findSource;
+	let isPathToFile = mikser.utils.isPathToFile;
 	let config = {
 
 		images: '**/*.{jpg,JPG,jpeg,JPEG,png,PNG,ico,bmp,BMP}',
@@ -68,7 +68,7 @@ module.exports = function (mikser, context) {
 					.crop(width, height)
 			},
 			watermark: (info, watermark, alpha) => {
-				let source = mikser.manager.findSource(watermark);
+				let source = mikser.utils.findSource(watermark);
 				info.command('composite')
 					.gravity('Center')
 					.in(source);
@@ -184,7 +184,7 @@ module.exports = function (mikser, context) {
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
 				if (context) {
-					imageInfo.destination = mikser.manager.resolveDestination(destination, document.destination);
+					imageInfo.destination = mikser.utils.resolveDestination(destination, document.destination);
 				} else {
 					imageInfo.destination = path.join(mikser.options.workingFolder, destination);
 				}
@@ -199,7 +199,7 @@ module.exports = function (mikser, context) {
 			}
 		} else {
 			imageInfo.destination = predictDestination(source);
-			imageInfo.destination = mikser.manager.resolveDestination(imageInfo.destination, document.destination);
+			imageInfo.destination = mikser.utils.resolveDestination(imageInfo.destination, document.destination);
 		}
 
 		if (isNotAllowedExtension(imageInfo.destination)) {
@@ -210,7 +210,7 @@ module.exports = function (mikser, context) {
 		}
 
 		imageInfo.outFolder = path.dirname(imageInfo.destination);
-		imageInfo.toString = () => mikser.manager.getUrl(imageInfo.destination);
+		imageInfo.toString = () => mikser.utils.getUrl(imageInfo.destination);
 		pushTransforms(imageInfo);
 
 		return {
