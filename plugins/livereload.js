@@ -61,6 +61,7 @@ module.exports = function (mikser) {
 
 	livereload.reload = function (file) {
 		file = S(file).replaceAll('\\','/').ensureLeft('/').s;
+		file = mikser.utils.getDomainUrl(file);
 		if (mikser.server.isListening) {
 			for(let clientId in livereload.clients) {
 				let client = livereload.clients[clientId];
@@ -120,13 +121,8 @@ module.exports = function (mikser) {
 					}));
 				}
 				else if (message.command === 'info') {
-					let url = message.url.split('#')[0].split('?')[0];
-					if (S(url).endsWith('/')) {
-						url = url + 'index.html';
-					}
-					url = '/' + decodeURI(url).split('/').slice(3).join('/');
-					livereload.clients[clientId].url = url;
-					debug('Live reload connected:', url);
+					livereload.clients[clientId].url = mikser.utils.getNormalizedUrl(message.url);
+					debug('Live reload connected:', livereload.clients[clientId].url);
 				}
 			});
 		});
