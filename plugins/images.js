@@ -232,10 +232,10 @@ module.exports = function (mikser, context) {
 					throw err;
 				}
 
-				let sourceStats = fs.statSync(sourceFilePath);
 				// let destinationExists = fs.existsSync(imageInfo.destination);
 
 				if (fs.existsSync(imageInfo.destination) && source != imageInfo.destination) {
+					let sourceStats = fs.statSync(sourceFilePath);
 					let destinationStats = fs.statSync(imageInfo.destination);
 					if (destinationStats.mtime < sourceStats.mtime) {
 						fs.unlinkSync(imageInfo.destination);
