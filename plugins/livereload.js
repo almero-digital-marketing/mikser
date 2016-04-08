@@ -76,9 +76,9 @@ module.exports = function (mikser) {
 				if (!S(file).endsWith('.html')) {
 					debug('Reloading[' + clientId + ']', file);
 					client.socket.send(JSON.stringify({
-						command: mikser.options.forceRefresh ? 'refresh' : 'reload',
+						command: mikser.options.forceRefresh ? 'reload' : 'refresh',
 						path: file,
-						liveCSS: true,
+						liveCSS: !mikser.options.forceRefresh,
 						liveImg: false
 					}), (err) => {
 						if (err) {
