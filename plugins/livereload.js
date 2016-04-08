@@ -9,7 +9,6 @@ var minimatch = require("minimatch");
 var cluster = require('cluster');
 
 module.exports = function (mikser) {
-	console.log('FUCK');
 	if (cluster.isWorker) return;
 
 	mikser.cli

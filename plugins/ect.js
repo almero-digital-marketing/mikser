@@ -25,7 +25,7 @@ module.exports = function (mikser, context) {
 							if (context.layout.meta.externalMeta) {
 								renderer = ECT({
 									cache: true,
-									root: path.dirname(context.layout.source);
+									root: path.dirname(context.layout.source)
 								});
 							} else {
 								renderer = ECT({
@@ -55,7 +55,7 @@ module.exports = function (mikser, context) {
 						err.diagnose = diagnose;
 						err.origin = 'ect';
 					}
-					throw err;	
+					throw err;
 				}
 			}
 		});
