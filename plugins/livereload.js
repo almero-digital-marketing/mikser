@@ -6,8 +6,17 @@ var path = require('path');
 var Promise = require('bluebird');
 var net = require('net');
 var minimatch = require("minimatch");
+var cluster = require('cluster');
 
 module.exports = function (mikser) {
+	console.log('FUCK');
+	if (cluster.isWorker) return;
+
+	mikser.cli
+		.option('-L, --force-refresh', 'force live reload to refresh all the time')
+		.init();
+	mikser.options.forceRefresh = mikser.cli.forceRefresh;
+
 	if (mikser.config.livereload === false) {
 		console.log('Live reload: disabled');
 		return Promise.resolve();
@@ -61,13 +70,14 @@ module.exports = function (mikser) {
 
 	livereload.reload = function (file) {
 		file = S(file).replaceAll('\\','/').ensureLeft('/').s;
+		file = mikser.utils.getDomainUrl(file);
 		if (mikser.server.isListening) {
 			for(let clientId in livereload.clients) {
 				let client = livereload.clients[clientId];
 				if (!S(file).endsWith('.html')) {
 					debug('Reloading[' + clientId + ']', file);
 					client.socket.send(JSON.stringify({
-						command: 'reload',
+						command: mikser.options.forceRefresh ? 'refresh' : 'reload',
 						path: file,
 						liveCSS: true,
 						liveImg: false
@@ -120,13 +130,8 @@ module.exports = function (mikser) {
 					}));
 				}
 				else if (message.command === 'info') {
-					let url = message.url.split('#')[0].split('?')[0];
-					if (S(url).endsWith('/')) {
-						url = url + 'index.html';
-					}
-					url = '/' + decodeURI(url).split('/').slice(3).join('/');
-					livereload.clients[clientId].url = url;
-					debug('Live reload connected:', url);
+					livereload.clients[clientId].url = mikser.utils.getNormalizedUrl(message.url);
+					debug('Live reload connected:', livereload.clients[clientId].url);
 				}
 			});
 		});
