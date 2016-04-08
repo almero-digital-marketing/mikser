@@ -6,8 +6,17 @@ var path = require('path');
 var Promise = require('bluebird');
 var net = require('net');
 var minimatch = require("minimatch");
+var cluster = require('cluster');
 
 module.exports = function (mikser) {
+	console.log('FUCK');
+	if (cluster.isWorker) return;
+
+	mikser.cli
+		.option('-L, --force-refresh', 'force live reload to refresh all the time')
+		.init();
+	mikser.options.forceRefresh = mikser.cli.forceRefresh;
+
 	if (mikser.config.livereload === false) {
 		console.log('Live reload: disabled');
 		return Promise.resolve();
@@ -68,7 +77,7 @@ module.exports = function (mikser) {
 				if (!S(file).endsWith('.html')) {
 					debug('Reloading[' + clientId + ']', file);
 					client.socket.send(JSON.stringify({
-						command: 'reload',
+						command: mikser.options.forceRefresh ? 'refresh' : 'reload',
 						path: file,
 						liveCSS: true,
 						liveImg: false
