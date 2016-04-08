@@ -22,12 +22,19 @@ module.exports = function (mikser, context) {
 						if (cached && cached.importDate.getTime() == context.layout.importDate.getTime()) {
 							renderer = cached.renderer;
 						} else {
-							renderer = ECT({ 
-								cache: true,
-								root: { 
-									page: context.layout.template 
-								} 
-							});
+							if (context.layout.meta.externalMeta) {
+								renderer = ECT({
+									cache: true,
+									root: path.dirname(context.layout.source);
+								});
+							} else {
+								renderer = ECT({
+									cache: true,
+									root: {
+										page: context.layout.template
+									}
+								});
+							}
 							cache[context.layout._id] = {
 								importDate: context.layout.importDate,
 								renderer: renderer
