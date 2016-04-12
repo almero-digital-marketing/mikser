@@ -17,6 +17,7 @@ module.exports = function (mikser, context) {
 			render: function(context) {
 				try {
 					if (context.layout && context.layout.template) {
+						let layoutName = context.layout.source.replace(path.extname(context.layout.source), '');
 						let cached = cache[context.layout._id];
 						let renderer; 
 						if (cached && cached.importDate.getTime() == context.layout.importDate.getTime()) {
@@ -28,11 +29,11 @@ module.exports = function (mikser, context) {
 									root: path.dirname(context.layout.source)
 								});
 							} else {
+								let root = {};
+								root[layoutName] = context.layout.template;
 								renderer = ECT({
 									cache: true,
-									root: {
-										page: context.layout.template
-									}
+									root: root
 								});
 							}
 							cache[context.layout._id] = {
@@ -40,10 +41,11 @@ module.exports = function (mikser, context) {
 								renderer: renderer
 							}
 						}
-						return renderer.render('page', context);
+						return renderer.render(layoutName, context);
 					}
 					return context.content;
 				} catch (err) {
+					console.log(err, '!!!');
 					let re = /on line\s(\d+)/;
 					let result = re.exec(err.message);
 					if (result) {
