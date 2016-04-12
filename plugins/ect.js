@@ -17,26 +17,35 @@ module.exports = function (mikser, context) {
 			render: function(context) {
 				try {
 					if (context.layout && context.layout.template) {
+						let layoutName = context.layout.source.replace(path.extname(context.layout.source), '');
 						let cached = cache[context.layout._id];
 						let renderer; 
 						if (cached && cached.importDate.getTime() == context.layout.importDate.getTime()) {
 							renderer = cached.renderer;
 						} else {
-							renderer = ECT({ 
-								cache: true,
-								root: { 
-									page: context.layout.template 
-								} 
-							});
+							if (context.layout.meta.externalMeta) {
+								renderer = ECT({
+									cache: true,
+									root: path.dirname(context.layout.source)
+								});
+							} else {
+								let root = {};
+								root[layoutName] = context.layout.template;
+								renderer = ECT({
+									cache: true,
+									root: root
+								});
+							}
 							cache[context.layout._id] = {
 								importDate: context.layout.importDate,
 								renderer: renderer
 							}
 						}
-						return renderer.render('page', context);
+						return renderer.render(layoutName, context);
 					}
 					return context.content;
 				} catch (err) {
+					console.log(err, '!!!');
 					let re = /on line\s(\d+)/;
 					let result = re.exec(err.message);
 					if (result) {
@@ -48,7 +57,7 @@ module.exports = function (mikser, context) {
 						err.diagnose = diagnose;
 						err.origin = 'ect';
 					}
-					throw err;	
+					throw err;
 				}
 			}
 		});
