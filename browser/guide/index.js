@@ -49,6 +49,7 @@ module.exports = function (mikser) {
 	});
 	Mousetrap.bind(['command+g', 'ctrl+g'], () => {
 		if (!enabled) {
+			console.log('Guide activated');
 			enabled = !enabled;
 			$('.mikser-guide').tipso({
 				tooltipHover: true,
@@ -70,7 +71,7 @@ module.exports = function (mikser) {
 						'<span class="mikser-guide-prefix">' + GUIDE_PREFIX + '</span>@' + 
 						'<span class="mikser-guide-sectoin">' + section + '</span>:/' + 
 						'<span class="mikser-guide-file">' + file + '</span>';
-					var clipboardHtml = '<a class="mikser-guide-copy" data-clipboard-text="' + file;
+					var clipboardHtml = '<a class="mikser-guide-copy" data-clipboard-text="' + file.substring(1);
 					if (line) {
 						guideHtml += '#<span class="mikser-guide-line">' + line + '</span>'
 						clipboardHtml += ':' + line;
