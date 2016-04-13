@@ -17,7 +17,10 @@ module.exports = function (mikser, context) {
 			render: function(context) {
 				try {
 					if (context.layout && context.layout.template) {
-						let layoutName = context.layout.source.replace(path.extname(context.layout.source), '');
+						let layoutName = context.layout.source;
+						if (!context.layout.meta.externalMeta) {
+							layoutName = context.layout.source.replace(path.extname(context.layout.source), '');
+						}
 						let cached = cache[context.layout._id];
 						let renderer; 
 						if (cached && cached.importDate.getTime() == context.layout.importDate.getTime()) {
@@ -45,7 +48,6 @@ module.exports = function (mikser, context) {
 					}
 					return context.content;
 				} catch (err) {
-					console.log(err, '!!!');
 					let re = /on line\s(\d+)/;
 					let result = re.exec(err.message);
 					if (result) {
