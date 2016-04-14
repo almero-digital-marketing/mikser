@@ -95,18 +95,21 @@ module.exports = function (mikser) {
 	}
 
 	mikser.cleanup.push(() => {
-		if (mikser.server.isListening) {
-			for(let clientId in livereload.clients) {
-				let client = livereload.clients[clientId];
-				client.socket.destroy();
-			}
+		if (livereload.server) {
+			let closeAsync = Promise.promisify(livereload.server.close, {context: livereload.server });
+			return closeAsync().catch((err) => {
+				for(let clientId in livereload.clients) {
+					let client = livereload.clients[clientId];
+					client.socket.destroy();
+				}
+			});
 		}
 		return Promise.resolve();
 	});
 
 	mikser.on('mikser.server.ready', () => {	
-		let liveReloadServer = new WebSocketServer({ port: mikser.config.livereloadPort });
-		liveReloadServer.on('connection', (socket) => {
+		livereload.server = new WebSocketServer({ port: mikser.config.livereloadPort });
+		livereload.server.on('connection', (socket) => {
 			let clientId = lastClientId++;
 			livereload.clients[clientId] = {
 				socket: socket
