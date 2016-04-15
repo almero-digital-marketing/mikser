@@ -34,9 +34,9 @@ mikser.run();
 After you run Mikser for the first time it will create all the necessary folders inside your project folder and then start watching for changes and auto-generate your web site.
 
 ## Performance
-We have have tried many static site generators they work well for simple web sites, but in real-life scenarios they degrade performance very fast. Here is what we have found out playing around with some of them.
+We have have tried many static site generators they work well for simple web sites, but in real-life scenarios they degrade performance very fast. Here is what we have found, playing around with some of them.
 
-For a real-life web site with around 200 pages [DocPad](http://docpad.org/) takes about 1 minute, [Hexo](https://hexo.io/) takes 2 minutes and Mikser takes 7 seconds. For a web site with 1000 pages and complex structure with blocks and partials, Mikser takes about 1 minute, [DocPad](http://docpad.org/) and [Hexo](https://hexo.io/) take almost 30 minutes. We haven't tried Hugo with the same sites because it lacks plug-ins and its very hard to extend and reuse existing templates but from some basic web sites we have implemented with it we found that it has almost the same performance as Mikser, for more complex solutions it is slower.
+For a simple web site with around 200 pages [DocPad](http://docpad.org/) takes about 1 minute, [Hexo](https://hexo.io/) takes 2 minutes and Mikser takes 7 seconds. For a complex web site with 1000 pages and templates with blocks and partials, Mikser takes about 30 seconds while [DocPad](http://docpad.org/) and [Hexo](https://hexo.io/) take almost 30 minutes. We haven't tried [Hugo](https://gohugo.io/) with the same sites because it lacks plug-ins and it is very hard to extend and reuse existing templates but from some basic web sites we have implemented with it we found that it has almost the same performance as Mikser, when templates get more complex it is slower by much.
 
 All static site generators that we have tested perform a full regeneration on every run. Mikser has build-in change tracking and only generates what has been affected by the change so most of the time it is ready for less than 5 seconds, when [DocPad](http://docpad.org/) and [Hexo](https://hexo.io/) take 30 minutes to finish.
 
