@@ -40,15 +40,8 @@ For a simple web site with around 200 pages [DocPad](http://docpad.org/) takes a
 
 All static site generators that we have tested perform a full regeneration on every run. Mikser has build-in change tracking and only generates what has been affected by the change so most of the time it is ready for less than 5 seconds, when [DocPad](http://docpad.org/) and [Hexo](https://hexo.io/) take 30 minutes to finish.
 
-# Example web sites
-You can check one of our projects [Dialog](https://github.com/almero-digital-marketing/dialog-web). It has relatively simple structure, with four languages in different domains. The project was originally implemented with [DocPad](http://docpad.org/). It took us 3 days to convert it to Mikser and we managed to reuse most of the templates with minor changes.
-
-```
-git clone https://github.com/almero-digital-marketing/dialog-web.git
-cd dialog-web
-npm i
-npm start
-```
+## Examples
+You can check one of our projects [Dialog](https://github.com/almero-digital-marketing/dialog-web). It has relatively simple structure with four languages in different domains. The project was originally implemented with [DocPad](http://docpad.org/). It took us 3 days to convert it to Mikser and we managed to reuse most of the templates with minor changes.
 
 ## Mikser documentation
 
