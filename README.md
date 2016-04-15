@@ -33,6 +33,23 @@ mikser.run();
 ## First run
 After you run Mikser for the first time it will create all the necessary folders inside your project folder and then start watching for changes and auto-generate your web site.
 
+## Performance
+We have have tried many static site generators they work well for simple web sites, but in real-life scenarios they degrade performance very fast. Here is what we have found out playing around with some of them.
+
+For a real-life web site with around 200 pages [DocPad](http://docpad.org/) takes about 1 minute, [Hexo](https://hexo.io/) takes 2 minutes and Mikser takes 7 seconds. For a web site with 1000 pages and complex structure with blocks and partials, Mikser takes about 1 minute, [DocPad](http://docpad.org/) and [Hexo](https://hexo.io/) take almost 30 minutes. We haven't tried Hugo with the same sites because it lacks plug-ins and its very hard to extend and reuse existing templates but from some basic web sites we have implemented with it we found that it has almost the same performance as Mikser, for more complex solutions it is slower.
+
+All static site generators that we have tested perform a full regeneration on every run. Mikser has build-in change tracking and only generates what has been affected by the change so most of the time it is ready for less than 5 seconds, when [DocPad](http://docpad.org/) and [Hexo](https://hexo.io/) take 30 minutes to finish.
+
+# Example web sites
+You can check one of our projects [Dialog](https://github.com/almero-digital-marketing/dialog-web). It has relatively simple structure, with four languages in different domains. The project was originally implemented with [DocPad](http://docpad.org/). It took us 3 days to convert it to Mikser and we managed to reuse most of the templates with minor changes.
+
+```
+git clone https://github.com/almero-digital-marketing/dialog-web.git
+cd dialog-web
+npm i
+npm start
+```
+
 ## Mikser documentation
 
 * [Folder structure](https://github.com/almero-digital-marketing/mikser-docs/blob/master/folders.md)

@@ -12,7 +12,7 @@ module.exports = function (mikser, context) {
 	} else {
 		var cache = {}
 		mikser.generator.engines.push({
-			pattern: '**/*.jade',
+			pattern: '**/*.+(jade|pug)', 
 			render: function(context) {
 				try {
 					if (context.layout && context.layout.template) {
