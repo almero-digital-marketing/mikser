@@ -54,6 +54,7 @@
     "nunjucks": "^2.4.1",
     "parse-spawn-args": "^1.0.2",
     "prettysize": "0.0.3",
+    "reconnectingwebsocket": "^1.0.0",
     "remove-markdown": "0.1.0",
     "request": "^2.70.0",
     "require-new": "^1.1.0",

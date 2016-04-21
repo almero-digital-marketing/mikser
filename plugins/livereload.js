@@ -4,7 +4,6 @@ var WebSocketServer = require('ws').Server;
 var S = require('string');
 var path = require('path');
 var Promise = require('bluebird');
-var net = require('net');
 var minimatch = require("minimatch");
 var cluster = require('cluster');
 
@@ -149,20 +148,13 @@ module.exports = function (mikser) {
 		return livereload.refresh(documentId);
 	});
 
-	if (!mikser.config.livereloadPort) {
-		let freeport = new Promise((resolve, reject) => {
-			var server = net.createServer();
-			server.listen(0, '127.0.0.1', () => {
-				let port = server.address().port;
-				server.close(() => {
-					resolve(port);
-				});
-			});
-		});
-		return freeport.then((port) => {
-			mikser.config.livereloadPort = port
-		});
-	}
-
-	return Promise.resolve(livereload);
+	return mikser.utils.resolvePort(mikser.config.livereloadPort, 'livereload').then((port) => {
+		let livereloadPort = mikser.config.livereloadPort;
+		if (livereloadPort && livereloadPort !== port) {
+			mikser.diagnostics.log('warning', `Livereload config port: ${livereloadPort} is already in use, resolved with ${port}`);
+		}
+		mikser.config.livereloadPort = port;
+		debug('Port:', port);
+		return Promise.resolve(livereload);
+	});
 };

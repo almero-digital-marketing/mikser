@@ -38,8 +38,8 @@ module.exports.run = function(options) {
 	.then(manager)
 	.then(tools)
 	.then(watcher)
-	.then(server)
 	.then(diagnostics)
+	.then(server)
 	.then(backports)
 	.then((mikser) => {
 		if (cluster.isMaster) {
