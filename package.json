@@ -51,6 +51,7 @@
     "mousetrap": "^1.5.3",
     "node-constants": "0.0.2",
     "node.extend": "^1.1.5",
+    "nprogress": "^0.2.0",
     "nunjucks": "^2.4.1",
     "parse-spawn-args": "^1.0.2",
     "prettysize": "0.0.3",

@@ -214,7 +214,6 @@ module.exports = function (mikser, context) {
 		pushTransforms(imageInfo);
 
 		let capturedContext = _.defaults({}, context);
-
 		return {
 			process: () => {
 

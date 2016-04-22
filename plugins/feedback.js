@@ -53,9 +53,13 @@ module.exports = function (mikser) {
 		});
 	});
 
-	mikser.on('mikser.diagnostics.progress', (message) => {
-
+	mikser.on('mikser.diagnostics.progress', (progress) => {
 		if (feedback.server) {
+			// when in debug mode progress event is not send at all !!!
+			let message = {
+				message: progress,
+				level: 'progress'
+			}
 			debug('Handling progress event');
 			return feedback.server.broadcast(JSON.stringify(message));
 		}
