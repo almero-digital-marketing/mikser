@@ -15,7 +15,7 @@ module.exports = function (mikser, context) {
 				let stats = fs.statSync(source);
 				if (urlFlag) {
 					let destination = mikser.utils.predictDestination(source);
-					destination = mikser.utils.resolveDestination(destination, context.document.destination);
+					destination = mikser.utils.resolveDestination(destination, context.entity.destination);
 					stats.url = mikser.utils.getUrl(destination);
 				}
 				result.push(stats);
@@ -63,7 +63,7 @@ module.exports = function (mikser, context) {
 		if (source) {
 			let stats = fs.statSync(source);
 			let destination = mikser.utils.predictDestination(source);
-			destination = mikser.utils.resolveDestination(destination, context.document.destination);
+			destination = mikser.utils.resolveDestination(destination, context.entity.destination);
 			let url = mikser.utils.getUrl(destination);
 			if (url) {
 				stats.url = url;

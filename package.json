@@ -40,6 +40,7 @@
     "jade": "^1.11.0",
     "jquery": "^2.2.3",
     "js-yaml": "^3.5.5",
+    "json.date-extensions": "^1.2.2",
     "json5": "^0.5.0",
     "jsonfile": "^2.2.3",
     "livereload-js": "^2.2.2",

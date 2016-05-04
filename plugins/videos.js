@@ -149,7 +149,7 @@ module.exports = function (mikser, context) {
 	}
 	let outputAndSaveAsync = Promise.promisify(outputAndSave);
 
-	function transform(document, source, destination) {
+	function transform(entity, source, destination) {
 		
 		if (!source) {
 			let err = new Error('Undefined source');
@@ -168,7 +168,7 @@ module.exports = function (mikser, context) {
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
 				if (context) {
-					imageInfo.destination = mikser.utils.resolveDestination(destination, document.destination);
+					imageInfo.destination = mikser.utils.resolveDestination(destination, entity.destination);
 				} else {
 					imageInfo.destination = path.join(mikser.options.workingFolder, destination);
 				}
@@ -181,7 +181,7 @@ module.exports = function (mikser, context) {
 			}
 		} else {
 			videoInfo.destination = mikser.utils.predictDestination(source);
-			videoInfo.destination = mikser.utils.resolveDestination(videoInfo.destination, context.document.destination);
+			videoInfo.destination = mikser.utils.resolveDestination(videoInfo.destination, context.entity.destination);
 		}
 
 		if (!mikser.utils.isPathToFile(videoInfo.destination)) {
@@ -228,7 +228,7 @@ module.exports = function (mikser, context) {
 
 	if (context) {
 		context.video = function(source, destination) {
-			let videoTransform = transform(context.document, source, destination);
+			let videoTransform = transform(context.entity, source, destination);
 			context.process(() => videoTransform.process());
 			return videoTransform.videoInfo;
 		}
