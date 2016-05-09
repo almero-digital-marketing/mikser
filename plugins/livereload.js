@@ -47,6 +47,8 @@ module.exports = function (mikser) {
 		if (mikser.server.isListening) {
 			for(let clientId in livereload.clients) {
 				let client = livereload.clients[clientId];
+				if (!client.url) continue;
+				
 				let entity = mikser.runtime.findEntity(collection, entityId);
 				if (entity) {
 					debug('Client:', client.url, entity.url);
