@@ -154,7 +154,7 @@ module.exports = function (mikser, context) {
 		wrapTransforms(imageInfo);
 	}
 
-	function transform(document, source, destination) {
+	function transform(entity, source, destination) {
 
 		if(!source || typeof source !== 'string') {
 			let err = new Error('Undefined source');
@@ -184,7 +184,7 @@ module.exports = function (mikser, context) {
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
 				if (context) {
-					imageInfo.destination = mikser.utils.resolveDestination(destination, document.destination);
+					imageInfo.destination = mikser.utils.resolveDestination(destination, entity.destination);
 				} else {
 					imageInfo.destination = path.join(mikser.options.workingFolder, destination);
 				}
@@ -199,7 +199,7 @@ module.exports = function (mikser, context) {
 			}
 		} else {
 			imageInfo.destination = predictDestination(source);
-			imageInfo.destination = mikser.utils.resolveDestination(imageInfo.destination, document.destination);
+			imageInfo.destination = mikser.utils.resolveDestination(imageInfo.destination, entity.destination);
 		}
 
 		if (isNotAllowedExtension(imageInfo.destination)) {
@@ -272,7 +272,7 @@ module.exports = function (mikser, context) {
 
 	if (context) {
 		context.image = function(source, destination) {
-			let imageTransform = transform(context.document, source, destination);
+			let imageTransform = transform(context.entity, source, destination);
 			context.process(() => {
 				return imageTransform.process();
 			});

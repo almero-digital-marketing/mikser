@@ -84,7 +84,7 @@ module.exports = function (mikser, context) {
 		});
 	}
 
-	function _cache(document, source, destination) {
+	function _cache(entity, source, destination) {
 
 		let cacheInfo = extend({}, defaultInfo);
 
@@ -103,7 +103,7 @@ module.exports = function (mikser, context) {
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
 				if (context) {
-					cacheInfo.destination = mikser.utils.resolveDestination(destination, document.destination);
+					cacheInfo.destination = mikser.utils.resolveDestination(destination, entity.destination);
 				} else {
 					cacheInfo.destination = path.join(mikser.options.workingFolder, destination);
 				}
@@ -113,7 +113,7 @@ module.exports = function (mikser, context) {
 			}
 		} else {
 			cacheInfo.destination = mikser.utils.predictDestination(source);
-			cacheInfo.destination = mikser.utils.resolveDestination(cacheInfo.destination, document.destination);
+			cacheInfo.destination = mikser.utils.resolveDestination(cacheInfo.destination, entity.destination);
 		}
 
 		if (!mikser.utils.isPathToFile(cacheInfo.destination)) {
@@ -170,7 +170,7 @@ module.exports = function (mikser, context) {
 
 	if (context){
 		context.cache = function(source, destination) {
-			let cache = _cache(context.document, source, destination);
+			let cache = _cache(context.entity, source, destination);
 			context.process(() => {
 				return cache.process();
 			});
