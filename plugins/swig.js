@@ -1,6 +1,6 @@
 'use strict'
 
-var swig = require('swig');
+var swig = require('swig-templates');
 
 module.exports = function (mikser, context) {
 	swig.setFilter('apply', () => undefined);
