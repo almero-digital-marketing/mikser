@@ -7,6 +7,7 @@ var Promise = require('bluebird');
 var net = require('net');
 var minimatch = require("minimatch");
 var cluster = require('cluster');
+var _ = require('lodash');
 
 module.exports = function (mikser) {
 	if (cluster.isWorker) return;
@@ -119,6 +120,7 @@ module.exports = function (mikser) {
 			livereload.clients[clientId] = {
 				socket: socket
 			};
+			debug('Clients:', _.keys(livereload.clients).length);
 
 			socket.on('close', (socket) => {
 				if (livereload.clients[clientId]) {
@@ -172,6 +174,8 @@ module.exports = function (mikser) {
 		});
 		return freeport.then((port) => {
 			mikser.config.livereloadPort = port
+		}).then(() => {
+			return Promise.resolve(livereload);
 		});
 	}
 
