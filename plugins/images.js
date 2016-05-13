@@ -213,6 +213,7 @@ module.exports = function (mikser, context) {
 		imageInfo.toString = () => mikser.utils.getUrl(imageInfo.destination);
 		pushTransforms(imageInfo);
 
+		let capturedContext = _.defaults({}, context);
 		return {
 			process: () => {
 
@@ -220,7 +221,7 @@ module.exports = function (mikser, context) {
 				// full path to file or undefined if file does not exist
 				if (!sourceFilePath) {
 					if (context) {
-						return mikser.diagnostics.log(context, 'warning', `[images] File not found at: ${source}`);
+						return mikser.diagnostics.log(capturedContext, 'warning', `[images] File not found at: ${source}`);
 					} else {
 						return mikser.diagnostics.log('warning', `[images] File not found at: ${source}`);
 					}
