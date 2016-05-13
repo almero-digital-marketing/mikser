@@ -1,9 +1,9 @@
 'use strict'
 
 module.exports = function (mikser, context) {
-	if (!context.document.meta || !context.document.meta.href) return;
-	let breadcrumb = [context.document.meta.href];
-	let crumb = context.document.meta.href;
+	if (!context.entity.meta || !context.entity.meta.href) return;
+	let breadcrumb = [context.entity.meta.href];
+	let crumb = context.entity.meta.href;
 	let i = crumb.lastIndexOf('/')
 	while (i > 0) {
 		crumb = crumb.substr(0,i);

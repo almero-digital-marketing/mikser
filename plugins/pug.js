@@ -1,13 +1,13 @@
 'use strict'
 
-var jade = require('jade');
+var pug = require('pug');
 var extend = require('node.extend');
 
 module.exports = function (mikser, context) {
 	if (context) {
-		context.jade = function (source, options) {
+		context.pug = context.jade = function (source, options) {
 			source = mikser.utils.findSource(source);
-			return jade.renderFile(source, options);
+			return pug.renderFile(source, options);
 		}		
 	} else {
 		var cache = {}
@@ -21,7 +21,7 @@ module.exports = function (mikser, context) {
 						if (cached && cached.importDate.getTime() == context.layout.importDate.getTime()) {
 							fn = cached.fn;
 						} else {
-							fn = jade.compile(context.layout.template, {
+							fn = pug.compile(context.layout.template, {
 								filename: context.layout.source,
 								cache: false
 							});
@@ -49,7 +49,7 @@ module.exports = function (mikser, context) {
 						
 						err = new Error('Render error');
 						err.diagnose = diagnose;
-						err.origin = 'jade';
+						err.origin = 'pug';
 					}
 					throw err;
 				}

@@ -4,8 +4,10 @@ var WebSocketServer = require('ws').Server;
 var S = require('string');
 var path = require('path');
 var Promise = require('bluebird');
+var net = require('net');
 var minimatch = require("minimatch");
 var cluster = require('cluster');
+var _ = require('lodash');
 
 module.exports = function (mikser) {
 	if (cluster.isWorker) return;
@@ -29,37 +31,42 @@ module.exports = function (mikser) {
 	}
 	let lastClientId = 0;
 
-	livereload.isLive = function(documentId) {
+	livereload.isLive = function(collection, entityId) {
 		if (mikser.server.isListening) {
-			let documentUrl = mikser.state.urlmap[documentId];
-			for(let clientId in livereload.clients) {
-				if (documentUrl == livereload.clients[clientId].url) return true;
+			let entity = mikser.runtime.findEntity(collection, entityId);
+			if (entity) {
+				for(let clientId in livereload.clients) {
+					if (entity.url == livereload.clients[clientId].url) return true;
+				}				
 			}
 		}
 		return false;
 	}
 
 
-	livereload.refresh = function (documentId) {
+	livereload.refresh = function (collection, entityId) {
 		if (mikser.server.isListening) {
 			for(let clientId in livereload.clients) {
 				let client = livereload.clients[clientId];
-				let documentUrl = client.url;
-				if (documentId) documentUrl = mikser.state.urlmap[documentId];
-				debug('Client:', client.url, documentUrl);
-				if (client.url == documentUrl) {
-					debug('Refreshing[' + clientId + ']', documentUrl);
-					client.socket.send(JSON.stringify({
-						command: 'reload',
-						path: documentUrl
-					}), (err) => {
-						if (err) {
-							if (livereload.clients[clientId]) {
-								debug('Live reload disconnected:', livereload.clients[clientId].url, err);
-								delete livereload.clients[clientId];
+				if (!client.url) continue;
+				
+				let entity = mikser.runtime.findEntity(collection, entityId);
+				if (entity) {
+					debug('Client:', client.url, entity.url);
+					if (client.url == entity.url) {
+						debug('Refreshing[' + clientId + ']', entity.url);
+						client.socket.send(JSON.stringify({
+							command: 'reload',
+							path: entity.url
+						}), (err) => {
+							if (err) {
+								if (livereload.clients[clientId]) {
+									debug('Live reload disconnected:', livereload.clients[clientId].url, err);
+									delete livereload.clients[clientId];
+								}
 							}
-						}
-					});
+						});
+					}
 				}
 			}
 		}
@@ -113,6 +120,7 @@ module.exports = function (mikser) {
 			livereload.clients[clientId] = {
 				socket: socket
 			};
+			debug('Clients:', _.keys(livereload.clients).length);
 
 			socket.on('close', (socket) => {
 				if (livereload.clients[clientId]) {
@@ -145,7 +153,13 @@ module.exports = function (mikser) {
 	});
 
 	mikser.on('mikser.scheduler.renderedDocument', (documentId) => {
-		return livereload.refresh(documentId);
+		return livereload.refresh('documents', documentId);
+	});
+
+	mikser.on('mikser.runtime.link', (entity) => {
+		if (entity.collection == 'views') {
+			return livereload.refresh(entity.collection, entity._id);		
+		}
 	});
 
 	return mikser.utils.resolvePort(mikser.config.livereloadPort, 'livereload').then((port) => {

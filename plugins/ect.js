@@ -19,7 +19,7 @@ module.exports = function (mikser, context) {
 					if (context.layout && context.layout.template) {
 						let layoutName = context.layout.source;
 						if (!context.layout.meta.externalMeta) {
-							layoutName = context.layout.source.replace(path.extname(context.layout.source), '');
+							layoutName = 'layout';
 						}
 						let cached = cache[context.layout._id];
 						let renderer; 

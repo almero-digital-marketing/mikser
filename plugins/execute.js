@@ -3,7 +3,7 @@ let Promise = require('bluebird');
 let execAsync = Promise.promisify(require('child_process').exec);
 let execSync = require('child_process').execSync;
 let extend = require('node.extend');
-let swig = require('swig');
+let swig = require('swig-templates');
 
 module.exports = function (mikser, context) {
 	let debug = mikser.debug('execute');
