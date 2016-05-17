@@ -274,9 +274,7 @@ module.exports = function (mikser, context) {
 	if (context) {
 		context.image = function(source, destination) {
 			let imageTransform = transform(context.entity, source, destination);
-			context.process(() => {
-				return imageTransform.process();
-			});
+			context.process(imageTransform.process);
 			return imageTransform.imageInfo;
 		}
 	}

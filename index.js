@@ -19,6 +19,7 @@ var debug = require('./lib/debug');
 var broker = require('./lib/broker');
 var parser = require('./lib/parser');
 var queue = require('./lib/queue');
+var observer = require('./lib/observer');
 var backports = require('./lib/backports');
 var _ = require('lodash');
 
@@ -31,6 +32,7 @@ module.exports.run = function(options) {
 	.then(databse)
 	.then(parser)
 	.then(queue)
+	.then(observer)
 	.then(loader)
 	.then(generator)
 	.then(scheduler)
