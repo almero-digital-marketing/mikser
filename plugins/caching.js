@@ -5,6 +5,7 @@ let request = require('request');
 let extend = require('node.extend');
 let moment = require('moment');
 let Promise = require('bluebird');
+let createOutputStream = require('create-output-stream');
 
 module.exports = function (mikser, context) {
 	let debug = mikser.debug('caching');
@@ -35,7 +36,7 @@ module.exports = function (mikser, context) {
 		readStream.on('error', next);
 		readStream.on('response', (response) => {
 			if (response.statusCode === 200) {
-				let writeStream = fs.createOutputStream(destination);
+				let writeStream = createOutputStream(destination);
 				writeStream.on('error', next);
 				writeStream.on('finish', next);
 				readStream.pipe(writeStream);
