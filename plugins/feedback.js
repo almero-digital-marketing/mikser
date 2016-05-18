@@ -55,6 +55,7 @@ module.exports = function (mikser) {
 
 	mikser.on('mikser.diagnostics.progress', (progress) => {
 		if (feedback.server) {
+			console.log(progress, '???')
 			// when in debug mode progress event is not send at all !!!
 			let message = {
 				message: progress,
@@ -66,7 +67,6 @@ module.exports = function (mikser) {
 	});
 
 	mikser.on('mikser.diagnostics.log', (log) => {
-
 		if (feedback.server) {
 			if(log.level !== 'info' || !log.document) {
 				let data = { message: log.message, level: log.level };

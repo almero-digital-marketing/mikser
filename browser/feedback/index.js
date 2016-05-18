@@ -37,8 +37,9 @@ module.exports = function (mikser) {
 
 
 			if (event.level === 'info') {
+				console.log(event.message, 'ulala mamet');
 				console.log('%c' + event.message, "color: #336600");
-				if (event.message.indexOf('Generation time:') !== -1) {
+				if (event.message.indexOf('Generation time:') === 0) {
 					nProgress.done();
 				}
 			}
