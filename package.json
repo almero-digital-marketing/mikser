@@ -55,6 +55,7 @@
     "nunjucks": "^2.4.2",
     "parse-spawn-args": "^1.0.2",
     "prettysize": "0.0.3",
+    "promise-queue": "^2.2.3",
     "pug": "^2.0.0-alpha7",
     "remove-markdown": "0.1.0",
     "request": "^2.72.0",
