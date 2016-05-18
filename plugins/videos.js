@@ -229,7 +229,7 @@ module.exports = function (mikser, context) {
 	if (context) {
 		context.video = function(source, destination) {
 			let videoTransform = transform(context.entity, source, destination);
-			context.process(() => videoTransform.process());
+			context.process(videoTransform.process);
 			return videoTransform.videoInfo;
 		}
 	}

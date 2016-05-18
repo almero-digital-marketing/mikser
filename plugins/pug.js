@@ -15,6 +15,13 @@ module.exports = function (mikser, context) {
 			pattern: '**/*.+(jade|pug)', 
 			render: function(context) {
 				try {
+					let _href = context.href;
+					context.href = function() {
+						let args = Array.from(arguments);
+						let found = _href.apply(null, args);
+						found.toJSON = found.toString;
+						return found;
+					}
 					if (context.layout && context.layout.template) {
 						let cached = cache[context.layout._id];
 						let fn; 
