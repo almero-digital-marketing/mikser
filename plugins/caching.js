@@ -33,12 +33,7 @@ module.exports = function (mikser, context) {
 
 	function download(destination, options, next) {
 		debug('Downloading:', options.url);
-		let writeStream = createOutputStream(destination);
-		writeStream.on('error', next);
-		writeStream.on('finish', () => {
-			debug(`Saved: ${destination}`) 
-			next();
-		});
+		let success = false;
 
 		let readStream = request(options, (err, response) => {
 			if (err) {
@@ -49,28 +44,22 @@ module.exports = function (mikser, context) {
 			if (response.statusCode !== 200) {
 				mikser.diagnostics.log(context ? this : context, 'error', `[cache] Invalid status code: ${options.url}, ${response.statusCode}, ${response.statusMessage}`);
 				next();
+			} else {
+				success = true;
 			}
-			readStream.pipe(writeStream);
 		});
-			// .on('error', (err) => {
-			// 	mikser.diagnostics.log(context ? this : context, 'error', `[cache] Download error: ${err.message}`);
-			// 	next();
-			// })
-			// .on('response', (response) => {
-			// 	if (response.statusCode !== 200) {
-			// 		mikser.diagnostics.log(context ? this : context, 'error', `[cache] Invalid status code: ${options.url}, ${response.statusCode}, ${response.statusMessage}`);
-			// 		next();
-			// 	} else {
-			// 		let writeStream = createOutputStream(destination);
-			// 		writeStream.on('error', next);
-			// 		writeStream.on('finish', () => { 
-			// 			debug(`Saved: ${destination}`) 
-			// 			next();
-			// 		});
-			// 		readStream.pipe(writeStream);
-			// 	}
-			// })
 
+		let writeStream = createOutputStream(destination);
+		writeStream.on('error', next);
+		writeStream.on('finish', () => {
+			if (!success) {
+				fs.remove(destination, next);
+			} else {
+				debug(`Saved: ${destination}`)
+				next();
+			}
+		});
+		readStream.pipe(writeStream);
 	}
 
 	function updateCache (cacheInfo) {
@@ -160,8 +149,11 @@ module.exports = function (mikser, context) {
 							method: 'GET',
 							encoding: null,
 							url: source,
-							auth: cacheInfo.credentials || {username:null, password:null}
 						};
+
+						if (cacheInfo.credentials) {
+							opts.auth = cacheInfo.credentials;
+						}
 
 						let downloadAsync = Promise.promisify(download);
 						return fs.existsAsync(cacheInfo.destination).then((exists) => {
