@@ -6,6 +6,7 @@ let extend = require('node.extend');
 let moment = require('moment');
 let Promise = require('bluebird');
 let createOutputStream = require('create-output-stream');
+let _ = require('lodash');
 
 module.exports = function (mikser, context) {
 	let debug = mikser.debug('caching');
@@ -31,21 +32,45 @@ module.exports = function (mikser, context) {
 	}
 
 	function download(destination, options, next) {
-		debug('Downloading:', options.url)
-		let readStream = request(options);
-		readStream.on('error', next);
-		readStream.on('response', (response) => {
-			if (response.statusCode === 200) {
-				let writeStream = createOutputStream(destination);
-				writeStream.on('error', next);
-				writeStream.on('finish', next);
-				readStream.pipe(writeStream);
-			}
-			else {
-				mikser.diagnostics.log(context, 'warning', `[cache] Invalid status code: ${options.url}, ${response.statusCode}, ${response.statusMessage}`);
+		debug('Downloading:', options.url);
+		let writeStream = createOutputStream(destination);
+		writeStream.on('error', next);
+		writeStream.on('finish', () => {
+			debug(`Saved: ${destination}`) 
+			next();
+		});
+
+		let readStream = request(options, (err, response) => {
+			if (err) {
+				mikser.diagnostics.log(context ? this : context, 'error', `[cache] Download error: ${err.message}`);
 				next();
 			}
+
+			if (response.statusCode !== 200) {
+				mikser.diagnostics.log(context ? this : context, 'error', `[cache] Invalid status code: ${options.url}, ${response.statusCode}, ${response.statusMessage}`);
+				next();
+			}
+			readStream.pipe(writeStream);
 		});
+			// .on('error', (err) => {
+			// 	mikser.diagnostics.log(context ? this : context, 'error', `[cache] Download error: ${err.message}`);
+			// 	next();
+			// })
+			// .on('response', (response) => {
+			// 	if (response.statusCode !== 200) {
+			// 		mikser.diagnostics.log(context ? this : context, 'error', `[cache] Invalid status code: ${options.url}, ${response.statusCode}, ${response.statusMessage}`);
+			// 		next();
+			// 	} else {
+			// 		let writeStream = createOutputStream(destination);
+			// 		writeStream.on('error', next);
+			// 		writeStream.on('finish', () => { 
+			// 			debug(`Saved: ${destination}`) 
+			// 			next();
+			// 		});
+			// 		readStream.pipe(writeStream);
+			// 	}
+			// })
+
 	}
 
 	function updateCache (cacheInfo) {
@@ -124,6 +149,7 @@ module.exports = function (mikser, context) {
 		cacheInfo.source = source;
 		updateCache(cacheInfo);
 		cacheInfo.toString = () => mikser.utils.getUrl(cacheInfo.destination);
+		if (context) var that = _.clone(this);
 
 		return {
 			process: () => {
@@ -134,7 +160,7 @@ module.exports = function (mikser, context) {
 							method: 'GET',
 							encoding: null,
 							url: source,
-							auth: cacheInfo.credentials || {}
+							auth: cacheInfo.credentials || {username:null, password:null}
 						};
 
 						let downloadAsync = Promise.promisify(download);
@@ -143,7 +169,7 @@ module.exports = function (mikser, context) {
 								return fs.unlinkAsync(cacheInfo.destination);
 							}
 						}).then(() => {
-							return downloadAsync(cacheInfo.destination, opts);
+							return downloadAsync.apply(that, [cacheInfo.destination, opts]);
 						});
 					}
 				}
@@ -158,7 +184,7 @@ module.exports = function (mikser, context) {
 								});
 							}
 							else if (!cacheInfo.isOptional) {
-								mikser.diagnostics.log(context, 'error', `[cache] File not found at: ${source}`);
+								mikser.diagnostics.log(context ? that : context, 'error', `[cache] File not found at: ${source}`);
 							}
 							return Promise.resolve();
 						});
@@ -171,7 +197,7 @@ module.exports = function (mikser, context) {
 
 	if (context){
 		context.cache = function(source, destination) {
-			let cache = _cache(context.entity, source, destination);
+			let cache = _cache.apply(this, [context.entity, source, destination]);
 			context.process(() => {
 				return cache.process();
 			});
