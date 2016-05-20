@@ -60,7 +60,7 @@ module.exports = function (mikser, context) {
 
 			sort: function (by, order) {
 				order = order || 'asc';
-				context.data[destination] = _.sortByOrder(context.data[destination], [by], [order]);
+				context.data[destination] = _.orderBy(context.data[destination], [by], [order]);
 				return this;
 			},
 
