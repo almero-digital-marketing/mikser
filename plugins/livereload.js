@@ -31,6 +31,9 @@ module.exports = function (mikser) {
 	}
 	let lastClientId = 0;
 
+	let refreshQueue = {};
+	let refreshTimeout;
+
 	livereload.isLive = function(collection, entityId) {
 		if (mikser.server.isListening) {
 			let entity = mikser.runtime.findEntity(collection, entityId);
@@ -49,23 +52,31 @@ module.exports = function (mikser) {
 			for(let clientId in livereload.clients) {
 				let client = livereload.clients[clientId];
 				if (!client.url) continue;
-				
 				let entity = mikser.runtime.findEntity(collection, entityId);
 				if (entity) {
 					debug('Client:', client.url, entity.url);
 					if (client.url == entity.url) {
-						debug('Refreshing[' + clientId + ']', entity.url);
-						client.socket.send(JSON.stringify({
-							command: 'reload',
-							path: entity.url
-						}), (err) => {
-							if (err) {
-								if (livereload.clients[clientId]) {
-									debug('Live reload disconnected:', livereload.clients[clientId].url, err);
-									delete livereload.clients[clientId];
+						if (refreshTimeout) clearTimeout(refreshTimeout);
+						refreshQueue[clientId] = () => {
+							debug('Refreshing[' + clientId + ']', entity.url);
+							client.socket.send(JSON.stringify({
+								command: 'reload',
+								path: entity.url
+							}), (err) => {
+								if (err) {
+									if (livereload.clients[clientId]) {
+										debug('Live reload disconnected:', livereload.clients[clientId].url, err);
+										delete livereload.clients[clientId];
+									}
 								}
+							});
+						};
+						refreshTimeout = setTimeout(() => {
+							for(let key in refreshQueue) {
+								refreshQueue[key]();
+								delete refreshQueue[key];
 							}
-						});
+						}, 500);
 					}
 				}
 			}
@@ -81,19 +92,33 @@ module.exports = function (mikser) {
 				let client = livereload.clients[clientId];
 				if (!S(file).endsWith('.html')) {
 					debug('Reloading[' + clientId + ']', file);
-					client.socket.send(JSON.stringify({
-						command: mikser.options.forceRefresh ? 'reload' : 'refresh',
-						path: file,
-						liveCSS: !mikser.options.forceRefresh,
-						liveImg: false
-					}), (err) => {
-						if (err) {
-							if (livereload.clients[clientId]) {
-								debug('Live reload disconnected:', livereload.clients[clientId].url, err);
-								delete livereload.clients[clientId];
+					let action = () => {
+						client.socket.send(JSON.stringify({
+							command: mikser.options.forceRefresh ? 'reload' : 'refresh',
+							path: file,
+							liveCSS: !mikser.options.forceRefresh,
+							liveImg: false
+						}), (err) => {
+							if (err) {
+								if (livereload.clients[clientId]) {
+									debug('Live reload disconnected:', livereload.clients[clientId].url, err);
+									delete livereload.clients[clientId];
+								}
 							}
-						}
-					});
+						});
+					}
+					if (mikser.options.forceRefresh) {
+						if (refreshTimeout) clearTimeout(refreshTimeout);
+						refreshQueue[clientId] = action;
+						refreshTimeout = setTimeout(() => {
+							for(let key in refreshQueue) {
+								refreshQueue[key]();
+								delete refreshQueue[key];
+							}
+						}, 500);						
+					} else {
+						action();
+					}
 				}
 			}
 		}
