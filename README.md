@@ -85,3 +85,5 @@ You can check one of our projects [Dialog](https://github.com/almero-digital-mar
 	* [Multi-language web sites](https://github.com/almero-digital-marketing/mikser-docs/blob/master/localization.md#multi-language-web-sites)
 	* [Referring documents from different languages](https://github.com/almero-digital-marketing/mikser-docs/blob/master/localization.md#referring-documents-from-different-languages)
 	* [Alternates](https://github.com/almero-digital-marketing/mikser-docs/blob/master/localization.md#alternates)
+
+[![Analytics](https://ga-beacon.appspot.com/UA-78544431-1/README.md?pixel)](https://github.com/igrigorik/ga-beacon)
