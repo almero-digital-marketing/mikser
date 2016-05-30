@@ -58,7 +58,6 @@ module.exports.run = function(options) {
 				.then(mikser.tools.build)
 				.then(mikser.watcher.start)
 				.then(() => {
-					mikser.observer.start();
 					if (!mikser.options.server && !mikser.options.watch) {
 						mikser.exit();
 					}
