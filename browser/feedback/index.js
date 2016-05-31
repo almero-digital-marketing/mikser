@@ -19,6 +19,7 @@ module.exports = function (mikser) {
 
 		ws.onmessage = function(event) {
 			event = JSON.parse(event.data);
+			console.log(event)
 
 			if (event.level === 'progress') {
 

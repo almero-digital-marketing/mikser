@@ -155,7 +155,6 @@ module.exports = function (mikser, context) {
 	}
 
 	function transform(entity, source, destination) {
-
 		if(!source || typeof source !== 'string') {
 			let err = new Error('Undefined source');
 			err.origin = 'images';
@@ -212,8 +211,11 @@ module.exports = function (mikser, context) {
 		imageInfo.outFolder = path.dirname(imageInfo.destination);
 		imageInfo.toString = () => mikser.utils.getUrl(imageInfo.destination);
 		pushTransforms(imageInfo);
+		
+		if (context) {
+			var that = _.clone(this);
+		}
 
-		let capturedContext = _.defaults({}, context);
 		return {
 			process: () => {
 
@@ -221,7 +223,9 @@ module.exports = function (mikser, context) {
 				// full path to file or undefined if file does not exist
 				if (!sourceFilePath) {
 					if (context) {
-						return mikser.diagnostics.log(capturedContext, 'warning', `[images] File not found at: ${source}`);
+						if (!that.layout) {
+						}
+						return mikser.diagnostics.log(that, 'warning', `[images] File not found at: ${source}`);
 					} else {
 						return mikser.diagnostics.log('warning', `[images] File not found at: ${source}`);
 					}
@@ -273,7 +277,7 @@ module.exports = function (mikser, context) {
 
 	if (context) {
 		context.image = function(source, destination) {
-			let imageTransform = transform(context.entity, source, destination);
+			let imageTransform = transform.apply(this, [context.entity, source, destination]);
 			context.process(imageTransform.process);
 			return imageTransform.imageInfo;
 		}

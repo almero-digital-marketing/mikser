@@ -199,7 +199,11 @@ module.exports = function (mikser, context) {
 			process: () => {
 				videoInfo.source = mikser.utils.findSource(source);
 				if (!videoInfo.source) {
-					return mikser.diagnostics.log(context, 'warning', `[videos] File not found at: ${source}`);
+					if (context) {
+						return mikser.diagnostics.log(this, 'warning', `[videos] File not found at: ${source}`);
+					} else {
+						return mikser.diagnostics.log('warning', `[videos] File not found at: ${source}`);
+					}
 				}
 
 				if ((videoInfo.source.indexOf(mikser.options.workingFolder) !== 0) && !destination) {
@@ -228,7 +232,7 @@ module.exports = function (mikser, context) {
 
 	if (context) {
 		context.video = function(source, destination) {
-			let videoTransform = transform(context.entity, source, destination);
+			let videoTransform = transform.apply(this, [context.entity, source, destination]);
 			context.process(videoTransform.process);
 			return videoTransform.videoInfo;
 		}
