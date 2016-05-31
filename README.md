@@ -58,13 +58,15 @@ You can check one of our projects [Dialog](https://github.com/almero-digital-mar
 	* [Using data queries](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-data-queries)
 		* [Layout queries](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#layout-queries)
 		* [Context queries](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#context-queries)
+		* [Live queries](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#live-queries)
 	* [Referring other documents from layouts](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#referring-other-documents-from-layouts)
-	* [Blocks (Partials)](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#blocks-partials)
-		* [Using plain blocks](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-plain-blocks)
-		* [Using blocks with options](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-blocks-with-options)
+	* [Blocks and Partials](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#blocks-and-partials)
+		* [Using plain blocks](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-plain-blocks-or-partials)
+		* [Using blocks with options](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-blocks-or-partials-with-options)
 	* [Short codes](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#short-codes)
 	* [Paging](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#paging)
 	* [Using auto layouts](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#using-auto-layouts)
+	* [Importing meta data from external file](https://github.com/almero-digital-marketing/mikser-docs/blob/master/layouts.md#importing-meta-data-from-external-file)
 * [External tools](https://github.com/almero-digital-marketing/mikser-docs/blob/master/tools.md)
 	* [Preprocessors and compilators](https://github.com/almero-digital-marketing/mikser-docs/blob/master/tools.md#preprocessors-and-compilators)
 	* [Build systems](https://github.com/almero-digital-marketing/mikser-docs/blob/master/tools.md#build-systems)
@@ -75,24 +77,13 @@ You can check one of our projects [Dialog](https://github.com/almero-digital-mar
 * [Debugging](https://github.com/almero-digital-marketing/mikser-docs/blob/master/debugging.md)
 	* [Error diagnostics](https://github.com/almero-digital-marketing/mikser-docs/blob/master/debugging.md#error-diagnostics)
 	* [Debug information](https://github.com/almero-digital-marketing/mikser-docs/blob/master/debugging.md#debug-information)
-* Plug-ins
-	* Layout plug-ins
-	* System plug-ins
-	* Build-in plug-ins
-		* Markup and template plug-ins
-		* Collections plug-in
-		* Images plug-in
-		* Videos plug-in
-		* Versions plug-in
-		* Caching plug-in
-	* Third-party plug-ins
-	* Custom plug-ins
-* Multi-language web sites
-	* Referring documents from different languages
-	* Alternates
-* Multi-domain web sites
-	* Shared resources
-	* Asset replication
-* Configuration
-* Command line arguments
-* Continuous integration
+* [Multi-domain web sites](https://github.com/almero-digital-marketing/mikser-docs/blob/master/domains.md)
+	* [Asset replication](https://github.com/almero-digital-marketing/mikser-docs/blob/master/domains.md#asset-replication)
+	* [Shared resources](https://github.com/almero-digital-marketing/mikser-docs/blob/master/domains.md#shared-resources)
+	* [Virtual hosts](https://github.com/almero-digital-marketing/mikser-docs/blob/master/domains.md#virtual-hosts)
+* [Localization](https://github.com/almero-digital-marketing/mikser-docs/blob/master/localization.md)
+	* [Multi-language web sites](https://github.com/almero-digital-marketing/mikser-docs/blob/master/localization.md#multi-language-web-sites)
+	* [Referring documents from different languages](https://github.com/almero-digital-marketing/mikser-docs/blob/master/localization.md#referring-documents-from-different-languages)
+	* [Alternates](https://github.com/almero-digital-marketing/mikser-docs/blob/master/localization.md#alternates)
+
+[![Analytics](https://ga-beacon.appspot.com/UA-78544431-1/README.md?pixel)](https://github.com/igrigorik/ga-beacon)
