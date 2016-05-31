@@ -6,6 +6,24 @@ let cluster = require('cluster');
 let net = require('net');
 
 module.exports = function (mikser) {
+
+	mikser.on('mikser.diagnostics.log', (log) => {
+		// console.log('test', log.message, log.layout ? log.layout._id : 'no layout', cluster.isMaster);
+		// if (feedback.server) {
+		// 	if (log.level !== 'info') {
+		// 		let data = { message: log.message, level: log.level };
+		// 		if (log.document) data.documentId = log.document._id;
+		// 		if (log.layout) data.layoutId = log.layout._id;
+		// 		debug('Broadcasting log:', data);
+		// 		if (cluster.isMaster) {
+		// 			return feedback.server.broadcast(data);
+		// 		} else {
+		// 			return mikser.broker.call('mikser.plugins.feedback.server.broadcast', data);
+		// 		}
+		// 	}
+		// }
+	});
+
 	if (cluster.isWorker) return;
 
 	if (mikser.config.feedback === false) {
@@ -32,11 +50,12 @@ module.exports = function (mikser) {
 		feedback.server = new WebSocketServer({ port: mikser.config.feedbackPort });
 
 		feedback.server.broadcast = function broadcast(data) {
+			if (typeof data !== 'string') {
+				data = JSON.stringify(data);
+			}
 			feedback.server.clients.forEach(function each(client) {
 				client.send(data, (err) => {
-					if (!err) {
-						debug('Data is send:', data);
-					} else {
+					if (err) {
 						debug('Send failed:', err);
 					}
 				});
@@ -55,28 +74,14 @@ module.exports = function (mikser) {
 
 	mikser.on('mikser.diagnostics.progress', (progress) => {
 		if (feedback.server) {
+			// console.log(progress, '???')
 			// when in debug mode progress event is not send at all !!!
 			let message = {
 				message: progress,
 				level: 'progress'
 			}
 			debug('Handling progress event');
-			return feedback.server.broadcast(JSON.stringify(message));
-		}
-	});
-
-	mikser.on('mikser.diagnostics.log', (log) => {
-
-		if (feedback.server) {
-			if(log.level !== 'info' || !log.document) {
-				let data = { message: log.message, level: log.level };
-				if (log.document) data.documentId = log.document._id;
-				if (log.layout) {
-					data.layoutId = log.layout._id;
-				}
-				debug('Broadcasting log:', data);
-				return feedback.server.broadcast(JSON.stringify(data));
-			}
+			return feedback.server.broadcast(message);
 		}
 	});
 

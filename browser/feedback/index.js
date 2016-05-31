@@ -19,6 +19,7 @@ module.exports = function (mikser) {
 
 		ws.onmessage = function(event) {
 			event = JSON.parse(event.data);
+			console.log(event)
 
 			if (event.level === 'progress') {
 
@@ -37,8 +38,9 @@ module.exports = function (mikser) {
 
 
 			if (event.level === 'info') {
+				console.log(event.message, 'ulala mamet');
 				console.log('%c' + event.message, "color: #336600");
-				if (event.message.indexOf('Generation time:') !== -1) {
+				if (event.message.indexOf('Generation time:') === 0) {
 					nProgress.done();
 				}
 			}
