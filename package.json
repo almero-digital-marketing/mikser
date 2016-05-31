@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -52,6 +52,7 @@
     "mousetrap": "^1.6.0",
     "node-constants": "0.0.2",
     "node.extend": "^1.1.5",
+    "nprogress": "^0.2.0",
     "nunjucks": "^2.4.2",
     "parse-spawn-args": "^1.0.2",
     "prettysize": "0.0.3",
