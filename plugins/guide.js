@@ -5,7 +5,7 @@ let Promise = require('bluebird');
 let fs = require('fs-extra-promise');
 let path = require('path');
 let traverse = require('traverse');
-let letters = require('unicode-8.0.0/categories/L/regex').source;
+let letters = require('unicode-8.0.0/General_Category/Letter/regex').source;
 let XRegExp = require('xregexp');
 var cluster = require('cluster');
 
