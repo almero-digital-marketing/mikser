@@ -5,6 +5,7 @@ let Promise = require('bluebird');
 let cluster = require('cluster');
 let net = require('net');
 let chalk = require('chalk');
+let stripAnsi = require('strip-ansi');
 
 module.exports = function (mikser) {
 	let debug = mikser.debug('feedback');
@@ -37,7 +38,10 @@ module.exports = function (mikser) {
 
 			feedback.server.broadcast = function broadcast(data) {
 				if (typeof data !== 'string') {
+					data.message = stripAnsi(data.message)
 					data = JSON.stringify(data);
+				} else {
+					data = stripAnsi(data);
 				}
 
 				feedback.server.clients.forEach(function each(client) {
@@ -84,7 +88,6 @@ module.exports = function (mikser) {
 		});
 
 	}
-
 
 	mikser.on('mikser.diagnostics.log', (log) => {
 		if (log.level !== 'info') {

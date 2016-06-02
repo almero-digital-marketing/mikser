@@ -66,6 +66,7 @@
     "shortcode-parser": "0.0.1",
     "stream-splitter": "^0.3.2",
     "string": "^3.3.1",
+    "strip-ansi": "^3.0.1",
     "swig-templates": "^2.0.1",
     "syntax-error": "^1.1.6",
     "textile": "0.0.1",
