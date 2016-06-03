@@ -17,13 +17,20 @@ module.exports = function (mikser, context) {
 					let destination = mikser.utils.predictDestination(source);
 					destination = mikser.utils.resolveDestination(destination, context.entity.destination);
 					stats.url = mikser.utils.getUrl(destination);
+				} else {
+					stats.url = mikser.utils.getUrl(file);
+				}
+				stats.toString = function() {
+					return stats.url;
 				}
 				result.push(stats);
 			});
 		}
 
+		console.log(globFolder);
 		if (globFolder) {
 			let cwd = path.join(mikser.options.workingFolder, globFolder);
+			console.log(cwd);
 			getStats(cwd, false);
 		} else {
 			for (let cwd of globFolders) {
