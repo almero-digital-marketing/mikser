@@ -4,94 +4,148 @@ let WebSocketServer = require('ws').Server;
 let Promise = require('bluebird');
 let cluster = require('cluster');
 let net = require('net');
+let chalk = require('chalk');
+let stripAnsi = require('strip-ansi');
 
 module.exports = function (mikser) {
-
-	mikser.on('mikser.diagnostics.log', (log) => {
-		// console.log('test', log.message, log.layout ? log.layout._id : 'no layout', cluster.isMaster);
-		// if (feedback.server) {
-		// 	if (log.level !== 'info') {
-		// 		let data = { message: log.message, level: log.level };
-		// 		if (log.document) data.documentId = log.document._id;
-		// 		if (log.layout) data.layoutId = log.layout._id;
-		// 		debug('Broadcasting log:', data);
-		// 		if (cluster.isMaster) {
-		// 			return feedback.server.broadcast(data);
-		// 		} else {
-		// 			return mikser.broker.call('mikser.plugins.feedback.server.broadcast', data);
-		// 		}
-		// 	}
-		// }
-	});
-
-	if (cluster.isWorker) return;
-
-	if (mikser.config.feedback === false) {
-		console.log('Feedback is disabled');
-		return Promise.resolve();
+	let debug = mikser.debug('feedback');
+	let feedback = {
+		server: {
+			broadcast: (data) => {
+				if (typeof data !== 'string') {
+					data.message = stripAnsi(data.message);
+					if (data.level === 'error' || data.level === 'warning') {
+						feedback.history.push(data);
+					}
+				}
+			}
+		},
+		history: [],
+		finishedPointer: 0,
+		finished: false
 	}
 
-	mikser.config.browser.push('feedback');
-	let debug = mikser.debug('feedback');
-	let feedback = {};
+	if (cluster.isMaster) {
 
-	mikser.cleanup.push(() => {
-		if (feedback.server) {
-			debug('Closing web socket server');
-			let closeAsync = Promise.promisify(feedback.server.close, { context: feedback.server });
-			return closeAsync().catch((err) => {
-				debug('Closing server failed:', err);
-			});
+		if (mikser.config.feedback === false) {
+			console.log('Feedback is disabled');
+			return Promise.resolve();
 		}
-		return Promise.resolve();
-	});
 
-	mikser.on('mikser.server.ready', () => {
-		feedback.server = new WebSocketServer({ port: mikser.config.feedbackPort });
-
-		feedback.server.broadcast = function broadcast(data) {
-			if (typeof data !== 'string') {
-				data = JSON.stringify(data);
+		mikser.config.browser.push('feedback');
+		mikser.cleanup.push(() => {
+			if (feedback.server) {
+				debug('Closing web socket server');
+				let closeAsync = Promise.promisify(feedback.server.close, { context: feedback.server });
+				return closeAsync().catch((err) => {
+					debug('Closing server failed:', err);
+				});
 			}
-			feedback.server.clients.forEach(function each(client) {
-				client.send(data, (err) => {
-					if (err) {
-						debug('Send failed:', err);
+			return Promise.resolve();
+		});
+
+		mikser.on('mikser.server.ready', () => {
+			feedback.server = new WebSocketServer({ port: mikser.config.feedbackPort });
+
+			feedback.server.broadcast = function broadcast(data) {
+				if (typeof data !== 'string') {
+					data.message = stripAnsi(data.message);
+					if (data.level === 'error' || data.level === 'warning') {
+						feedback.history.push(data);
 					}
+					data = JSON.stringify(data);
+				} else {
+					data = stripAnsi(data);
+				}
+
+				feedback.server.clients.forEach(function each(client) {
+					client.send(data, (err) => {
+						if (err) {
+							debug('Send failed:', err);
+						}
+					});
+				});
+			}
+
+			feedback.server.on('connection', (socket) => {
+				debug('New feedback connection established');
+				if (feedback.history.length > 0) {
+					let data = {
+						history: feedback.history,
+						finished: feedback.finished,
+						level: 'history'
+					}
+					socket.send(JSON.stringify(data), (err) => {
+						debug(`Error sending data: ${err}`);
+					});
+				}
+
+				socket.on('close', (code, message) => {
+					debug(`Feedback disconnected.Code: ${code}`, message);
 				});
 			});
-		}
-
-		feedback.server.on('connection', (socket) => {
-			debug('New feedback connection established');
-
-			socket.on('close', (socket) => {
-				debug('Feedback disconnected.');
-			});
-
 		});
-	});
 
-	mikser.on('mikser.diagnostics.progress', (progress) => {
-		if (feedback.server) {
-			// console.log(progress, '???')
-			// when in debug mode progress event is not send at all !!!
-			let message = {
-				message: progress,
-				level: 'progress'
+		mikser.on('mikser.scheduler.renderStarted', () => {
+			debug('Started');
+			// clear feedback history
+			feedback.history.splice(0, feedback.finishedPointer);
+			feedback.finishedPointer = 0;
+			feedback.finished = false;
+			return feedback.server.broadcast({
+				status: 'started'
+			});
+		});
+
+		mikser.on('mikser.diagnostics.progress', (progress) => {
+			if (feedback.server) {
+				debug('Handling progress event');
+				return feedback.server.broadcast({
+					message: progress,
+					status: 'progress'
+				});
 			}
-			debug('Handling progress event');
-			return feedback.server.broadcast(message);
+		});
+
+		mikser.on('mikser.scheduler.renderFinished', () => {
+			debug('Finished');
+			feedback.finishedPointer = feedback.history.length;
+			feedback.finished = true;
+			return feedback.server.broadcast({
+				status: 'finished'
+			});
+		});
+
+	}
+
+	mikser.on('mikser.diagnostics.log', (log) => {
+		if (log.level !== 'info') {
+			let data = { message: log.message, level: log.level };
+			if (log.document) data.documentId = log.document._id;
+			if (log.layout) data.layoutId = log.layout._id;
+			debug('Broadcasting log:', data);
+
+			if (cluster.isMaster && feedback.server) {
+				return feedback.server.broadcast(data);
+			} else if(cluster.isWorker) {
+				return mikser.broker.call('mikser.plugins.feedback.server.broadcast', data);
+			}
 		}
 	});
 
-	return mikser.utils.resolvePort(mikser.config.feedbackPort, 'feedback').then((port) => {
-		let feedbackPort = mikser.config.feedbackPort;
-		if (feedbackPort && feedbackPort !== port) {
-			mikser.diagnostics.log('warning', `Feedback config port: ${feedbackPort} is already in use, resolved with ${port}`);
-		}
-		mikser.config.feedbackPort = port;
-		debug('Port:', port);
-		return Promise.resolve(feedback);
-	});
+
+	if (cluster.isWorker) {
+		return Promise.resolve();
+	} else {
+		return mikser.utils.resolvePort(mikser.config.feedbackPort, 'feedback').then((port) => {
+			let feedbackPort = mikser.config.feedbackPort;
+			if (feedbackPort && feedbackPort !== port) {
+				mikser.diagnostics.log('warning', `Feedback config port: ${feedbackPort} is already in use, resolved with ${port}`);
+			}
+			mikser.config.feedbackPort = port;
+			debug('Port:', port);
+			return Promise.resolve(feedback);
+		});
+	}
+
 }

@@ -1,1 +1,19 @@
+#nprogress.mikser-feedback-warning .bar {
+  background: #FCC300;
+}
 
+#nprogress.mikser-feedback-warning .peg {
+  box-shadow: 0 0 10px #FCC300, 0 0 5px #FCC300;
+}
+
+#nprogress.mikser-feedback-error .bar{
+  background: #EE3C43;
+}
+
+#nprogress.mikser-feedback-error .peg {
+  box-shadow: 0 0 10px #EE3C43, 0 0 5px #EE3C43;
+}
+
+.snackbar-content strong {
+	font-weight: bold;
+}
