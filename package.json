@@ -64,6 +64,7 @@
     "resolve": "^1.1.7",
     "route-parser": "0.0.5",
     "shortcode-parser": "0.0.1",
+    "snackbarjs": "^1.1.0",
     "stream-splitter": "^0.3.2",
     "string": "^3.3.1",
     "strip-ansi": "^3.0.1",

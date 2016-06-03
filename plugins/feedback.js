@@ -11,11 +11,22 @@ module.exports = function (mikser) {
 	let debug = mikser.debug('feedback');
 	let feedback = {
 		server: {
-			broadcast: () => {}
-		}
+			broadcast: (data) => {
+				if (typeof data !== 'string') {
+					data.message = stripAnsi(data.message);
+					if (data.level === 'error' || data.level === 'warning') {
+						feedback.history.push(data);
+					}
+				}
+			}
+		},
+		history: [],
+		finishedPointer: 0,
+		finished: false
 	}
 
 	if (cluster.isMaster) {
+
 		if (mikser.config.feedback === false) {
 			console.log('Feedback is disabled');
 			return Promise.resolve();
@@ -38,7 +49,10 @@ module.exports = function (mikser) {
 
 			feedback.server.broadcast = function broadcast(data) {
 				if (typeof data !== 'string') {
-					data.message = stripAnsi(data.message)
+					data.message = stripAnsi(data.message);
+					if (data.level === 'error' || data.level === 'warning') {
+						feedback.history.push(data);
+					}
 					data = JSON.stringify(data);
 				} else {
 					data = stripAnsi(data);
@@ -55,6 +69,16 @@ module.exports = function (mikser) {
 
 			feedback.server.on('connection', (socket) => {
 				debug('New feedback connection established');
+				if (feedback.history.length > 0) {
+					let data = {
+						history: feedback.history,
+						finished: feedback.finished,
+						level: 'history'
+					}
+					socket.send(JSON.stringify(data), (err) => {
+						debug(`Error sending data: ${err}`);
+					});
+				}
 
 				socket.on('close', (code, message) => {
 					debug(`Feedback disconnected.Code: ${code}`, message);
@@ -63,27 +87,32 @@ module.exports = function (mikser) {
 		});
 
 		mikser.on('mikser.scheduler.renderStarted', () => {
-			console.log(chalk.bgCyan.bold('Started'));
+			debug('Started');
+			// clear feedback history
+			feedback.history.splice(0, feedback.finishedPointer);
+			feedback.finishedPointer = 0;
+			feedback.finished = false;
 			return feedback.server.broadcast({
-				message: 'render-started'
+				status: 'started'
 			});
 		});
 
 		mikser.on('mikser.diagnostics.progress', (progress) => {
 			if (feedback.server) {
-				let message = {
-					message: progress,
-					level: 'progress'
-				}
 				debug('Handling progress event');
-				return feedback.server.broadcast(message);
+				return feedback.server.broadcast({
+					message: progress,
+					status: 'progress'
+				});
 			}
 		});
 
 		mikser.on('mikser.scheduler.renderFinished', () => {
-			console.log(chalk.bgGreen.bold('Finished'));
+			debug('Finished');
+			feedback.finishedPointer = feedback.history.length;
+			feedback.finished = true;
 			return feedback.server.broadcast({
-				message: 'render-finished'
+				status: 'finished'
 			});
 		});
 
