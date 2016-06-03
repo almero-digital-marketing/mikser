@@ -126,9 +126,9 @@ module.exports = function (mikser) {
 			debug('Broadcasting log:', data);
 
 			if (cluster.isMaster && feedback.server) {
-				return feedback.server.broadcast(data);
+				feedback.server.broadcast(data);
 			} else if(cluster.isWorker) {
-				return mikser.broker.call('mikser.plugins.feedback.server.broadcast', data);
+				mikser.broker.call('mikser.plugins.feedback.server.broadcast', data);
 			}
 		}
 	});
