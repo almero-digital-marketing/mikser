@@ -58,6 +58,7 @@
     "prettysize": "0.0.3",
     "promise-queue": "^2.2.3",
     "pug": "^2.0.0-alpha8",
+    "reconnectingwebsocket": "^1.0.0",
     "remove-markdown": "0.1.0",
     "request": "^2.72.0",
     "require-new": "^1.1.0",
