@@ -97,7 +97,8 @@ module.exports = function (mikser) {
 				error: 0,
 				warning: 0,
 			};
-			console.log('Mikser: Generation ' + parsedData.status);
+			console.log('Mikser: Generation started.');
+			$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning');
 		}
 		else if (parsedData.status === 'progress') {
 			var pending = extractNumber(parsedData.message, 'pending');
@@ -126,7 +127,7 @@ module.exports = function (mikser) {
 			handleMessage(parsedData);
 		}
 		else if (parsedData.status === 'finished') {
-			console.log('Mikser: Generation', parsedData.status, 'errors: '+ counters.error, 'warnings: ' + counters.warning);
+			console.log('Mikser: Generation finished. Errors: '+ counters.error, 'warnings: ' + counters.warning);
 			showSummary();
 			nProgress.done();
 			currentProgress = 0;
