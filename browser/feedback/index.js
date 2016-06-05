@@ -16,15 +16,14 @@ module.exports = function (mikser) {
 
 	var port = mikser.config.feedbackPort;
 	var ws = new ReconnectingWebSocket('ws://' + location.host.split(':')[0] + ':' + port);
+	var lastMessage;
 
 	var styles = {
 		warning: [
 			'color: #FCC300',
-			'font-weight: bold',
 		].join(';'),
 		error: [
 			'color: #EE3C43',
-			'font-weight: bold',
 		].join(';')
 	}
 
@@ -51,7 +50,15 @@ module.exports = function (mikser) {
 				currentState = data.level;
 			}
 		}
-		console.log('%c Mikser: ' + data.message, styles[data.level]);
+		if (data.message != lastMessage) {
+			console.log('%cMikser: ' + data.message, styles[data.level]);
+			lastMessage = data.message;
+		}
+		if (data.layoutId) {
+			console.log('%c  ' + data.entityId + ' -> ' + data.layoutId, styles[data.level]);			
+		} else if (data.entityId) {
+			console.log('%c  ' + data.entityId, styles[data.level]);			
+		}
 		counters[data.level]++;
 		$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning').addClass('mikser-feedback-' + currentState);
 	}
@@ -67,7 +74,7 @@ module.exports = function (mikser) {
 
 		if (counters.warning || counters.error) {
 			$.snackbar({
-				content: 'Mikser finished.' + messageSulfix,
+				content: 'Mikser generation finished.' + messageSulfix,
 				htmlAllowed: true,
 				timeout: 10 * 1000
 			});
@@ -90,7 +97,7 @@ module.exports = function (mikser) {
 				error: 0,
 				warning: 0,
 			};
-			console.log('%c Mikser: ' + parsedData.status, 'color: green');
+			console.log('Mikser: Generation ' + parsedData.status);
 		}
 		else if (parsedData.status === 'progress') {
 			var pending = extractNumber(parsedData.message, 'pending');
@@ -119,7 +126,7 @@ module.exports = function (mikser) {
 			handleMessage(parsedData);
 		}
 		else if (parsedData.status === 'finished') {
-			console.log('Mikser:', parsedData.status, ' errors: '+ counters.error, 'warnings: ' + counters.warning);
+			console.log('Mikser: Generation', parsedData.status, 'errors: '+ counters.error, 'warnings: ' + counters.warning);
 			showSummary();
 			nProgress.done();
 			currentProgress = 0;
