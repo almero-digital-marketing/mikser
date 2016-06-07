@@ -86,7 +86,7 @@ module.exports = function (mikser) {
 			feedback.history.splice(0, feedback.finishedPointer);
 			feedback.finishedPointer = 0;
 			feedback.finished = false;
-			return feedback.server.broadcast({
+			feedback.server.broadcast({
 				status: 'started'
 			});
 		});
@@ -94,7 +94,7 @@ module.exports = function (mikser) {
 		mikser.on('mikser.diagnostics.progress', (progress) => {
 			if (feedback.server) {
 				debug('Handling progress event');
-				return feedback.server.broadcast({
+				feedback.server.broadcast({
 					message: progress,
 					status: 'progress'
 				});
@@ -105,7 +105,7 @@ module.exports = function (mikser) {
 			debug('Finished');
 			feedback.finishedPointer = feedback.history.length;
 			feedback.finished = true;
-			return feedback.server.broadcast({
+			feedback.server.broadcast({
 				status: 'finished'
 			});
 		});
@@ -118,23 +118,18 @@ module.exports = function (mikser) {
 
 	mikser.on('mikser.diagnostics.log', (log) => {
 		if (log.level !== 'info') {
-			let data = { 
-				message: stripAnsi(log.message),
-				level: log.level
-			};
-			if (log.document) data.documentId = log.document._id;
-			if (log.layout) data.layoutId = log.layout._id;
-
-			feedback.history.push(data);
-			debug('Broadcasting log:', data);
-
+			debug('Broadcasting log:', log);
+			feedback.history.push(log);
+			log = stripAnsi(log.message);
+			
 			if (cluster.isMaster && feedback.server) {
-				return feedback.server.broadcast(data);
+				feedback.server.broadcast(log);
 			} else if(cluster.isWorker) {
-				return mikser.broker.call('mikser.plugins.feedback.server.broadcast', data);
+				mikser.broker.call('mikser.plugins.feedback.server.broadcast', log);
 			}
 		}
 	});
+
 
 	if (cluster.isWorker) {
 		return Promise.resolve();
