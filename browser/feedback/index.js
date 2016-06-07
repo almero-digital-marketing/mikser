@@ -3,6 +3,7 @@ var ReconnectingWebSocket = require('reconnectingwebsocket');
 var nProgress = require('nprogress');
 var S = require('string');
 var $ = require('jquery');
+var aw = require('ansi-webkit');
 require('snackbarjs');
 
 nProgress.configure({ trickle: false, showSpinner: false });
@@ -84,6 +85,14 @@ module.exports = function (mikser) {
 
 	ws.onmessage = function(event) {
 		var parsedData = JSON.parse(event.data);
+
+		if (parsedData.run) {
+			console.log(parsedData, '???????????');
+		}
+
+		// console.log(parsedData.message);
+		// console.log.apply(console, aw.parse(parsedData.message));
+		// return;
 
 		if (parsedData.status === 'started') {
 			counters = {

@@ -49,13 +49,7 @@ module.exports = function (mikser) {
 
 			feedback.server.broadcast = function broadcast(data) {
 				if (typeof data !== 'string') {
-					data.message = stripAnsi(data.message);
-					if (data.level === 'error' || data.level === 'warning') {
-						feedback.history.push(data);
-					}
 					data = JSON.stringify(data);
-				} else {
-					data = stripAnsi(data);
 				}
 
 				feedback.server.clients.forEach(function each(client) {
@@ -116,13 +110,22 @@ module.exports = function (mikser) {
 			});
 		});
 
+		mikser.on('mikser.tools.run', (log) => {
+			feedback.server.broadcast(log);
+		});
+
 	}
 
 	mikser.on('mikser.diagnostics.log', (log) => {
 		if (log.level !== 'info') {
-			let data = { message: log.message, level: log.level };
+			let data = { 
+				message: stripAnsi(log.message),
+				level: log.level
+			};
 			if (log.document) data.documentId = log.document._id;
 			if (log.layout) data.layoutId = log.layout._id;
+
+			feedback.history.push(data);
 			debug('Broadcasting log:', data);
 
 			if (cluster.isMaster && feedback.server) {
@@ -132,7 +135,6 @@ module.exports = function (mikser) {
 			}
 		}
 	});
-
 
 	if (cluster.isWorker) {
 		return Promise.resolve();
