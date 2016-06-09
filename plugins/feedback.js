@@ -6,8 +6,10 @@ let cluster = require('cluster');
 let net = require('net');
 let chalk = require('chalk');
 let stripAnsi = require('strip-ansi');
+let util = require('util');
 
 module.exports = function (mikser) {
+
 	let debug = mikser.debug('feedback');
 	let feedback = {
 		server: {
@@ -22,7 +24,8 @@ module.exports = function (mikser) {
 		},
 		history: [],
 		finishedPointer: 0,
-		finished: false
+		finished: false,
+		commands: {}
 	}
 
 	if (cluster.isMaster) {
@@ -49,13 +52,11 @@ module.exports = function (mikser) {
 
 			feedback.server.broadcast = function broadcast(data) {
 				if (typeof data !== 'string') {
-					data.message = stripAnsi(data.message);
-					if (data.level === 'error' || data.level === 'warning') {
+					// gather errors and warnings from diagnostics module
+					if (data.source === 'diagnostics' && (data.level === 'error' || data.level === 'warning')) {
 						feedback.history.push(data);
 					}
 					data = JSON.stringify(data);
-				} else {
-					data = stripAnsi(data);
 				}
 
 				feedback.server.clients.forEach(function each(client) {
@@ -67,14 +68,34 @@ module.exports = function (mikser) {
 				});
 			}
 
+			// when new client send all history objects
 			feedback.server.on('connection', (socket) => {
 				debug('New feedback connection established');
+				// send diagnostics history 
 				if (feedback.history.length > 0) {
 					let data = {
 						history: feedback.history,
 						finished: feedback.finished,
-						level: 'history'
+						level: 'history',
+						source: 'diagnostics'
 					}
+					socket.send(JSON.stringify(data), (err) => {
+						debug(`Error sending data: ${err}`);
+					});
+				}
+				// send tools history
+				if (Object.keys(feedback.commands).length > 0 && feedback.commands.constructor === Object) {
+					let data = {
+						history: Object.keys(feedback.commands).map((command) => {
+							return {
+								command: command,
+								message: feedback.commands[command].message,
+								code: feedback.commands[command].code
+							};
+						}),
+						source: 'tools'
+					}
+
 					socket.send(JSON.stringify(data), (err) => {
 						debug(`Error sending data: ${err}`);
 					});
@@ -88,12 +109,12 @@ module.exports = function (mikser) {
 
 		mikser.on('mikser.scheduler.renderStarted', () => {
 			debug('Started');
-			// clear feedback history
 			feedback.history.splice(0, feedback.finishedPointer);
 			feedback.finishedPointer = 0;
 			feedback.finished = false;
 			feedback.server.broadcast({
-				status: 'started'
+				status: 'started',
+				source: 'scheduler'
 			});
 		});
 
@@ -102,7 +123,8 @@ module.exports = function (mikser) {
 				debug('Handling progress event');
 				feedback.server.broadcast({
 					message: progress,
-					status: 'progress'
+					status: 'progress',
+					source: 'queue'
 				});
 			}
 		});
@@ -112,7 +134,31 @@ module.exports = function (mikser) {
 			feedback.finishedPointer = feedback.history.length;
 			feedback.finished = true;
 			feedback.server.broadcast({
-				status: 'finished'
+				status: 'finished',
+				source: 'scheduler'
+			});
+		});
+
+		mikser.on('mikser.tools.run.start', (event) => {
+			delete feedback.commands[event.command];
+		});
+
+		mikser.on('mikser.tools.run', (event) => {
+			if (!feedback.commands[event.command]) {
+				feedback.commands[event.command] = { message: '' };
+			}
+			let command = feedback.commands[event.command];
+			if (event.message) command.message += event.message + '\n';
+		});
+
+		mikser.on('mikser.tools.run.finish', (event) => {
+			feedback.commands[event.command].code = event.code;
+
+			feedback.server.broadcast({
+				code: event.code,
+				command: event.command,
+				message: feedback.commands[event.command].message,
+				source: 'tools'
 			});
 		});
 
@@ -121,7 +167,9 @@ module.exports = function (mikser) {
 	mikser.on('mikser.diagnostics.log', (log) => {
 		if (log.level !== 'info') {
 			debug('Broadcasting log:', log);
-
+			log.message = stripAnsi(log.message);
+			log.source = 'diagnostics';
+			
 			if (cluster.isMaster && feedback.server) {
 				feedback.server.broadcast(log);
 			} else if(cluster.isWorker) {
@@ -129,7 +177,6 @@ module.exports = function (mikser) {
 			}
 		}
 	});
-
 
 	if (cluster.isWorker) {
 		return Promise.resolve();
