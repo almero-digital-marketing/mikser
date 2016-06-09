@@ -17,9 +17,8 @@ module.exports = function (mikser) {
 		.init();
 	mikser.options.forceRefresh = mikser.cli.forceRefresh;
 
-	mikser.config.watcher.output = ['**/*.jpeg', '**/*.jpg', '**/*.gif', '**/*.png', '**/*.svg'];
-	mikser.config.watcher.reload = ['**/*.css', '**/*.js'];
-
+	mikser.config.watcher.output = mikser.config.watcher.output || ['**/*.jpeg', '**/*.jpg', '**/*.gif', '**/*.png', '**/*.svg'];
+	mikser.config.watcher.reload = mikser.config.watcher.reload || ['**/*.css', '**/*.js'];
 
 	if (mikser.config.livereload === false) {
 		console.log('Live reload: disabled');
@@ -85,12 +84,13 @@ module.exports = function (mikser) {
 				if (!S(file).endsWith('.html')) {
 					debug('Reloading[' + clientId + ']', file);
 					let action = () => {
-						client.socket.send(JSON.stringify({
-							command: mikser.options.forceRefresh ? 'reload' : 'refresh',
+						let message = {
+							command: 'reload',
 							path: file,
 							liveCSS: !mikser.options.forceRefresh,
 							liveImg: false
-						}), (err) => {
+						}
+						client.socket.send(JSON.stringify(message), (err) => {
 							if (err) {
 								if (livereload.clients[clientId]) {
 									debug('Live reload disconnected:', livereload.clients[clientId].url, err);
@@ -149,6 +149,7 @@ module.exports = function (mikser) {
 			});
 
 			socket.on('message', (message) => {
+				console.log(message);
 				message = JSON.parse(message);
 				if (message.command === 'hello') {
 					socket.send(JSON.stringify({
