@@ -17,6 +17,10 @@ module.exports = function (mikser) {
 		.init();
 	mikser.options.forceRefresh = mikser.cli.forceRefresh;
 
+	mikser.config.watcher.output = ['**/*.jpeg', '**/*.jpg', '**/*.gif', '**/*.png', '**/*.svg'];
+	mikser.config.watcher.reload = ['**/*.css', '**/*.js'];
+
+
 	if (mikser.config.livereload === false) {
 		console.log('Live reload: disabled');
 		return Promise.resolve();
@@ -33,19 +37,6 @@ module.exports = function (mikser) {
 
 	let refreshQueue = {};
 	let refreshTimeout;
-
-	livereload.isLive = function(collection, entityId) {
-		if (mikser.server.isListening) {
-			let entity = mikser.runtime.findEntity(collection, entityId);
-			if (entity) {
-				for(let clientId in livereload.clients) {
-					if (entity.url == livereload.clients[clientId].url) return true;
-				}				
-			}
-		}
-		return false;
-	}
-
 
 	livereload.refresh = function (collection, entityId) {
 		if (mikser.server.isListening) {
@@ -66,6 +57,7 @@ module.exports = function (mikser) {
 								if (err) {
 									if (livereload.clients[clientId]) {
 										debug('Live reload disconnected:', livereload.clients[clientId].url, err);
+										mikser.server.hot = _.remove(mikser.server.hot, livereload.clients[clientId].url);
 										delete livereload.clients[clientId];
 									}
 								}
@@ -102,6 +94,7 @@ module.exports = function (mikser) {
 							if (err) {
 								if (livereload.clients[clientId]) {
 									debug('Live reload disconnected:', livereload.clients[clientId].url, err);
+									mikser.server.hot = _.remove(mikser.server.hot, livereload.clients[clientId].url);
 									delete livereload.clients[clientId];
 								}
 							}
@@ -150,6 +143,7 @@ module.exports = function (mikser) {
 			socket.on('close', (socket) => {
 				if (livereload.clients[clientId]) {
 					debug('Live reload disconnected:', livereload.clients[clientId].url);
+					mikser.server.hot = _.remove(mikser.server.hot, livereload.clients[clientId].url);
 					delete livereload.clients[clientId];								
 				}
 			});
@@ -165,6 +159,7 @@ module.exports = function (mikser) {
 				}
 				else if (message.command === 'info') {
 					livereload.clients[clientId].url = mikser.utils.getNormalizedUrl(message.url);
+					mikser.server.hot.push(livereload.clients[clientId].url);
 					debug('Live reload connected:', livereload.clients[clientId].url);
 				}
 			});
@@ -179,6 +174,11 @@ module.exports = function (mikser) {
 
 	mikser.on('mikser.scheduler.renderedDocument', (documentId) => {
 		return livereload.refresh('documents', documentId);
+	});
+
+
+	mikser.on('mikser.scheduler.viewInvalidated', (viewId) => {
+		return livereload.refresh('views', viewId);
 	});
 
 	mikser.on('mikser.runtime.link', (entity) => {
