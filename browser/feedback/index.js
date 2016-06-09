@@ -56,9 +56,9 @@ module.exports = function (mikser) {
 			lastMessage = data.message;
 		}
 		if (data.layoutId) {
-			console.log('%c  ' + data.entityId + ' -> ' + data.layoutId, styles[data.level]);			
+			console.log('%c  ' + data.entityId + ' -> ' + data.layoutId, styles[data.level]);
 		} else if (data.entityId) {
-			console.log('%c  ' + data.entityId, styles[data.level]);			
+			console.log('%c  ' + data.entityId, styles[data.level]);
 		}
 		counters[data.level]++;
 		$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning').addClass('mikser-feedback-' + currentState);
@@ -67,7 +67,11 @@ module.exports = function (mikser) {
 	function handleRunMessage(data) {
 		console.log.apply(console, aw.parse(data.message));
 		if (data.code !== 0) {
-			counters.failedCommands++;
+			$.snackbar({
+				content: 'Command failed: <strong>' + data.command + '</strong>',
+				htmlAllowed: true,
+				timeout: 10 * 1000,
+			});
 		}
 	}
 
@@ -81,21 +85,12 @@ module.exports = function (mikser) {
 			messageSulfix += ' Warnings: <strong>' + counters.warning + '</strong>';
 		}
 
-		var options = {
-			content: message + messageSulfix,
-			htmlAllowed: true,
-			timeout: 10 * 1000
-		}
-
 		if (counters.warning || counters.error) {
-			options.content = message + messageSulfix;
-			$.snackbar(options);
-		}
-
-		if (counters.failedCommands > 0) {
-			options.content = message + 'Commands failed: <strong>' + counters.failedCommands + '</strong>';
-			options.style = 'toast';
-			$.snackbar(options);
+			$.snackbar({
+				content: message + messageSulfix,
+				htmlAllowed: true,
+				timeout: 10 * 1000
+			});
 		}
 	}
 
@@ -105,7 +100,6 @@ module.exports = function (mikser) {
 	var counters = {
 		error: 0,
 		warning: 0,
-		failedCommands: 0,
 		reset: function(counter) {
 			if (counter && this[counter]) {
 				this[counter] = 0;
@@ -121,55 +115,59 @@ module.exports = function (mikser) {
 	ws.onmessage = function(event) {
 		var parsedData = JSON.parse(event.data);
 
-		if (parsedData.isRunEvent) {
+		if (parsedData.source === 'tools') {
 			if (parsedData.history) {
 				parsedData.history.forEach(handleRunMessage);
 			} else {
 				handleRunMessage(parsedData);
 			}
-			showSummary();
 		}
-		else if (parsedData.status === 'started') {
-			counters.reset();
-			console.log('Mikser: Generation started.');
-			$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning');
-		}
-		else if (parsedData.status === 'progress') {
-			var pending = extractNumber(parsedData.message, 'pending');
-			var processed = extractNumber(parsedData.message, 'processed');
-			var progress = processed / (pending + processed);
-			progress = Number(progress.toFixed(2));
-
-			if (currentState) {
-				$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning').addClass('mikser-feedback-' + currentState);
-			}
-
-			if ((currentProgress != progress) && (new Date().getTime() - currentMomemnt > 400)) {
-				currentProgress = progress;
-				currentMomemnt = new Date().getTime();
-				nProgress.set(currentProgress);
-			}
-		}
-		else if (parsedData.level === 'history') {
-			parsedData.history.forEach(handleMessage);
-			if (parsedData.finished) showSummary();
-		}
-		else if (parsedData.level === 'warning') {
-			handleMessage(parsedData);
-		}
-		else if (parsedData.level === 'error') {
-			handleMessage(parsedData);
-		}
-		else if (parsedData.status === 'finished') {
-			console.log('Mikser: Generation finished. Errors: '+ counters.error, 'warnings: ' + counters.warning);
-			showSummary();
-			nProgress.done();
-			currentProgress = 0;
-			currentState = undefined;
-			setTimeout(function() {
+		else if (parsedData.source === 'scheduler') {
+			if (parsedData.status === 'started') {
+				counters.reset();
+				console.log('Mikser: Generation started.');
 				$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning');
-			}, 400);
+			}
+			else if (parsedData.status === 'finished') {
+				console.log('Mikser: Generation finished. Errors: '+ counters.error, 'warnings: ' + counters.warning);
+				showSummary();
+				nProgress.done();
+				currentProgress = 0;
+				currentState = undefined;
+				setTimeout(function() {
+					$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning');
+				}, 400);
+			}
 		}
+		else if (parsedData.source === 'diagnostics') {
+			if (parsedData.level === 'history') {
+				parsedData.history.forEach(handleMessage);
+				if (parsedData.finished) showSummary();
+			}
+			else if (parsedData.level === 'warning') {
+				handleMessage(parsedData);
+			}
+			else if (parsedData.level === 'error') {
+				handleMessage(parsedData);
+			}
+		}
+		else if (parsedData.source === 'queue') {
+			if (parsedData.status === 'progress') {
+				var pending = extractNumber(parsedData.message, 'pending');
+				var processed = extractNumber(parsedData.message, 'processed');
+				var progress = processed / (pending + processed);
+				progress = Number(progress.toFixed(2));
 
+				if (currentState && !$('#nprogress').hasClass('mikser-feedback-warning') && !$('#nprogress').hasClass('mikser-feedback-error')) {
+					$('#nprogress').addClass('mikser-feedback-' + currentState);
+				}
+
+				if ((currentProgress != progress) && (new Date().getTime() - currentMomemnt > 400)) {
+					currentProgress = progress;
+					currentMomemnt = new Date().getTime();
+					nProgress.set(currentProgress);
+				}
+			}
+		}
 	}
 }
