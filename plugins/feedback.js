@@ -6,12 +6,15 @@ let cluster = require('cluster');
 let net = require('net');
 let chalk = require('chalk');
 let stripAnsi = require('strip-ansi');
+let util = require('util');
 
 module.exports = function (mikser) {
+
 	let debug = mikser.debug('feedback');
 	let feedback = {
 		server: {
 			broadcast: (data) => {
+				console.log('Initial broadcast method');
 				if (typeof data !== 'string') {
 					data.message = stripAnsi(data.message);
 					if (data.level === 'error' || data.level === 'warning') {
@@ -22,7 +25,8 @@ module.exports = function (mikser) {
 		},
 		history: [],
 		finishedPointer: 0,
-		finished: false
+		finished: false,
+		commands: {}
 	}
 
 	if (cluster.isMaster) {
@@ -49,6 +53,10 @@ module.exports = function (mikser) {
 
 			feedback.server.broadcast = function broadcast(data) {
 				if (typeof data !== 'string') {
+					if (data.level === 'error' || data.level === 'warning') {
+						feedback.history.push(data);
+					}
+					// console.log('Sending to clients', JSON.stringify(data, null, 4));
 					data = JSON.stringify(data);
 				}
 
@@ -69,6 +77,19 @@ module.exports = function (mikser) {
 						finished: feedback.finished,
 						level: 'history'
 					}
+					socket.send(JSON.stringify(data), (err) => {
+						debug(`Error sending data: ${err}`);
+					});
+				}
+
+				if (Object.keys(feedback.commands).length > 0 && feedback.commands.constructor === Object) {
+					let data = {
+						history: Object.keys(feedback.commands).map((command) => {
+							return { command: command, message: feedback.commands[command].message };
+						}),
+						isRunEvent: true
+					}
+
 					socket.send(JSON.stringify(data), (err) => {
 						debug(`Error sending data: ${err}`);
 					});
@@ -110,8 +131,23 @@ module.exports = function (mikser) {
 			});
 		});
 
+		mikser.on('mikser.tools.run.start', (event) => {
+			delete feedback.commands[event.command];
+		});
+
 		mikser.on('mikser.tools.run', (log) => {
-			feedback.server.broadcast(log);
+			if (!feedback.commands[log.command]) {
+				feedback.commands[log.command] = { message: '' };
+			}
+			let command = feedback.commands[log.command];
+			command.isRunEvent = true;
+			if (log.message) command.message += log.message + '\n';
+		});
+
+		mikser.on('mikser.tools.run.finish', (event) => {
+			console.log(event.command, event.code, 'Yep something is happening');
+			feedback.commands[event.command].code = event.code;
+			feedback.server.broadcast(feedback.commands[event.command]);
 		});
 
 	}
@@ -119,8 +155,7 @@ module.exports = function (mikser) {
 	mikser.on('mikser.diagnostics.log', (log) => {
 		if (log.level !== 'info') {
 			debug('Broadcasting log:', log);
-			feedback.history.push(log);
-			log = stripAnsi(log.message);
+			log.message = stripAnsi(log.message);
 			
 			if (cluster.isMaster && feedback.server) {
 				feedback.server.broadcast(log);
@@ -129,7 +164,6 @@ module.exports = function (mikser) {
 			}
 		}
 	});
-
 
 	if (cluster.isWorker) {
 		return Promise.resolve();

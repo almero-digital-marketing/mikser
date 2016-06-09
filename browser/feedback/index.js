@@ -64,8 +64,16 @@ module.exports = function (mikser) {
 		$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning').addClass('mikser-feedback-' + currentState);
 	}
 
+	function handleRunMessage(data) {
+		console.log.apply(console, aw.parse(data.message));
+		if (data.code !== 0) {
+			counters.failedCommands++;
+		}
+	}
+
 	function showSummary() {
 		var messageSulfix = '';
+		var message = 'Mikser generation finished.';
 		if (counters.error) {
 			messageSulfix += ' Errors: <strong>' + counters.error + '</strong>';
 		}
@@ -73,12 +81,21 @@ module.exports = function (mikser) {
 			messageSulfix += ' Warnings: <strong>' + counters.warning + '</strong>';
 		}
 
+		var options = {
+			content: message + messageSulfix,
+			htmlAllowed: true,
+			timeout: 10 * 1000
+		}
+
 		if (counters.warning || counters.error) {
-			$.snackbar({
-				content: 'Mikser generation finished.' + messageSulfix,
-				htmlAllowed: true,
-				timeout: 10 * 1000
-			});
+			options.content = message + messageSulfix;
+			$.snackbar(options);
+		}
+
+		if (counters.failedCommands > 0) {
+			options.content = message + 'Commands failed: <strong>' + counters.failedCommands + '</strong>';
+			options.style = 'toast';
+			$.snackbar(options);
 		}
 	}
 
@@ -88,24 +105,32 @@ module.exports = function (mikser) {
 	var counters = {
 		error: 0,
 		warning: 0,
+		failedCommands: 0,
+		reset: function(counter) {
+			if (counter && this[counter]) {
+				this[counter] = 0;
+			} else {
+				var self = this;
+				Object.keys(this).forEach(function(key){
+					if (typeof self[key] === 'number') self[key] = 0;
+				});
+			}
+		}
 	}
 
 	ws.onmessage = function(event) {
 		var parsedData = JSON.parse(event.data);
 
-		if (parsedData.run) {
-			console.log(parsedData, '???????????');
+		if (parsedData.isRunEvent) {
+			if (parsedData.history) {
+				parsedData.history.forEach(handleRunMessage);
+			} else {
+				handleRunMessage(parsedData);
+			}
+			showSummary();
 		}
-
-		// console.log(parsedData.message);
-		// console.log.apply(console, aw.parse(parsedData.message));
-		// return;
-
-		if (parsedData.status === 'started') {
-			counters = {
-				error: 0,
-				warning: 0,
-			};
+		else if (parsedData.status === 'started') {
+			counters.reset();
 			console.log('Mikser: Generation started.');
 			$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning');
 		}
