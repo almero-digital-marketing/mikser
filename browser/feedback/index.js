@@ -129,7 +129,7 @@ module.exports = function (mikser) {
 				$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning');
 			}
 			else if (parsedData.status === 'finished') {
-				console.log('Mikser: Generation finished. Errors: '+ counters.error, 'warnings: ' + counters.warning);
+				console.log('Mikser: Generation finished. Errors: '+ counters.error, 'Warnings: ' + counters.warning);
 				showSummary();
 				nProgress.done();
 				currentProgress = 0;
