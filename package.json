@@ -14,6 +14,7 @@
     "mikser": "./app.js"
   },
   "dependencies": {
+    "ansi-webkit": "^1.0.1",
     "archieml": "^0.3.1",
     "bluebird": "^3.4.0",
     "browser-request": "^0.3.3",
