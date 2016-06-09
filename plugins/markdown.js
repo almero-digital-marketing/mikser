@@ -8,6 +8,7 @@ var removeMd = require('remove-markdown');
 module.exports = function (mikser, context) {
 	if (context) {
 		context.markdown = function (content) {
+			if (!content) return '';
 			if (typeof content != 'string') {
 				throw new Error('Argument is not a string');
 			}
