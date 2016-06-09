@@ -149,7 +149,6 @@ module.exports = function (mikser) {
 			});
 
 			socket.on('message', (message) => {
-				console.log(message);
 				message = JSON.parse(message);
 				if (message.command === 'hello') {
 					socket.send(JSON.stringify({
