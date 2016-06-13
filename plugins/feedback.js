@@ -61,9 +61,7 @@ module.exports = function (mikser) {
 
 				feedback.server.clients.forEach(function each(client) {
 					client.send(data, (err) => {
-						if (err) {
-							debug('Send failed:', err);
-						}
+						if (err) debug('Send failed:', err);
 					});
 				});
 			}
@@ -80,7 +78,7 @@ module.exports = function (mikser) {
 						source: 'diagnostics'
 					}
 					socket.send(JSON.stringify(data), (err) => {
-						debug(`Error sending data: ${err}`);
+						if (err) debug(`Error sending data: ${err}`);
 					});
 				}
 				// send tools history
@@ -97,12 +95,12 @@ module.exports = function (mikser) {
 					}
 
 					socket.send(JSON.stringify(data), (err) => {
-						debug(`Error sending data: ${err}`);
+						if (err) debug(`Error sending data: ${err}`);
 					});
 				}
 
 				socket.on('close', (code, message) => {
-					debug(`Feedback disconnected.Code: ${code}`, message);
+					debug(`Feedback disconnected. Code: ${code}`, message);
 				});
 			});
 		});
