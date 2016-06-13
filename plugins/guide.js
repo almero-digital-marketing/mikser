@@ -106,6 +106,7 @@ module.exports = function(mikser, context) {
 		}
 	} else {
 		if (cluster.isMaster) {
+			mikser.config.browser.push('guide');
 			let cursor = 0;
 			mikser.on('mikser.manager.importDocument', (document) => {
 				let guidePath = path.join(mikser.config.runtimeFolder, 'guide', document._id + '.json');

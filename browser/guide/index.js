@@ -16,30 +16,9 @@ function filter(node) {
 	}
 }
 
-$(function() {
+module.exports = function (mikser) {
 	if (!document.createTreeWalker) return;
 
-	var treeWalker = document.createTreeWalker(
-		document.body,
-		NodeFilter.SHOW_COMMENT,
-		{ acceptNode: filter },
-		false
-	);
-
-	while(treeWalker.nextNode()) {
-		var $holder = $(treeWalker.currentNode).parent();
-		var $prev =$(treeWalker.currentNode).prev();
-		if ($prev.is('img')) $holder = $prev;
-
-		var guide = treeWalker.currentNode.nodeValue.trim();
-		$holder
-			.data('mikser-guide', guide)
-			.addClass('mikser-guide');
-	}
-
-});
-
-module.exports = function (mikser) {
 	mikser.loadResource('/mikser/browser/guide/style.css');
 	mikser.loadResource('/mikser/node_modules/font-awesome/css/font-awesome.min.css');
 
@@ -47,8 +26,26 @@ module.exports = function (mikser) {
 	clipboard.on('success', function(e) {
 		$('.mikser-guide-copy').removeClass('mikser-guide-copy');
 	});
-	Mousetrap.bind(['command+g', 'ctrl+g'], () => {
+	Mousetrap.bind(['command+g', 'ctrl+g'], function() {
 		if (!enabled) {
+			var treeWalker = document.createTreeWalker(
+				document.body,
+				NodeFilter.SHOW_COMMENT,
+				{ acceptNode: filter },
+				false
+			);
+
+			while(treeWalker.nextNode()) {
+				var $holder = $(treeWalker.currentNode).parent();
+				var $prev =$(treeWalker.currentNode).prev();
+				if ($prev.is('img')) $holder = $prev;
+
+				var guide = treeWalker.currentNode.nodeValue.trim();
+				$holder
+					.data('mikser-guide', guide)
+					.addClass('mikser-guide');
+			}
+
 			console.log('Guide activated');
 			enabled = !enabled;
 			$('.mikser-guide').tipso({
