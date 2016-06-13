@@ -4,16 +4,12 @@ var nProgress = require('nprogress');
 var S = require('string');
 var $ = require('jquery');
 var aw = require('ansi-webkit');
-require('snackbarjs');
 
 nProgress.configure({ trickle: false, showSpinner: false });
 
 module.exports = function (mikser) {
-
 	mikser.loadResource('/mikser/node_modules/nprogress/nprogress.css');
 	mikser.loadResource('/mikser/browser/feedback/style.css');
-	mikser.loadResource('/mikser/node_modules/snackbarjs/dist/snackbar.min.css');
-	mikser.loadResource('/mikser/node_modules/snackbarjs/themes-css/material.css');
 
 	var port = mikser.config.feedbackPort;
 	var ws = new ReconnectingWebSocket('ws://' + location.host.split(':')[0] + ':' + port);
@@ -67,11 +63,7 @@ module.exports = function (mikser) {
 	function handleRunMessage(data) {
 		console.log.apply(console, aw.parse(data.message));
 		if (data.code !== 0) {
-			$.snackbar({
-				content: 'Command failed: <strong>' + data.command + '</strong>',
-				htmlAllowed: true,
-				timeout: 10 * 1000,
-			});
+			mikser.plugins.notification.server('Command failed: <strong>' + data.command + '</strong>');
 		}
 	}
 
@@ -86,11 +78,7 @@ module.exports = function (mikser) {
 		}
 
 		if (counters.warning || counters.error) {
-			$.snackbar({
-				content: message + messageSulfix,
-				htmlAllowed: true,
-				timeout: 10 * 1000
-			});
+			mikser.plugins.notification.server(message + messageSulfix);
 		}
 	}
 

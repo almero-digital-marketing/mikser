@@ -3,13 +3,14 @@
 var Promise = require('bluebird');
 var S = require('string');
 var config = require('mikser-config');
+var _ = require('lodash');
 
 let mikser = {
 	resources: [],
 	isBrowser: true,
 	loadPlugins: function() {
 		mikser.plugins = {};
-		return Promise.map(mikser.config.browser, (pluginName) => {
+		return Promise.map(_.uniq(mikser.config.browser), (pluginName) => {
 			let plugin = require(pluginName);
 			return Promise.resolve(plugin(mikser)).then((result) => {
 				if (result) {

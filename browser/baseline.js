@@ -81,8 +81,10 @@ var Baseliner = function(options) {
 		}
 		this.create();
 		if (forced || this.overlay.style.display != 'block') {
+			mikser.plugins.notification.client('Baseline enabled');
 			this.overlay.style.display = 'block';
 		} else {
+			mikser.plugins.notification.client('Baseline disabled');
 			this.overlay.style.display = 'none';
 		}
 	}

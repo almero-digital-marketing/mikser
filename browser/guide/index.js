@@ -28,6 +28,7 @@ module.exports = function (mikser) {
 	});
 	Mousetrap.bind(['command+g', 'ctrl+g'], function() {
 		if (!enabled) {
+			mikser.plugins.notification.client('Guide enabled');
 			var treeWalker = document.createTreeWalker(
 				document.body,
 				NodeFilter.SHOW_COMMENT,
@@ -110,6 +111,7 @@ module.exports = function (mikser) {
 				}
 			});
 		} else {
+			mikser.plugins.notification.client('Guide disabled');
 			enabled = !enabled;
 			$('.mikser-guide').tipso('close');
 			$('.mikser-guide').tipso('destroy');
