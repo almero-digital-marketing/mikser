@@ -152,6 +152,7 @@ module.exports = function (mikser) {
 		});
 
 		mikser.on('mikser.tools.run.finish', (event) => {
+			feedback.commands[event.command] = feedback.commands[event.command] || {}
 			feedback.commands[event.command].code = event.code;
 
 			feedback.server.broadcast({
