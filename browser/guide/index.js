@@ -20,7 +20,6 @@ module.exports = function (mikser) {
 	if (!document.createTreeWalker) return;
 
 	function toggle(enabled) {
-		console.log(enabled, '???');
 		state.enabled = enabled;
 		localStorage.setItem('mikser-guide', JSON.stringify(state));
 		if (enabled) {
