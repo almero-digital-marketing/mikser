@@ -5,7 +5,7 @@ require('tipso');
 
 var Clipboard = require('clipboard');
 var GUIDE_PREFIX = 'guide';
-var enabled;
+var state = JSON.parse(localStorage.getItem('mikser-guide') || '{"enabled": false}');
 
 function filter(node) {
 	var text = node.nodeValue.trim();
@@ -19,16 +19,12 @@ function filter(node) {
 module.exports = function (mikser) {
 	if (!document.createTreeWalker) return;
 
-	mikser.loadResource('/mikser/browser/guide/style.css');
-	mikser.loadResource('/mikser/node_modules/font-awesome/css/font-awesome.min.css');
-
-	var clipboard = new Clipboard('.mikser-guide-copy');
-	clipboard.on('success', function(e) {
-		$('.mikser-guide-copy').removeClass('mikser-guide-copy');
-	});
-	Mousetrap.bind(['command+g', 'ctrl+g'], function() {
-		if (!enabled) {
-			mikser.plugins.notification.client('Guide enabled');
+	function toggle(enabled) {
+		console.log(enabled, '???');
+		state.enabled = enabled;
+		localStorage.setItem('mikser-guide', JSON.stringify(state));
+		if (enabled) {
+			if (mikser.plugins.notification) mikser.plugins.notification.client('Guide enabled');
 			var treeWalker = document.createTreeWalker(
 				document.body,
 				NodeFilter.SHOW_COMMENT,
@@ -48,7 +44,6 @@ module.exports = function (mikser) {
 			}
 
 			console.log('Guide activated');
-			enabled = !enabled;
 			$('.mikser-guide').tipso({
 				tooltipHover: true,
 				width: 'auto',
@@ -111,11 +106,25 @@ module.exports = function (mikser) {
 				}
 			});
 		} else {
-			mikser.plugins.notification.client('Guide disabled');
-			enabled = !enabled;
-			$('.mikser-guide').tipso('close');
-			$('.mikser-guide').tipso('destroy');
+			if (mikser.plugins.notification) mikser.plugins.notification.client('Guide disabled');
+			if ($('.mikser-guide').length) {
+				$('.mikser-guide').tipso('close');
+				$('.mikser-guide').tipso('destroy');
+			}
 		}
+	}
+
+	mikser.loadResource('/mikser/browser/guide/style.css');
+	mikser.loadResource('/mikser/node_modules/font-awesome/css/font-awesome.min.css');
+	toggle(state.enabled);
+
+	var clipboard = new Clipboard('.mikser-guide-copy');
+	clipboard.on('success', function(e) {
+		$('.mikser-guide-copy').removeClass('mikser-guide-copy');
+	});
+
+	Mousetrap.bind(['command+g', 'ctrl+g'], function() {
+		toggle(!state.enabled);
 		return false;
 	});
 };
