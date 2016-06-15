@@ -13,15 +13,23 @@ module.exports = function(mikser) {
 	$.get(locationOrigin + '/switch/watcher', function(data) {
 		if (!data.status && !sessionStorage.getItem('mikser-switch-watcher')) {
 			sessionStorage.setItem('mikser-switch-watcher', JSON.stringify({status: data.status}));
-			mikser.plugins.notification.client(messages.watcher + data.status ? 'enabled' : 'disabled');
+			mikser.plugins.notification.client(messages.watcher + (data.status ? 'enabled' : 'disabled') + 'from get');
 		}
 	});
 
-	Mousetrap.bind(['alt+w', 'alt+w'], function() {
+	Mousetrap.bind(['ctrl+shift+w', 'command+shift+w'], function() {
 		$.post(locationOrigin + '/switch/watcher', function(data){
 			sessionStorage.setItem('mikser-switch-watcher', JSON.stringify({status: data.status}));
-			mikser.plugins.notification.client(messages.watcher + data.status ? 'enabled' : 'disabled');
+			mikser.plugins.notification.client(messages.watcher + (data.status ? 'enabled' : 'disabled'));
 		});
 		return false;
 	});
+
+	Mousetrap.bind(['ctrl+shift+d', 'command+shift+d'], function() {
+		$.post(locationOrigin + '/switch/debug', function(data){
+			mikser.plugins.notification.client(messages.debug + (data.status ? 'enabled' : 'disabled'));
+		});
+		return false;
+	});
+
 }
