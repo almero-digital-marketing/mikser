@@ -47,7 +47,6 @@ module.exports = function (mikser) {
 					.addClass('mikser-guide');
 			}
 
-			console.log('Guide activated');
 			enabled = !enabled;
 			$('.mikser-guide').tipso({
 				tooltipHover: true,
