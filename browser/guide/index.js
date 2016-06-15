@@ -122,7 +122,7 @@ module.exports = function (mikser) {
 		$('.mikser-guide-copy').removeClass('mikser-guide-copy');
 	});
 
-	Mousetrap.bind(['command+g', 'ctrl+g'], function() {
+	Mousetrap.bind(['command+shift+g', 'ctrl+shift+g'], function() {
 		toggle(!state.enabled);
 		return false;
 	});

@@ -147,7 +147,7 @@ var Baseliner = function(options) {
 module.exports = function (mikser) {
 	let baseliner = new Baseliner(mikser.config.baseline);
 
-	Mousetrap.bind(['command+b', 'ctrl+b'], () => {
+	Mousetrap.bind(['command+shift+b', 'ctrl+shift+b'], () => {
 		baseliner.toggle();
 		return false;
 	});
