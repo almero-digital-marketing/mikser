@@ -44,7 +44,7 @@ module.exports = function(mikser) {
 				});
 		} else {
 			mikser.watcher.stop().then(() => {
-				mikser.diagnostics.log('info', 'Watcher status: ' + (mikser.options.watch ? 'enabled' : 'disabled'));
+				mikser.diagnostics.log('info', 'Watcher: ' + (mikser.options.watch ? 'enabled' : 'disabled'));
 				res.send({status: mikser.options.watch});
 			});
 		}
@@ -61,7 +61,7 @@ module.exports = function(mikser) {
 		}
 		mikser.broker.broadcast('mikser.plugins.switch.toggleDebug', status).then(() => {
 			res.send({status: mikser.options.debug});
-			mikser.diagnostics.log('info', 'Debug status: ' + (mikser.options.debug ? 'enabled' : 'disabled'));
+			mikser.diagnostics.log('info', 'Debug: ' + (mikser.options.debug ? 'enabled' : 'disabled'));
 		});
 	});
 
