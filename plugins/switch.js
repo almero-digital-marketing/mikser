@@ -15,6 +15,8 @@ module.exports = function(mikser) {
 
 	if (cluster.isWorker) return plugin;
 
+	mikser.config.browser.push('switch');
+
 	router.get('/watcher', (req, res) => {
 		res.json({status: mikser.options.watch});
 	});
@@ -59,7 +61,7 @@ module.exports = function(mikser) {
 		}
 		mikser.broker.broadcast('mikser.plugins.switch.toggleDebug', status).then(() => {
 			res.send({status: mikser.options.debug});
-			mikser.diagnostics.log('info', 'Watcher status: ' + (mikser.options.debug ? 'enabled' : 'disabled'));
+			mikser.diagnostics.log('info', 'Debug status: ' + (mikser.options.debug ? 'enabled' : 'disabled'));
 		});
 	});
 

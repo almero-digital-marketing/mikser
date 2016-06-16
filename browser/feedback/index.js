@@ -61,7 +61,9 @@ module.exports = function (mikser) {
 	}
 
 	function handleRunMessage(data) {
-		console.log.apply(console, aw.parse(data.message));
+		if (data.message) {
+			console.log.apply(console, aw.parse(data.message));
+		}		
 		if (data.code !== 0) {
 			mikser.plugins.notification.server('Command failed: <strong>' + data.command + '</strong>');
 		}
