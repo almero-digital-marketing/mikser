@@ -5,12 +5,11 @@ var S = require('string');
 var $ = require('jquery');
 var aw = require('ansi-webkit');
 
+require('./style.css');
+
 nProgress.configure({ trickle: false, showSpinner: false });
 
 module.exports = function (mikser) {
-	mikser.loadResource('/mikser/node_modules/nprogress/nprogress.css');
-	mikser.loadResource('/mikser/browser/feedback/style.css');
-
 	var port = mikser.config.feedbackPort;
 	var ws = new ReconnectingWebSocket('ws://' + location.host.split(':')[0] + ':' + port);
 	var lastMessage;

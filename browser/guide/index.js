@@ -7,6 +7,8 @@ var Clipboard = require('clipboard');
 var GUIDE_PREFIX = 'guide';
 var state = JSON.parse(localStorage.getItem('mikser-guide') || '{"enabled": false}');
 
+require('./style.css');
+
 function filter(node) {
 	var text = node.nodeValue.trim();
 	if (text.substring(0, GUIDE_PREFIX.length) !== GUIDE_PREFIX) {
@@ -42,7 +44,6 @@ module.exports = function (mikser) {
 					.addClass('mikser-guide');
 			}
 
-			console.log('Guide activated');
 			$('.mikser-guide').tipso({
 				tooltipHover: true,
 				width: 'auto',
@@ -113,8 +114,6 @@ module.exports = function (mikser) {
 		}
 	}
 
-	mikser.loadResource('/mikser/browser/guide/style.css');
-	mikser.loadResource('/mikser/node_modules/font-awesome/css/font-awesome.min.css');
 	toggle(state.enabled);
 
 	var clipboard = new Clipboard('.mikser-guide-copy');

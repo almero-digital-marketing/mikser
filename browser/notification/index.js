@@ -1,12 +1,9 @@
 'use strict'
 var $ = require('jquery');
 require('snackbarjs');
+require('./style.css');
 
 module.exports = function (mikser) {
-
-	mikser.loadResource('/mikser/node_modules/snackbarjs/dist/snackbar.min.css');
-	mikser.loadResource('/mikser/node_modules/snackbarjs/themes-css/material.css');
-	mikser.loadResource('/mikser/browser/notification/style.css');
 
 	return {
 		client: function(message) {
