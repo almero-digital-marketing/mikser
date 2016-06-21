@@ -38,12 +38,14 @@ module.exports = function (mikser) {
 	}
 
 	function handleMessage(data) {
-		if (data.level === 'error') {
-			currentState = data.level;
-		}
-		else if (data.level === 'warning') {
-			if (currentState !== 'error') {
+		if (data.entityId) {
+			if (data.level === 'error') {
 				currentState = data.level;
+			}
+			else if (data.level === 'warning') {
+				if (currentState !== 'error') {
+					currentState = data.level;
+				}
 			}
 		}
 		if (data.message != lastMessage) {
@@ -55,8 +57,10 @@ module.exports = function (mikser) {
 		} else if (data.entityId) {
 			console.log('%c  ' + data.entityId, styles[data.level]);
 		}
-		counters[data.level]++;
-		$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning').addClass('mikser-feedback-' + currentState);
+		if (data.entityId) {
+			counters[data.level]++;
+			$('#nprogress').removeClass('mikser-feedback-error mikser-feedback-warning').addClass('mikser-feedback-' + currentState);			
+		}
 	}
 
 	function handleRunMessage(data) {
