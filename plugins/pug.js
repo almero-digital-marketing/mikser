@@ -4,6 +4,7 @@ var pug = require('pug');
 var extend = require('node.extend');
 
 module.exports = function (mikser, context) {
+	let debug = mikser.debug('pug');
 	if (context) {
 		context.pug = context.jade = function (source, options) {
 			source = mikser.utils.findSource(source);
@@ -41,6 +42,7 @@ module.exports = function (mikser, context) {
 					}
 					return context.content;
 				} catch (err) {
+					debug(err.message);
 					delete cache[context.layout._id];
 					let re = /(?:on line\s|Jade:)(\d+)/;
 					let result = re.exec(err.message);
