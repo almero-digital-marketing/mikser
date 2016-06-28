@@ -1,6 +1,5 @@
 'use strict'
 
-var $ = require('jquery');
 var Mousetrap = require('mousetrap');
 
 module.exports = function(mikser) {
