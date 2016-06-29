@@ -9,6 +9,11 @@ let request = require('request-promise');
 
 module.exports = function(mikser) {
 	if (cluster.isWorker) return;
+	mikser.on('mikser.server.ready', () => {
+		return 
+
+	});
+
 	mikser.on('mikser.utils.resolvePort', (portName, resolvedPort) => {
 		let gatePorts = path.join(mikser.config.runtimeFolder, 'recent', 'gate.json');
 		return fs.existsAsync(gatePorts).then((exists) => {
