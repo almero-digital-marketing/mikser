@@ -1,5 +1,5 @@
-@import 'snackbarjs/dist/snackbar.min.css';
-@import 'snackbarjs/themes-css/material.css';
+@import '../../node_modules/snackbarjs/dist/snackbar.min.css';
+@import '../../node_modules/snackbarjs/themes-css/material.css';
 
 .snackbar-content strong {
 	font-weight: bold;
