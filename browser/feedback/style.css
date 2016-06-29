@@ -1,4 +1,4 @@
-@import '../../node_modules/nprogress/nprogress.css';
+@import 'vendor/nprogress/nprogress.css';
 
 #nprogress.mikser-feedback-warning .bar {
   background: #FCC300;

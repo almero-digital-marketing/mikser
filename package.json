@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "5.7.6",
+  "version": "5.7.9",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -79,7 +79,14 @@
     "vhost": "^3.0.2",
     "ws": "^1.1.0"
   },
-  "keywords": [
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0"
+  },
+  "scripts": {
+    "prepublish": "grunt"
+  },
+ "keywords": [
     "mikser",
     "document management system",
     "dms",
