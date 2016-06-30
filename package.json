@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "5.8.2",
+  "version": "5.8.6",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -17,8 +17,6 @@
     "ansi-webkit": "^1.0.1",
     "archieml": "^0.4.1",
     "bluebird": "^3.4.1",
-    "browser-request": "^0.3.3",
-    "browserify-css": "^0.9.1",
     "browserify-middleware": "^7.0.0",
     "chained-emitter": "^0.1.4",
     "chalk": "^1.1.3",
