@@ -118,26 +118,9 @@ module.exports = function (mikser) {
 		return Promise.resolve();
 	}
 
-	mikser.cleanup.push(() => {
-		if (livereload.server) {
-			let closeAsync = Promise.promisify(livereload.server.close, {context: livereload.server });
-			return closeAsync().catch((err) => {
-				for(let clientId in livereload.clients) {
-					let client = livereload.clients[clientId];
-					client.socket.destroy();
-				}
-			});
-		}
-		return Promise.resolve();
-	});
-
-	mikser.on('mikser.server.ready', () => {	
-		livereload.server = new WebSocketServer({ port: mikser.config.livereloadPort });
-		livereload.server.on('connection', (socket) => {
+	mikser.on('mikser.server.listen', (app) => {
+		app.ws('/livereload', function(socket, req) {
 			let clientId = lastClientId++;
-			livereload.clients[clientId] = {
-				socket: socket
-			};
 			debug('Clients:', _.keys(livereload.clients).length);
 
 			socket.on('close', (socket) => {
@@ -147,8 +130,7 @@ module.exports = function (mikser) {
 					delete livereload.clients[clientId];								
 				}
 			});
-
-			socket.on('message', (message) => {
+			socket.on('message', function(message) {
 				message = JSON.parse(message);
 				if (message.command === 'hello') {
 					socket.send(JSON.stringify({
@@ -156,6 +138,9 @@ module.exports = function (mikser) {
 						protocols: ['http://livereload.com/protocols/official-7'],
 						serverName: path.basename(mikser.options.workingFolder)
 					}));
+					livereload.clients[clientId] = {
+						socket: socket
+					};
 				}
 				else if (message.command === 'info') {
 					livereload.clients[clientId].url = mikser.utils.getNormalizedUrl(message.url);
@@ -187,13 +172,5 @@ module.exports = function (mikser) {
 		}
 	});
 
-	return mikser.utils.resolvePort(mikser.config.livereloadPort, 'livereload').then((port) => {
-		let livereloadPort = mikser.config.livereloadPort;
-		if (livereloadPort && livereloadPort !== port) {
-			mikser.diagnostics.log('warning', `Livereload config port: ${livereloadPort} is already in use, resolved with ${port}`);
-		}
-		mikser.config.livereloadPort = port;
-		debug('Port:', port);
-		return Promise.resolve(livereload);
-	});
+	return Promise.resolve(livereload);
 };

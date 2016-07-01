@@ -11,7 +11,7 @@ module.exports = function (mikser) {
 	mikser.loadResource('/mikser/feedback/style.css');
 	
 	var port = mikser.config.feedbackPort;
-	var ws = new ReconnectingWebSocket('ws://' + location.host.split(':')[0] + ':' + port);
+	var ws = new ReconnectingWebSocket('ws://' + location.host.split(':')[0] + ':' + mikser.config.serverPort + '/feedback');
 	var lastMessage;
 
 	var styles = {

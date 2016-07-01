@@ -47,28 +47,8 @@ module.exports = function (mikser) {
 			return Promise.resolve();
 		});
 
-		mikser.on('mikser.server.ready', () => {
-			debug('Feedback server:', mikser.config.feedbackPort);
-			feedback.server = new WebSocketServer({ port: mikser.config.feedbackPort });
-
-			feedback.server.broadcast = function broadcast(data) {
-				if (typeof data !== 'string') {
-					// gather errors and warnings from diagnostics module
-					if (data.source === 'diagnostics' && (data.level === 'error' || data.level === 'warning')) {
-						feedback.history.push(data);
-					}
-					data = JSON.stringify(data);
-				}
-
-				feedback.server.clients.forEach(function each(client) {
-					client.send(data, (err) => {
-						if (err) debug('Send failed:', err);
-					});
-				});
-			}
-
-			// when new client send all history objects
-			feedback.server.on('connection', (socket) => {
+		mikser.on('mikser.server.listen', (app) => {
+			app.ws('/feedback', function(socket, req) {
 				debug('New feedback connection established');
 				// send diagnostics history 
 				if (feedback.history.length > 0) {
@@ -104,6 +84,22 @@ module.exports = function (mikser) {
 					debug(`Feedback disconnected. Code: ${code}`, message);
 				});
 			});
+			feedback.server = mikser.server.ws.getWss('/feedback');
+			feedback.server.broadcast = function broadcast(data) {
+				if (typeof data !== 'string') {
+					// gather errors and warnings from diagnostics module
+					if (data.source === 'diagnostics' && (data.level === 'error' || data.level === 'warning')) {
+						feedback.history.push(data);
+					}
+					data = JSON.stringify(data);
+				}
+
+				feedback.server.clients.forEach(function each(client) {
+					client.send(data, (err) => {
+						if (err) debug('Send failed:', err);
+					});
+				});
+			}
 		});
 
 		mikser.on('mikser.scheduler.renderStarted', () => {
@@ -181,15 +177,7 @@ module.exports = function (mikser) {
 	if (cluster.isWorker) {
 		return Promise.resolve();
 	} else {
-		return mikser.utils.resolvePort(mikser.config.feedbackPort, 'feedback').then((port) => {
-			let feedbackPort = mikser.config.feedbackPort;
-			if (feedbackPort && feedbackPort !== port) {
-				mikser.diagnostics.log('warning', `Feedback config port: ${feedbackPort} is already in use, resolved with ${port}`);
-			}
-			mikser.config.feedbackPort = port;
-			debug('Port:', port);
-			return Promise.resolve(feedback);
-		});
+		return Promise.resolve(feedback);
 	}
 
 }

@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "5.9.1",
+  "version": "5.9.2",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -28,6 +28,7 @@
     "ect": "^0.5.9",
     "ejs": "^2.4.2",
     "express": "^4.14.0",
+    "express-ws": "^2.0.0-rc.1",
     "fluent-ffmpeg": "^2.1.0",
     "fs-extra": "^0.30.0",
     "fs-extra-promise": "^0.4.0",
