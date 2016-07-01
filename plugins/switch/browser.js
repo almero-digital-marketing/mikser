@@ -9,7 +9,7 @@ module.exports = function(mikser) {
 		debug: 'Mikser debug ',
 	}
 
-	$.get(locationOrigin + '/switch/watcher', function(data) {
+	$.get(locationOrigin + '/mikser/switch/watcher', function(data) {
 		if (!data.status && !sessionStorage.getItem('mikser-switch-watcher')) {
 			sessionStorage.setItem('mikser-switch-watcher', JSON.stringify({status: data.status}));
 			mikser.plugins.notification.client(messages.watcher + (data.status ? 'enabled' : 'disabled') + 'from get');
@@ -17,7 +17,7 @@ module.exports = function(mikser) {
 	});
 
 	Mousetrap.bind(['ctrl+shift+w', 'command+shift+w'], function() {
-		$.post(locationOrigin + '/switch/watcher', function(data){
+		$.post(locationOrigin + '/mikser/switch/watcher', function(data){
 			sessionStorage.setItem('mikser-switch-watcher', JSON.stringify({status: data.status}));
 			mikser.plugins.notification.client(messages.watcher + (data.status ? 'enabled' : 'disabled'));
 		});
@@ -25,7 +25,7 @@ module.exports = function(mikser) {
 	});
 
 	Mousetrap.bind(['ctrl+shift+d', 'command+shift+d'], function() {
-		$.post(locationOrigin + '/switch/debug', function(data){
+		$.post(locationOrigin + '/mikser/switch/debug', function(data){
 			mikser.plugins.notification.client(messages.debug + (data.status ? 'enabled' : 'disabled'));
 		});
 		return false;

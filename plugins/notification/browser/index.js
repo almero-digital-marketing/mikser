@@ -3,7 +3,7 @@ var $ = require('jquery');
 require('snackbarjs');
 
 module.exports = function (mikser) {
-	mikser.loadResource('/mikser/browser/notification/style.css');
+	mikser.loadResource('/mikser/notification/style.css');
 
 	return {
 		client: function(message) {

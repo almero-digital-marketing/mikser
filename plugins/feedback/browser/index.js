@@ -8,7 +8,7 @@ var aw = require('ansi-webkit');
 nProgress.configure({ trickle: false, showSpinner: false });
 
 module.exports = function (mikser) {
-	mikser.loadResource('/mikser/browser/feedback/style.css');
+	mikser.loadResource('/mikser/feedback/style.css');
 	
 	var port = mikser.config.feedbackPort;
 	var ws = new ReconnectingWebSocket('ws://' + location.host.split(':')[0] + ':' + port);

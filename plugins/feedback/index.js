@@ -48,6 +48,7 @@ module.exports = function (mikser) {
 		});
 
 		mikser.on('mikser.server.ready', () => {
+			debug('Feedback server:', mikser.config.feedbackPort);
 			feedback.server = new WebSocketServer({ port: mikser.config.feedbackPort });
 
 			feedback.server.broadcast = function broadcast(data) {

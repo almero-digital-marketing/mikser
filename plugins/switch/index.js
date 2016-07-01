@@ -66,7 +66,7 @@ module.exports = function(mikser) {
 	});
 
 	mikser.on('mikser.server.listen', (app) => {
-		app.use('/switch', router);
+		app.use('/mikser/switch', router);
 	});
 
 	return plugin;
