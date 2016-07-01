@@ -95,9 +95,11 @@ module.exports = function (mikser) {
 				}
 
 				feedback.server.clients.forEach(function each(client) {
-					client.send(data, (err) => {
-						if (err) debug('Send failed:', err);
-					});
+					if (client.upgradeReq.url == '/feedback/.websocket') {
+						client.send(data, (err) => {
+							if (err) debug('Send failed:', err);
+						});						
+					}
 				});
 			}
 		});
