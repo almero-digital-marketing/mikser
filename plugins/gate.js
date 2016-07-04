@@ -1,44 +1,57 @@
 'use strict';
 let _ = require('lodash');
-let uuid = require('uuid');
 let Promise = require('bluebird');
 let fs = require('fs-extra-promise');
 let path = require('path');
 let cluster = require('cluster');
-let request = require('request-promise');
+let shortid = require('shortid');
+let MuxDemux = require('mux-demux/msgpack')
+let reconnect = require('reconnect-net');
+let net = require('net');
+let S = require('string');
 
 module.exports = function(mikser) {
-	if (cluster.isWorker) return;
-	mikser.on('mikser.server.ready', () => {
-		return 
+	if (cluster.isWorker || mikser.config.gate === false) return;
 
+	function client() {
+
+	}
+
+	mikser.on('mikser.server.ready', () => {
+		reconnect((stream) => stream.pipe(client).pipe(socket)).connect({
+			port: 9000,
+			host: 'mikser.io'
+		}).on('connect' () => {
+			if (mikser.config.shared.length) {
+				for (let share of mikser.config.shared) {
+					mikser.diagnostics.log('info', 'Gate: http://' + mikser.options.gate + '.mikser.io' + S(share).ensureLeft('/').s);
+				}
+			}
+			else {
+				mikser.diagnostics.log('info', 'Gate: http://' + mikser.options.gate + '.mikser.io/');
+			}
+		});
 	});
 
-	mikser.on('mikser.utils.resolvePort', (portName, resolvedPort) => {
-		let gatePorts = path.join(mikser.config.runtimeFolder, 'recent', 'gate.json');
-		return fs.existsAsync(gatePorts).then((exists) => {
-			if (exists) {
-				return fs.readJsonAsync(gatePorts, 'utf-8');
-			} else {
-				return {};
-			}
-		}).then((ports) => {
-			let cachedPort = ports[portName];
-			let port = resolvedPort;
-			if (cachedPort) port = cachedPort;
-			return request({
-				url: 'http://api.mikser.io/gate/port/' + port,
-				method: 'GET',
-				json: true
-			}).then((portInfo) => {
-				if (portInfo.err) return mikser.diagnostics.log('error', 'Error finding free port on gate');
-				let action = Promise.resolve();
-				if (portInfo.port != ports[portName]) {
-					ports[portName] = portInfo.port;
-					action = fs.outputJsonAsync(gatePorts, ports);
-				}
-				return action;
-			});
+	if (mikser.config.gate && shortid.isValid(mikser.config.gate)) {
+		mikser.options.gate = mikser.config.gate;
+		return Promise.resolve();
+	}
+	let recent = path.join(mikser.config.runtimeFolder, 'recent', 'gate.json');
+	return fs.existsAsync(recent).then((exists) => {
+		if (exists) {
+			return fs.readJsonAsync(recent, 'utf-8');
+		} else {
+			return {};
+		}
+	}).then((gateInfo) => {
+		if (gateInfo.key) {
+			mikser.options.gate = gateInfo.key;
+			return Promise.resolve();
+		}
+		mikser.options.gate = shortid.generate();
+		return fs.outputJsonAsync(gatePorts, {
+			key: mikser.config.gate
 		});
 	});
 
