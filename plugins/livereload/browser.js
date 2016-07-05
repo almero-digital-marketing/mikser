@@ -9,6 +9,9 @@ module.exports = function (mikser) {
 			port: hostInfo[1],
 			snipver: 1
 		};
-		require('livereload-js');
+		var livereload = require('livereload-js');
+		window.addEventListener('beforeunload', function(e){
+			LiveReload.shutDown();
+		}, false);
 	}
 };

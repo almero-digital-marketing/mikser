@@ -13,6 +13,9 @@ module.exports = function (mikser) {
 	var hostInfo = location.host.split(':');
 	hostInfo.push(80);
 	var ws = new ReconnectingWebSocket('ws://' + hostInfo[0] + ':' + hostInfo[1] + '/feedback');
+	window.addEventListener('beforeunload', function(e){
+		ws.close();
+	}, false);
 	var lastMessage;
 
 	var styles = {
