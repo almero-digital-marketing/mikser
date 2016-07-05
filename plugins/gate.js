@@ -19,7 +19,7 @@ module.exports = function(mikser) {
 		reconnect((connection) => {
 			let mx = MuxDemux((stream) => {
 				if (stream.meta.tunnel) {
-					stream.pipe(net.connect({port: mikser.config.serverPort})).pipe(stream);					
+					stream.pipe(net.connect({port: mikser.config.serverPort})).pipe(stream).on('error', debug);					
 				}
 			});
 			connection.pipe(mx).pipe(connection);

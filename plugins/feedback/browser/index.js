@@ -10,8 +10,9 @@ nProgress.configure({ trickle: false, showSpinner: false });
 module.exports = function (mikser) {
 	mikser.loadResource('/mikser/feedback/style.css');
 	
-	var port = mikser.config.feedbackPort;
-	var ws = new ReconnectingWebSocket('ws://' + location.host.split(':')[0] + ':' + mikser.config.serverPort + '/feedback');
+	var hostInfo = location.host.split(':');
+	hostInfo.push(80);
+	var ws = new ReconnectingWebSocket('ws://' + hostInfo[0] + ':' + hostInfo[1] + '/feedback');
 	var lastMessage;
 
 	var styles = {
