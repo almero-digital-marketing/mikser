@@ -7,30 +7,38 @@ let cluster = require('cluster');
 let shortid = require('shortid');
 let MuxDemux = require('mux-demux/msgpack')
 let reconnect = require('reconnect-net');
-let net = require('net');
 let S = require('string');
+let net = require('net');
+let base32 = require('base32')
 
 module.exports = function(mikser) {
 	if (cluster.isWorker || mikser.config.gate === false) return;
-
-	function client() {
-
-	}
+	let debug = mikser.debug('gate');
 
 	mikser.on('mikser.server.ready', () => {
-		reconnect((stream) => stream.pipe(client).pipe(socket)).connect({
-			port: 9000,
-			host: 'mikser.io'
-		}).on('connect' () => {
-			if (mikser.config.shared.length) {
-				for (let share of mikser.config.shared) {
-					mikser.diagnostics.log('info', 'Gate: http://' + mikser.options.gate + '.mikser.io' + S(share).ensureLeft('/').s);
+		reconnect((connection) => {
+			let mx = MuxDemux((stream) => {
+				if (stream.meta.tunnel) {
+					stream.pipe(net.connect({port: mikser.config.serverPort})).pipe(stream);					
 				}
+			});
+			connection.pipe(mx).pipe(connection);
+			mx.createStream({
+				gate: mikser.options.gate
+			}).end();
+		}).connect({
+			port: 9090,
+			host: 'mikser.io'
+		}).on('error', debug);
+
+		if (mikser.config.shared.length) {
+			for (let share of mikser.config.shared) {
+				mikser.diagnostics.log('info', 'Gate: http://' + 'm' + base32.encode(mikser.options.gate) + '.mikser.io' + S(share).ensureLeft('/').s);
 			}
-			else {
-				mikser.diagnostics.log('info', 'Gate: http://' + mikser.options.gate + '.mikser.io/');
-			}
-		});
+		}
+		else {
+			mikser.diagnostics.log('info', 'Gate: http://' + 'm' + base32.encode(mikser.options.gate) + '.mikser.io/');
+		}
 	});
 
 	if (mikser.config.gate && shortid.isValid(mikser.config.gate)) {
@@ -45,13 +53,13 @@ module.exports = function(mikser) {
 			return {};
 		}
 	}).then((gateInfo) => {
-		if (gateInfo.key) {
-			mikser.options.gate = gateInfo.key;
+		if (gateInfo.gate) {
+			mikser.options.gate = gateInfo.gate;
 			return Promise.resolve();
 		}
 		mikser.options.gate = shortid.generate();
-		return fs.outputJsonAsync(gatePorts, {
-			key: mikser.config.gate
+		return fs.outputJsonAsync(recent, {
+			gate: mikser.options.gate
 		});
 	});
 

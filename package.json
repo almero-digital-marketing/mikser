@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "5.9.3",
+  "version": "5.9.5",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -16,6 +16,7 @@
   "dependencies": {
     "ansi-webkit": "^1.0.1",
     "archieml": "^0.4.1",
+    "base32": "0.0.6",
     "bluebird": "^3.4.1",
     "browserify-middleware": "^7.0.0",
     "chained-emitter": "^0.1.4",
@@ -126,7 +127,7 @@
     "realtime",
     "livereload"
   ],
-  "main": "./index.js",
+  "main": "index.js",
   "bugs": {
     "url": "https://github.com/almero-digital-marketing/mikser/issues"
   },
