@@ -210,6 +210,14 @@ module.exports = function (mikser, context) {
 
 		imageInfo.outFolder = path.dirname(imageInfo.destination);
 		imageInfo.toString = () => mikser.utils.getUrl(imageInfo.destination);
+		imageInfo.on = () => {
+			imageInfo.overwrite = true;
+			return imageInfo;
+		}
+		imageInfo.off = () => {
+			imageInfo.overwrite = false;
+			return imageInfo;
+		}
 		pushTransforms(imageInfo);
 		
 		if (context) {
@@ -239,36 +247,49 @@ module.exports = function (mikser, context) {
 
 				// let destinationExists = fs.existsSync(imageInfo.destination);
 
-				if (fs.existsSync(imageInfo.destination) && source != imageInfo.destination) {
-					let sourceStats = fs.statSync(sourceFilePath);
-					let destinationStats = fs.statSync(imageInfo.destination);
-					if (destinationStats.mtime < sourceStats.mtime) {
-						fs.unlinkSync(imageInfo.destination);
-					} else {
-						debug(imageInfo.destination.replace(mikser.options.workingFolder, ''), 'is newer than', sourceFilePath.replace(mikser.options.workingFolder, ''));
-						return Promise.resolve();
-					}
-				}
-
-				console.log('Image:', imageInfo.destination.replace(mikser.options.workingFolder, ''));
-				fs.ensureDirSync(imageInfo.outFolder);
-
-				let transforms = Promise.resolve();
-				for (let i = 0; i < imageInfo.images.length; i++) {
-					transforms = transforms.then(() => {
-						if (i == 0) {
-							imageInfo.images[i].source = sourceFilePath;
+				return fs.existsAsync(imageInfo.destination, (exist) => {
+					let overwrite = Promise.resolve(true);
+					if (exist && source != imageInfo.destination) {
+						if (imageInfo.overwrite) {
+							overwrite = fs.unlinkAsync(imageInfo.destination).then(Promise.resolve(imageInfo.overwrite));
+						} else if (imageInfo.overwrite === false) {
+							overwrite = Promise.resolve(imageInfo.overwrite)
 						} else {
-							imageInfo.images[i].source = imageInfo.destination;
+							overwrite = Promise.join(fs.statAsync(sourceFilePath), fs.statAsync(imageInfo.destination), (sourceStats, destinationStats) => {
+								if (destinationStats.mtime < sourceStats.mtime) {
+									fs.unlinkSync(imageInfo.destination).then(Promise.resolve(true));
+								} else {
+									debug(imageInfo.destination.replace(mikser.options.workingFolder, ''), 'is newer than', sourceFilePath.replace(mikser.options.workingFolder, ''));
+									overwrite = Promise.resolve(false);
+								}
+
+							});
 						}
-						imageInfo.images[i].noProfile();
-						let writeAsync = Promise.promisify(imageInfo.images[i].write, {context: imageInfo.images[i]});
-						// debug(imageInfo.images[i], 'DEBUG INFO FOR IMAGE INSTANCE');
-						debug(imageInfo.images[i]._subCommand, imageInfo.images[i]._in.join(' '), imageInfo.images[i]._out.join(' '));
-						return writeAsync(imageInfo.destination);
+					}
+
+					return overwrite.then((newer) => {
+						if (!newer) return Promise.resolve();
+						console.log('Image:', imageInfo.destination.replace(mikser.options.workingFolder, ''));
+						fs.ensureDirSync(imageInfo.outFolder);
+
+						let transforms = Promise.resolve();
+						for (let i = 0; i < imageInfo.images.length; i++) {
+							transforms = transforms.then(() => {
+								if (i == 0) {
+									imageInfo.images[i].source = sourceFilePath;
+								} else {
+									imageInfo.images[i].source = imageInfo.destination;
+								}
+								imageInfo.images[i].noProfile();
+								let writeAsync = Promise.promisify(imageInfo.images[i].write, {context: imageInfo.images[i]});
+								// debug(imageInfo.images[i], 'DEBUG INFO FOR IMAGE INSTANCE');
+								debug(imageInfo.images[i]._subCommand, imageInfo.images[i]._in.join(' '), imageInfo.images[i]._out.join(' '));
+								return writeAsync(imageInfo.destination);
+							});
+						}
+						return transforms;					
 					});
-				}
-				return transforms;
+				});
 
 			},
 			imageInfo: imageInfo

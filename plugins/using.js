@@ -3,6 +3,7 @@ let Promise = require('bluebird');
 let exec = Promise.promisify(require('child_process').exec);
 let fs = require("fs-extra-promise");
 let path = require('path');
+let S = require('string');
 
 module.exports = function (mikser, context) {
 	let debug = mikser.debug('using');
@@ -16,12 +17,12 @@ module.exports = function (mikser, context) {
 	using = using.filter((use) => {
 		let packagePath = path.join(mikser.config.runtimeFolder, 'node_modules', use);
 		if (fs.existsSync(packagePath)) {
-			context[use] = require(packagePath);
+			context[S(use).camelize().s] = require(packagePath);
 			return false;
 		} else {
 			packagePath = path.join(mikser.options.workingFolder, 'node_modules', use);
 			if (fs.existsSync(packagePath)) {
-				context[use] = require(packagePath);
+				context[S(use).camelize().s] = require(packagePath);
 				return false;
 			}
 		}

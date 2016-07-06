@@ -168,9 +168,9 @@ module.exports = function (mikser, context) {
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
 				if (context) {
-					imageInfo.destination = mikser.utils.resolveDestination(destination, entity.destination);
+					videoInfo.destination = mikser.utils.resolveDestination(destination, entity.destination);
 				} else {
-					imageInfo.destination = path.join(mikser.options.workingFolder, destination);
+					videoInfo.destination = path.join(mikser.options.workingFolder, destination);
 				}
 			}
 			else {
@@ -191,6 +191,14 @@ module.exports = function (mikser, context) {
 		videoInfo.toString = () => mikser.utils.getUrl(videoInfo.destination);
 		videoInfo.outFolder = path.dirname(videoInfo.destination);
 		videoInfo.video = ffmpeg();
+		videoInfo.on = () => {
+			videoInfo.overwrite = true;
+			return videoInfo;
+		}
+		videoInfo.off = () => {
+			videoInfo.overwrite = false;
+			return videoInfo;
+		}
 
 		exposeTransforms(videoInfo);
 		wrapTransforms(videoInfo);
@@ -211,20 +219,34 @@ module.exports = function (mikser, context) {
 					err.origin = 'videos';
 					throw err;
 				}
-				videoInfo.mtime = fs.statSync(videoInfo.source).mtime;
 
-				if (fs.existsSync(videoInfo.destination)) {
-					let destinationMtime = fs.statSync(videoInfo.destination).mtime;
-					if (destinationMtime < videoInfo.mtime) {
-						fs.unlinkSync(videoInfo.destination);
-					} else {
-						return Promise.resolve();
+				return fs.existsAsync(videoInfo.destination, (exist) => {
+					let overwrite = Promise.resolve(true);
+					if (exist && source != videoInfo.destination) {
+						if (videoInfo.overwrite) {
+							overwrite = fs.unlinkAsync(videoInfo.destination).then(Promise.resolve(videoInfo.overwrite));
+						} else if (videoInfo.overwrite === false) {
+							overwrite = Promise.resolve(videoInfo.overwrite)
+						} else {
+							overwrite = Promise.join(fs.statAsync(sourceFilePath), fs.statAsync(videoInfo.destination), (sourceStats, destinationStats) => {
+								if (destinationStats.mtime < sourceStats.mtime) {
+									fs.unlinkSync(videoInfo.destination).then(Promise.resolve(true));
+								} else {
+									debug(videoInfo.destination.replace(mikser.options.workingFolder, ''), 'is newer than', sourceFilePath.replace(mikser.options.workingFolder, ''));
+									overwrite = Promise.resolve(false);
+								}
+
+							});
+						}
 					}
-				}
 
-				fs.ensureDirSync(videoInfo.outFolder);
-				videoInfo.video.input(videoInfo.source);
-				return outputAndSaveAsync(videoInfo);
+					return overwrite.then((newer) => {
+						if (!newer) return Promise.resolve();
+						fs.ensureDirSync(videoInfo.outFolder);
+						videoInfo.video.input(videoInfo.source);
+						return outputAndSaveAsync(videoInfo);
+					});
+				});
 			},
 			videoInfo: videoInfo
 		}

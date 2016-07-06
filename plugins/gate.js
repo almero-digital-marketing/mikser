@@ -22,7 +22,7 @@ module.exports = function(mikser) {
 					stream.pipe(net.connect({port: mikser.config.serverPort})).pipe(stream).on('error', debug);					
 				}
 			});
-			connection.pipe(mx).pipe(connection);
+			connection.pipe(mx).pipe(connection).on('error', debug);
 			mx.createStream({
 				gate: mikser.options.gate
 			}).end();
