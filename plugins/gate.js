@@ -15,6 +15,17 @@ module.exports = function(mikser) {
 	if (cluster.isWorker || mikser.config.gate === false) return;
 	let debug = mikser.debug('gate');
 
+	function showServerInfo() {
+		if (mikser.config.shared.length) {
+			for (let share of mikser.config.shared) {
+				mikser.diagnostics.log('info', 'Gate: http://' + 'm' + base32.encode(mikser.options.gate) + '.mikser.io' + S(share).ensureLeft('/').s);
+			}
+		}
+		else {
+			mikser.diagnostics.log('info', 'Gate: http://' + 'm' + base32.encode(mikser.options.gate) + '.mikser.io/');
+		}
+	};
+
 	mikser.on('mikser.server.ready', () => {
 		reconnect((connection) => {
 			let mx = MuxDemux((stream) => {
@@ -31,15 +42,13 @@ module.exports = function(mikser) {
 			host: 'mikser.io'
 		}).on('error', debug);
 
-		if (mikser.config.shared.length) {
-			for (let share of mikser.config.shared) {
-				mikser.diagnostics.log('info', 'Gate: http://' + 'm' + base32.encode(mikser.options.gate) + '.mikser.io' + S(share).ensureLeft('/').s);
-			}
-		}
-		else {
-			mikser.diagnostics.log('info', 'Gate: http://' + 'm' + base32.encode(mikser.options.gate) + '.mikser.io/');
-		}
+		showServerInfo();
 	});
+
+	mikser.on('mikser.scheduler.renderFinished', () => {
+		if (!_.keys(mikser.server.clients).length) showServerInfo();
+	});
+
 
 	if (mikser.config.gate && shortid.isValid(mikser.config.gate)) {
 		mikser.options.gate = mikser.config.gate;
