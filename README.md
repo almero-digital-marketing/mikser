@@ -13,6 +13,7 @@ Mikser is designed for rapid web site development. It works equally well for sma
 
 ## Installation
 Mikser works well on Windows, Linux and OSX. It can be installed both globally and as a local dependency. It comes with all contrib plugins build-in.
+
 1. Node.js &ge; 4.0
 2. MongoDB &ge; 2.4 
 

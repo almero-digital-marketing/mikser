@@ -27,7 +27,10 @@ module.exports = function(mikser) {
 	};
 
 	mikser.on('mikser.server.ready', () => {
-		reconnect((connection) => {
+		reconnect({
+			strategy: 'fibonacci',
+			failAfter: Infinity
+		}, (connection) => {
 			let mx = MuxDemux((stream) => {
 				if (stream.meta.tunnel) {
 					stream.pipe(net.connect({port: mikser.config.serverPort})).pipe(stream).on('error', debug);					
