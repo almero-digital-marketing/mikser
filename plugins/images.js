@@ -245,24 +245,21 @@ module.exports = function (mikser, context) {
 					throw err;
 				}
 
-				// let destinationExists = fs.existsSync(imageInfo.destination);
-
-				return fs.existsAsync(imageInfo.destination, (exist) => {
+				return fs.existsAsync(imageInfo.destination).then((exist) => {
 					let overwrite = Promise.resolve(true);
 					if (exist && source != imageInfo.destination) {
 						if (imageInfo.overwrite) {
-							overwrite = fs.unlinkAsync(imageInfo.destination).then(Promise.resolve(imageInfo.overwrite));
+							overwrite = fs.unlinkAsync(imageInfo.destination).return(true);
 						} else if (imageInfo.overwrite === false) {
 							overwrite = Promise.resolve(imageInfo.overwrite)
 						} else {
 							overwrite = Promise.join(fs.statAsync(sourceFilePath), fs.statAsync(imageInfo.destination), (sourceStats, destinationStats) => {
 								if (destinationStats.mtime < sourceStats.mtime) {
-									fs.unlinkSync(imageInfo.destination).then(Promise.resolve(true));
+									return fs.unlinkAsync(imageInfo.destination).return(true);
 								} else {
 									debug(imageInfo.destination.replace(mikser.options.workingFolder, ''), 'is newer than', sourceFilePath.replace(mikser.options.workingFolder, ''));
-									overwrite = Promise.resolve(false);
+									return Promise.resolve(false);
 								}
-
 							});
 						}
 					}

@@ -224,18 +224,17 @@ module.exports = function (mikser, context) {
 					let overwrite = Promise.resolve(true);
 					if (exist && source != videoInfo.destination) {
 						if (videoInfo.overwrite) {
-							overwrite = fs.unlinkAsync(videoInfo.destination).then(Promise.resolve(videoInfo.overwrite));
+							overwrite = fs.unlinkAsync(videoInfo.destination).return(true);
 						} else if (videoInfo.overwrite === false) {
 							overwrite = Promise.resolve(videoInfo.overwrite)
 						} else {
 							overwrite = Promise.join(fs.statAsync(sourceFilePath), fs.statAsync(videoInfo.destination), (sourceStats, destinationStats) => {
 								if (destinationStats.mtime < sourceStats.mtime) {
-									fs.unlinkSync(videoInfo.destination).then(Promise.resolve(true));
+									return fs.unlinkAsync(videoInfo.destination).return(true);
 								} else {
 									debug(videoInfo.destination.replace(mikser.options.workingFolder, ''), 'is newer than', sourceFilePath.replace(mikser.options.workingFolder, ''));
-									overwrite = Promise.resolve(false);
+									return Promise.resolve(false);
 								}
-
 							});
 						}
 					}
