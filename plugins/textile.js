@@ -1,6 +1,6 @@
 'use strict'
 
-var textile = require('textile');
+var textile = require('textile-js');
 
 module.exports = function (mikser, context) {
 	if (context) {
