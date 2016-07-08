@@ -22,7 +22,7 @@ module.exports = function(mikser) {
 		}
 		if (mikser.config.shared.length) {
 			for (let share of mikser.config.shared) {
-				mikser.diagnostics.log('info', 'Gate: http://' + 'm' + base32.encode(mikser.options.gate['server']) + '.mikser.io' + S(share).ensureLeft('/').s);
+				mikser.diagnostics.log('info', 'Gate: http://' + 'm' + base32.encode(mikser.options.gate['server']) + '.mikser.io' + S(share).ensureLeft('/').ensureRight('/').s);
 			}
 		}
 		else {
