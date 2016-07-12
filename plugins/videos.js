@@ -202,13 +202,23 @@ module.exports = function (mikser, context) {
 
 		exposeTransforms(videoInfo);
 		wrapTransforms(videoInfo);
+		
+		if (context) {
+			var capturedContext = {
+				_id: context._id,
+				document: context.document,
+				view: context.view,
+				entity: context.entity,
+				layout: context.layout
+			}
+		}
 
 		return {
 			process: () => {
 				videoInfo.source = mikser.utils.findSource(source);
 				if (!videoInfo.source) {
-					if (context) {
-						return mikser.diagnostics.log(this, 'warning', `[videos] File not found at: ${source}`);
+					if (capturedContext) {
+						return mikser.diagnostics.log(capturedContext, 'warning', `[videos] File not found at: ${source}`);
 					} else {
 						return mikser.diagnostics.log('warning', `[videos] File not found at: ${source}`);
 					}

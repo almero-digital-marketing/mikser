@@ -165,8 +165,11 @@ module.exports = function (mikser) {
 	mikser.on('mikser.diagnostics.log', (log) => {
 		if (log.level !== 'info') {
 			debug('Broadcasting log:', log);
-			log.message = stripAnsi(log.message);
-			log.source = 'diagnostics';
+			let feedbackLog = {
+				level: log.level,
+				message: stripAnsi(log.message),
+				source: 'diagnostics'
+			}
 			
 			if (cluster.isMaster && feedback.server) {
 				feedback.server.broadcast(log);

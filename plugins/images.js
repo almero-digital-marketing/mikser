@@ -221,7 +221,13 @@ module.exports = function (mikser, context) {
 		pushTransforms(imageInfo);
 		
 		if (context) {
-			var that = _.clone(this);
+			var capturedContext = {
+				_id: context._id,
+				document: context.document,
+				view: context.view,
+				entity: context.entity,
+				layout: context.layout
+			}
 		}
 
 		return {
@@ -230,10 +236,9 @@ module.exports = function (mikser, context) {
 				let sourceFilePath = findSource(source);
 				// full path to file or undefined if file does not exist
 				if (!sourceFilePath) {
-					if (context) {
-						if (!that.layout) {
-						}
-						return mikser.diagnostics.log(that, 'warning', `[images] File not found at: ${source}`);
+					if (capturedContext) {
+						//console.log(that);
+						return mikser.diagnostics.log(capturedContext, 'warning', `[images] File not found at: ${source}`);
 					} else {
 						return mikser.diagnostics.log('warning', `[images] File not found at: ${source}`);
 					}
