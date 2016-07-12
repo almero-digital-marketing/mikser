@@ -17,7 +17,7 @@ module.exports = function (mikser, context) {
 
 			if (trimmedValue.toLowerCase() == 'false') return false;
 			if (trimmedValue.toLowerCase() == 'true') return true;
-			
+
 			let date = Date.parse(trimmedValue);
 			if (!_.isNaN(date)) return date;
 		}
@@ -33,7 +33,8 @@ module.exports = function (mikser, context) {
 			pattern: '**/*.+(aml)', 
 			parse: function(content) {
 				let raw = archieml.load(content);
-				return _.cloneDeepWith(raw, customizer);
+				let guess = _.cloneDeepWith(raw, customizer);
+				return guess;
 			}
 		});
 	}
