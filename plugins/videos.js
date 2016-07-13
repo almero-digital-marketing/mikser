@@ -202,26 +202,12 @@ module.exports = function (mikser, context) {
 
 		exposeTransforms(videoInfo);
 		wrapTransforms(videoInfo);
-		
-		if (context) {
-			var capturedContext = {
-				_id: context._id,
-				document: context.document,
-				view: context.view,
-				entity: context.entity,
-				layout: context.layout
-			}
-		}
 
 		return {
 			process: () => {
 				videoInfo.source = mikser.utils.findSource(source);
 				if (!videoInfo.source) {
-					if (capturedContext) {
-						return mikser.diagnostics.log(capturedContext, 'warning', `[videos] File not found at: ${source}`);
-					} else {
-						return mikser.diagnostics.log('warning', `[videos] File not found at: ${source}`);
-					}
+					return mikser.diagnostics.log(this, 'warning', `[videos] File not found at: ${source}`);
 				}
 
 				if ((videoInfo.source.indexOf(mikser.options.workingFolder) !== 0) && !destination) {
@@ -263,14 +249,17 @@ module.exports = function (mikser, context) {
 
 	if (context) {
 		context.video = function(source, destination) {
-			let videoTransform = transform.apply(this, [context.entity, source, destination]);
+			let videoTransform = transform(context.entity, source, destination);
 			context.process(videoTransform.process);
 			return videoTransform.videoInfo;
 		}
 	}
 
 	let plugin = {
-		transform: transform
+		transform: function(source, destination) {
+			let videoTransform = transform(context.entity, source, destination);
+			return videoTransform.process.apply(null).return(videoTransform.videoInfo);
+		}
 	}
 
 	return plugin;

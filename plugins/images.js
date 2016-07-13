@@ -220,28 +220,12 @@ module.exports = function (mikser, context) {
 		}
 		pushTransforms(imageInfo);
 		
-		if (context) {
-			var capturedContext = {
-				_id: context._id,
-				document: context.document,
-				view: context.view,
-				entity: context.entity,
-				layout: context.layout
-			}
-		}
-
 		return {
 			process: () => {
-
 				let sourceFilePath = findSource(source);
 				// full path to file or undefined if file does not exist
 				if (!sourceFilePath) {
-					if (capturedContext) {
-						//console.log(that);
-						return mikser.diagnostics.log(capturedContext, 'warning', `[images] File not found at: ${source}`);
-					} else {
-						return mikser.diagnostics.log('warning', `[images] File not found at: ${source}`);
-					}
+					return mikser.diagnostics.log(this, 'warning', `[images] File not found at: ${source}`);
 				}
 
 				if ((sourceFilePath.indexOf(mikser.options.workingFolder) !== 0) && !destination) {
@@ -300,14 +284,17 @@ module.exports = function (mikser, context) {
 
 	if (context) {
 		context.image = function(source, destination) {
-			let imageTransform = transform.apply(this, [context.entity, source, destination]);
+			let imageTransform = transform(context.entity, source, destination);
 			context.process(imageTransform.process);
 			return imageTransform.imageInfo;
 		}
 	}
 
 	let plugin = {
-		transform: transform
+		transform: function(source, destination) {
+			let imageTransform = transform(context.entity, source, destination);
+			return imageTransform.process.apply(null).return(imageTransform.imageInfo);
+		}
 	}
 
 	return plugin;

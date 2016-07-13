@@ -32,18 +32,18 @@ module.exports = function (mikser, context) {
 		return /^http[s]?:\/\//.test(path);
 	}
 
-	function downloadFile(destination, options, context, next) {
+	function downloadFile(destination, options, next) {
 		debug('Downloading:', options.url);
 		let success = false;
 
 		let readStream = request(options, (err, response) => {
 			if (err) {
-				mikser.diagnostics.log(context, 'error', `[cache] Download error: ${err.message}`);
+				mikser.diagnostics.log(this, 'error', `[cache] Download error: ${err.message}`);
 				next();
 			}
 
 			if (response.statusCode !== 200) {
-				mikser.diagnostics.log(context, 'error', `[cache] Invalid status code: ${options.url}, ${response.statusCode}, ${response.statusMessage}`);
+				mikser.diagnostics.log(this, 'error', `[cache] Invalid status code: ${options.url}, ${response.statusCode}, ${response.statusMessage}`);
 				next();
 			} else {
 				success = true;
@@ -100,16 +100,7 @@ module.exports = function (mikser, context) {
 		});
 	}
 
-	function cacheFile(entity, source, destination, context) {
-		if (context) {
-			var capturedContext = {
-				_id: context._id,
-				document: context.document,
-				view: context.view,
-				entity: context.entity,
-				layout: context.layout
-			}
-		}
+	function cacheFile(entity, source, destination) {
 		let cacheInfo = extend({}, defaultInfo);
 
 		if (!source) {
@@ -169,7 +160,7 @@ module.exports = function (mikser, context) {
 								return fs.unlinkAsync(cacheInfo.destination);
 							}
 						}).then(() => {
-							return downloadAsync(cacheInfo.destination, opts, capturedContext);
+							return downloadAsync(cacheInfo.destination, opts);
 						});
 					}
 				}
@@ -184,7 +175,7 @@ module.exports = function (mikser, context) {
 								});
 							}
 							else if (!cacheInfo.isOptional) {
-								mikser.diagnostics.log(context, 'error', `[cache] File not found at: ${source}`);
+								mikser.diagnostics.log(this, 'error', `[cache] File not found at: ${source}`);
 							}
 							return Promise.resolve();
 						});
@@ -197,16 +188,17 @@ module.exports = function (mikser, context) {
 
 	if (context){
 		context.cache = function(source, destination) {
-			let cache = cacheFile(context.entity, source, destination, context);
-			context.process(() => {
-				return cache.process();
-			});
+			let cache = cacheFile(context.entity, source, destination);
+			context.process(cache.process);
 			return cache.cacheInfo;
 		}
 	}
 
 	let plugin = {
-		cache: cacheFile
+		cache: function(source, destination) {
+			let cache = cacheFile(context.entity, source, destination);
+			return cache.process.apply(null).return(cache.cacheInfo);
+		}
 	}
 
 	return plugin;
