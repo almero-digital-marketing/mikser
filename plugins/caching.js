@@ -9,6 +9,7 @@ let createOutputStream = require('create-output-stream');
 let _ = require('lodash');
 
 module.exports = function (mikser, context) {
+
 	let debug = mikser.debug('caching');
 	let defaultInfo = {
 		credentials: mikser.config.caching ? mikser.config.caching.credentials : null,
@@ -31,18 +32,18 @@ module.exports = function (mikser, context) {
 		return /^http[s]?:\/\//.test(path);
 	}
 
-	function download(destination, options, next) {
+	function downloadFile(destination, options, context, next) {
 		debug('Downloading:', options.url);
 		let success = false;
 
 		let readStream = request(options, (err, response) => {
 			if (err) {
-				mikser.diagnostics.log(context ? this : context, 'error', `[cache] Download error: ${err.message}`);
+				mikser.diagnostics.log(context, 'error', `[cache] Download error: ${err.message}`);
 				next();
 			}
 
 			if (response.statusCode !== 200) {
-				mikser.diagnostics.log(context ? this : context, 'error', `[cache] Invalid status code: ${options.url}, ${response.statusCode}, ${response.statusMessage}`);
+				mikser.diagnostics.log(context, 'error', `[cache] Invalid status code: ${options.url}, ${response.statusCode}, ${response.statusMessage}`);
 				next();
 			} else {
 				success = true;
@@ -99,7 +100,16 @@ module.exports = function (mikser, context) {
 		});
 	}
 
-	function _cache(entity, source, destination) {
+	function cacheFile(entity, source, destination, context) {
+		if (context) {
+			var capturedContext = {
+				_id: context._id,
+				document: context.document,
+				view: context.view,
+				entity: context.entity,
+				layout: context.layout
+			}
+		}
 		let cacheInfo = extend({}, defaultInfo);
 
 		if (!source) {
@@ -138,16 +148,6 @@ module.exports = function (mikser, context) {
 		updateCache(cacheInfo);
 		cacheInfo.toString = () => mikser.utils.getUrl(cacheInfo.destination);
 
-		if (context) {
-			var capturedContext = {
-				_id: context._id,
-				document: context.document,
-				view: context.view,
-				entity: context.entity,
-				layout: context.layout
-			}
-		}
-
 		return {
 			process: () => {
 				updateCache(cacheInfo);
@@ -163,13 +163,13 @@ module.exports = function (mikser, context) {
 							opts.auth = cacheInfo.credentials;
 						}
 
-						let downloadAsync = Promise.promisify(download);
+						let downloadAsync = Promise.promisify(downloadFile);
 						return fs.existsAsync(cacheInfo.destination).then((exists) => {
 							if (exists) {
 								return fs.unlinkAsync(cacheInfo.destination);
 							}
 						}).then(() => {
-							return downloadAsync.apply(that, [cacheInfo.destination, opts]);
+							return downloadAsync(cacheInfo.destination, opts, capturedContext);
 						});
 					}
 				}
@@ -197,7 +197,7 @@ module.exports = function (mikser, context) {
 
 	if (context){
 		context.cache = function(source, destination) {
-			let cache = _cache.apply(this, [context.entity, source, destination]);
+			let cache = cacheFile(context.entity, source, destination, context);
 			context.process(() => {
 				return cache.process();
 			});
@@ -206,7 +206,7 @@ module.exports = function (mikser, context) {
 	}
 
 	let plugin = {
-		cache: _cache
+		cache: cacheFile
 	}
 
 	return plugin;

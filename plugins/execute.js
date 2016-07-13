@@ -37,10 +37,19 @@ module.exports = function (mikser, context) {
 					throw err;
 				}
 			} else {
+				if (context) {
+					var capturedContext = {
+						_id: context._id,
+						document: context.document,
+						view: context.view,
+						entity: context.entity,
+						layout: context.layout
+					}
+				}
 				context.process(() => {
-					mikser.diagnostics.log(context, 'info', `[execute] ${command}`);
+					mikser.diagnostics.log(capturedContext, 'info', `[execute] ${command}`);
 					return mikser.broker.call('mikser.plugins.execute.exec', command).catch((err) => {
-						mikser.diagnostics.log(context, 'error', `[execute] ${err}`);
+						mikser.diagnostics.log(capturedContext, 'error', `[execute] ${err}`);
 					});
 				});
 			}
