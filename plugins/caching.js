@@ -100,7 +100,6 @@ module.exports = function (mikser, context) {
 	}
 
 	function _cache(entity, source, destination) {
-
 		let cacheInfo = extend({}, defaultInfo);
 
 		if (!source) {
@@ -138,7 +137,16 @@ module.exports = function (mikser, context) {
 		cacheInfo.source = source;
 		updateCache(cacheInfo);
 		cacheInfo.toString = () => mikser.utils.getUrl(cacheInfo.destination);
-		if (context) var that = _.clone(this);
+
+		if (context) {
+			var capturedContext = {
+				_id: context._id,
+				document: context.document,
+				view: context.view,
+				entity: context.entity,
+				layout: context.layout
+			}
+		}
 
 		return {
 			process: () => {
@@ -176,7 +184,7 @@ module.exports = function (mikser, context) {
 								});
 							}
 							else if (!cacheInfo.isOptional) {
-								mikser.diagnostics.log(context ? that : context, 'error', `[cache] File not found at: ${source}`);
+								mikser.diagnostics.log(context, 'error', `[cache] File not found at: ${source}`);
 							}
 							return Promise.resolve();
 						});
