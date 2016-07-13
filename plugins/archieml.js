@@ -8,12 +8,8 @@ module.exports = function (mikser, context) {
 		if (_.isString(value)) {
 			let trimmedValue = value.trim();
 
-			let float = parseFloat(trimmedValue);
-			let int = _.parseInt(trimmedValue);
-			if (!_.isNaN(float) || !_.isNaN(int)) {
-				if (float == int) return int;
-				else return float;
-			} 
+			let number = Number(trimmedValue);
+			if (!_.isNaN(number)) return number;
 
 			if (trimmedValue.toLowerCase() == 'false') return false;
 			if (trimmedValue.toLowerCase() == 'true') return true;
