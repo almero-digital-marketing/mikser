@@ -36,7 +36,7 @@ module.exports = function (mikser, context) {
 		return new Promise((resolve, reject) => {
 			request.get(source, options).on('response', (response) => {
 				if (response.statusCode !== 200) {
-					let err = new Error(`Download failed[${response.statusCode}]: ${options.url}, ${response.statusMessage}`);
+					let err = new Error(`Download failed[${response.statusCode}]: ${source}, ${response.statusMessage}`);
 					err.origin = 'cache';
 					reject(err);
 					return;
