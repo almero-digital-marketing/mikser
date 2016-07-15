@@ -149,7 +149,7 @@ module.exports = function (mikser, context) {
 	}
 	let outputAndSaveAsync = Promise.promisify(outputAndSave);
 
-	function transform(entity, source, destination) {
+	function transform(source, destination) {
 		
 		if (!source) {
 			let err = new Error('Undefined source');
@@ -168,7 +168,7 @@ module.exports = function (mikser, context) {
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
 				if (context) {
-					videoInfo.destination = mikser.utils.resolveDestination(destination, entity.destination);
+					videoInfo.destination = mikser.utils.resolveDestination(destination, context.entity.destination);
 				} else {
 					videoInfo.destination = path.join(mikser.options.workingFolder, destination);
 				}
@@ -205,18 +205,18 @@ module.exports = function (mikser, context) {
 
 		return {
 			process: () => {
-				videoInfo.source = mikser.utils.findSource(source);
-				if (!videoInfo.source) {
+				let sourceFilePath = mikser.utils.findSource(source);
+				if (!sourceFilePath) {
 					return mikser.diagnostics.log(this, 'warning', `[videos] File not found at: ${source}`);
 				}
 
-				if ((videoInfo.source.indexOf(mikser.options.workingFolder) !== 0) && !destination) {
+				if ((sourceFilePath.indexOf(mikser.options.workingFolder) !== 0) && !destination) {
 					let err = new Error(`Destination is missing for file ${videoInfo.base}`);
 					err.origin = 'videos';
 					throw err;
 				}
 
-				return fs.existsAsync(videoInfo.destination, (exist) => {
+				return fs.existsAsync(videoInfo.destination).then((exist) => {
 					let overwrite = Promise.resolve(true);
 					if (exist && source != videoInfo.destination) {
 						if (videoInfo.overwrite) {
@@ -238,7 +238,7 @@ module.exports = function (mikser, context) {
 					return overwrite.then((newer) => {
 						if (!newer) return Promise.resolve();
 						fs.ensureDirSync(videoInfo.outFolder);
-						videoInfo.video.input(videoInfo.source);
+						videoInfo.video.input(sourceFilePath);
 						return outputAndSaveAsync(videoInfo);
 					});
 				});
@@ -249,7 +249,7 @@ module.exports = function (mikser, context) {
 
 	if (context) {
 		context.video = function(source, destination) {
-			let videoTransform = transform(context.entity, source, destination);
+			let videoTransform = transform(source, destination);
 			context.process(videoTransform.process);
 			return videoTransform.videoInfo;
 		}
@@ -257,7 +257,7 @@ module.exports = function (mikser, context) {
 
 	let plugin = {
 		transform: function(source, destination) {
-			let videoTransform = transform(context.entity, source, destination);
+			let videoTransform = transform(source, destination);
 			return videoTransform.process.apply(null).return(videoTransform.videoInfo);
 		}
 	}

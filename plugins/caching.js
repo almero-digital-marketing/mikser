@@ -32,35 +32,25 @@ module.exports = function (mikser, context) {
 		return /^http[s]?:\/\//.test(path);
 	}
 
-	function downloadFile(destination, options, next) {
-		debug('Downloading:', options.url);
-		let success = false;
-
-		let readStream = request(options, (err, response) => {
-			if (err) {
-				mikser.diagnostics.log(this, 'error', `[cache] Download error: ${err.message}`);
-				next();
-			}
-
-			if (response.statusCode !== 200) {
-				mikser.diagnostics.log(this, 'error', `[cache] Invalid status code: ${options.url}, ${response.statusCode}, ${response.statusMessage}`);
-				next();
-			} else {
-				success = true;
-			}
+	function downloadFile(source, destination, options) {
+		return new Promise((resolve, reject) => {
+			request.get(source, options).on('response', (response) => {
+				if (response.statusCode !== 200) {
+					let err = new Error(`Download failed[${response.statusCode}]: ${options.url}, ${response.statusMessage}`);
+					err.origin = 'cache';
+					reject(err);
+					return;
+				}
+				let file = createOutputStream(destination).on('finish', () => {
+					file.close(resolve);
+				});
+				response.pipe(file).on('error', (err) => {
+					fs.removeAsync(destination).finally(() => next(err));
+				});				
+			}).on('error', function(err) {
+				reject(err);
+			});
 		});
-
-		let writeStream = createOutputStream(destination);
-		writeStream.on('error', next);
-		writeStream.on('finish', () => {
-			if (!success) {
-				fs.remove(destination, next);
-			} else {
-				debug(`Saved: ${destination}`)
-				next();
-			}
-		});
-		readStream.pipe(writeStream);
 	}
 
 	function updateCache (cacheInfo) {
@@ -100,8 +90,13 @@ module.exports = function (mikser, context) {
 		});
 	}
 
-	function cacheFile(entity, source, destination) {
+	function cacheFile(source, destination, options) {
 		let cacheInfo = extend({}, defaultInfo);
+		if (typeof destination != 'string') {
+			options = destination;
+			destination = undefined;
+		}
+		cacheInfo.options = options || {};
 
 		if (!source) {
 			let err = new Error('Undefined source');
@@ -118,7 +113,7 @@ module.exports = function (mikser, context) {
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
 				if (context) {
-					cacheInfo.destination = mikser.utils.resolveDestination(destination, entity.destination);
+					cacheInfo.destination = mikser.utils.resolveDestination(destination, context.entity.destination);
 				} else {
 					cacheInfo.destination = path.join(mikser.options.workingFolder, destination);
 				}
@@ -128,7 +123,7 @@ module.exports = function (mikser, context) {
 			}
 		} else {
 			cacheInfo.destination = mikser.utils.predictDestination(source);
-			cacheInfo.destination = mikser.utils.resolveDestination(cacheInfo.destination, entity.destination);
+			cacheInfo.destination = mikser.utils.resolveDestination(cacheInfo.destination, context.entity.destination);
 		}
 
 		if (!mikser.utils.isPathToFile(cacheInfo.destination)) {
@@ -142,25 +137,16 @@ module.exports = function (mikser, context) {
 		return {
 			process: () => {
 				updateCache(cacheInfo);
-				if (isUrl(source)) {
+				if (isUrl(cacheInfo.source)) {
 					if (!cacheInfo.fromCache) {
-						let opts = {
-							method: 'GET',
-							encoding: null,
-							url: source,
-						};
-
-						if (cacheInfo.credentials) {
-							opts.auth = cacheInfo.credentials;
-						}
-
-						let downloadAsync = Promise.promisify(downloadFile);
 						return fs.existsAsync(cacheInfo.destination).then((exists) => {
 							if (exists) {
 								return fs.unlinkAsync(cacheInfo.destination);
 							}
 						}).then(() => {
-							return downloadAsync(cacheInfo.destination, opts);
+							debug('Downloading:', cacheInfo.source);
+							return downloadFile(cacheInfo.source, cacheInfo.destination, cacheInfo.options)
+								.tap(() => console.log('Saved:', cacheInfo.destination));
 						});
 					}
 				}
@@ -187,16 +173,16 @@ module.exports = function (mikser, context) {
 	}
 
 	if (context){
-		context.cache = function(source, destination) {
-			let cache = cacheFile(context.entity, source, destination);
+		context.cache = function(source, destination, options) {
+			let cache = cacheFile(source, destination, options);
 			context.process(cache.process);
 			return cache.cacheInfo;
 		}
 	}
 
 	let plugin = {
-		cache: function(source, destination) {
-			let cache = cacheFile(context.entity, source, destination);
+		cache: function(source, destination, options) {
+			let cache = cacheFile(source, destination, options);
 			return cache.process.apply(null).return(cache.cacheInfo);
 		}
 	}
