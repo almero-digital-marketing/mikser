@@ -198,7 +198,7 @@ module.exports = function (mikser, context) {
 			}
 		} else {
 			imageInfo.destination = predictDestination(source);
-			imageInfo.destination = mikser.utils.resolveDestination(imageInfo.destination, entity.destination);
+			imageInfo.destination = mikser.utils.resolveDestination(imageInfo.destination, context.entity.destination);
 		}
 
 		if (isNotAllowedExtension(imageInfo.destination)) {
