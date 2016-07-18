@@ -291,10 +291,7 @@ module.exports = function (mikser, context) {
 	}
 
 	let plugin = {
-		transform: function(source, destination) {
-			let imageTransform = transform(source, destination);
-			return imageTransform.process.apply(null).return(imageTransform.imageInfo);
-		}
+		transform: transform
 	}
 
 	return plugin;

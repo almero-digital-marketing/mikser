@@ -181,10 +181,7 @@ module.exports = function (mikser, context) {
 	}
 
 	let plugin = {
-		cache: function(source, destination, options) {
-			let cache = cacheFile(source, destination, options);
-			return cache.process.apply(null).return(cache.cacheInfo);
-		}
+		cache: cacheFile
 	}
 
 	return plugin;

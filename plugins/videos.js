@@ -256,10 +256,7 @@ module.exports = function (mikser, context) {
 	}
 
 	let plugin = {
-		transform: function(source, destination) {
-			let videoTransform = transform(source, destination);
-			return videoTransform.process.apply(null).return(videoTransform.videoInfo);
-		}
+		transform: transform
 	}
 
 	return plugin;
