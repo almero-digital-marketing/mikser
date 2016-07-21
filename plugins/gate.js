@@ -60,20 +60,21 @@ module.exports = function(mikser) {
 					}
 				});
 				connection.pipe(mx).pipe(connection).on('error', debug);
-				mx.createStream({
+				let gateStream = mx.createStream({
 					gate: mikser.options.gate[portName]
 				}).end();
 
+				let pingStream = mx.createStream({
+					ping: mikser.options.gate[portName]
+				}).on('error', (err) => {
+					connectionManager.disconnect();
+					debug(err);
+				});
 				if (ping[portName]) clearInterval(ping[portName]);
-				ping[portName] = setInterval(()=> {
+				ping[portName] = setInterval(() => {
 					debug('Ping', portName);
-					mx.createStream({
-						ping: mikser.options.gate[portName]
-					}).end().on('error', (err) => {
-						connectionManager.disconnect();
-						debug(err);
-					});
-				}, 60e3);
+					pingStream.write('ping');
+				}, 30e3);
 			}).connect({
 				port: 9090,
 				host: 'mikser.io'
