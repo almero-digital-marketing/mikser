@@ -47,6 +47,8 @@ module.exports = function(mikser) {
 			return fs.outputJsonAsync(recent, mikser.options.gate);
 		}).then(() => {
 			reconnect({
+				initialDelay: 1e3,
+  				maxDelay: 30e3,
 				strategy: 'fibonacci',
 				failAfter: Infinity
 			}, (connection) => {
@@ -62,7 +64,7 @@ module.exports = function(mikser) {
 			}).connect({
 				port: 9090,
 				host: 'mikser.io'
-			}).on('error', debug);
+			}).on('reconnect', debug).on('error', debug);
 		});			
 	}
 
