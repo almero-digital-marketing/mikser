@@ -16,6 +16,8 @@ module.exports = function(mikser) {
 	let debug = mikser.debug('gate');
 	mikser.options.gate = {};
 
+	let ping = {};
+
 	function showServerInfo() {
 		for(let portName of _.keys(mikser.options.gate)) {
 			if (portName != 'server') mikser.diagnostics.log('info', 'Gate[' + portName + ']: http://' + 'm' + base32.encode(mikser.options.gate[portName]) + '.mikser.io/');
@@ -46,7 +48,7 @@ module.exports = function(mikser) {
 			mikser.options.gate[portName] = shortid.generate();
 			return fs.outputJsonAsync(recent, mikser.options.gate);
 		}).then(() => {
-			reconnect({
+			let connectionManager = reconnect({
 				initialDelay: 1e3,
   				maxDelay: 30e3,
 				strategy: 'fibonacci',
@@ -61,6 +63,17 @@ module.exports = function(mikser) {
 				mx.createStream({
 					gate: mikser.options.gate[portName]
 				}).end();
+
+				if (ping[portName]) clearInterval(ping[portName]);
+				ping[portName] = setInterval(()=> {
+					debug('Ping', portName);
+					mx.createStream({
+						ping: mikser.options.gate[portName]
+					}).end().on('error', (err) => {
+						connectionManager.disconnect();
+						debug(err);
+					});
+				}, 60e3);
 			}).connect({
 				port: 9090,
 				host: 'mikser.io'
