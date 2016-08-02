@@ -73,7 +73,9 @@ module.exports = function(mikser) {
 				if (ping[portName]) clearInterval(ping[portName]);
 				ping[portName] = setInterval(() => {
 					debug('Ping', portName);
-					pingStream.write('ping').catch(debug);
+					try {
+						pingStream.write('ping');	
+					} catch(err) { debug(err) }
 				}, 30e3);
 			}).connect({
 				port: 9090,
