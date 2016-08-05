@@ -26,7 +26,18 @@ Mikser works well on Windows, Linux and OSX. It can be installed both globally a
 ### Using mikser from inside a script
 ```js
 var mikser = require('mikser');
-mikser(options).run();
+var express = require('express')
+var cookieParser = require('cookie-parser')
+var app = express();
+app.use(cookieParser());
+mikser({
+	workingFolder: '/var/mikser', // Use custom working folder
+	app: app, // Use existing Express web server, Default: Mikser will create one
+	server: true, // Add Mikser middle-ware. Default: true, if set to false Mikser won't start web server
+	watch: false, // Don't watch file system for changes. Default: true
+	debug: true, // Enter debug mode. Default: false
+	environment: 'dev' // Merge some extra configuration from another config file.
+}).run();
 ```
 1. Create `mikser.js` and put these lines inside 
 2. Install mikser as local dependency with `npm install mikser`
