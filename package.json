@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "6.4.0",
+  "version": "6.4.1",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -51,6 +51,7 @@
     "mongodb": "^2.1.20",
     "mousetrap": "^1.6.0",
     "mux-demux": "^3.7.9",
+    "node-cache": "^3.2.1",
     "node-constants": "0.0.2",
     "node.extend": "^1.1.5",
     "nprogress": "^0.2.0",
