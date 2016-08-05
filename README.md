@@ -26,8 +26,8 @@ Mikser works well on Windows, Linux and OSX. It can be installed both globally a
 ### Using mikser from inside a script
 ```js
 var mikser = require('mikser');
-var express = require('express')
-var cookieParser = require('cookie-parser')
+var express = require('express');
+var cookieParser = require('cookie-parser');
 var app = express();
 app.use(cookieParser());
 mikser({
