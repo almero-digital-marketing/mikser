@@ -26,7 +26,7 @@ Mikser works well on Windows, Linux and OSX. It can be installed both globally a
 ### Using mikser from inside a script
 ```js
 var mikser = require('mikser');
-mikser.run();
+mikser(options).run();
 ```
 1. Create `mikser.js` and put these lines inside 
 2. Install mikser as local dependency with `npm install mikser`

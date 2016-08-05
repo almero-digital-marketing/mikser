@@ -2,7 +2,7 @@
 
 var cluster = require('cluster');
 var Promise = require('bluebird');
-var mikser = require('./lib/mikser');
+var application = require('./lib/application');
 var config = require('./lib/config');
 var runtime = require('./lib/runtime');
 var databse = require('./lib/database');
@@ -23,49 +23,52 @@ var observer = require('./lib/observer');
 var backports = require('./lib/backports');
 var _ = require('lodash');
 
-module.exports.run = function(options) {
-	mikser(options)
-	.then(debug)
-	.then(broker)
-	.then(config)
-	.then(runtime)
-	.then(databse)
-	.then(parser)
-	.then(queue)
-	.then(observer)
-	.then(loader)
-	.then(generator)
-	.then(scheduler)
-	.then(utils)
-	.then(manager)
-	.then(tools)
-	.then(watcher)
-	.then(diagnostics)
-	.then(server)
-	.then(backports)
-	.then((mikser) => {
-		if (cluster.isMaster) {
-			console.log('Mikser: Loaded');
-			mikser.loadPlugins().then(() => {
-				mikser.cli.init(true);					
-				mikser.debug.resetWatch()
-				.then(mikser.manager.glob)
-				.then(mikser.manager.clean)
-				.then(mikser.tools.compile)
-				.then(mikser.manager.sync)
-				.then(mikser.server.listen)
-				.then(mikser.scheduler.process)
-				.then(mikser.tools.build)
-				.then(mikser.watcher.start)
-				.then(() => {
-					if (!mikser.options.server && !mikser.options.watch) {
-						mikser.exit();
-					}
-				});
+module.exports = function(options) {
+	let mikser = application(options);
+	mikser.run = function() {
+	 	return Promise.resolve(mikser)
+			.then(debug)
+			.then(broker)
+			.then(config)
+			.then(runtime)
+			.then(databse)
+			.then(parser)
+			.then(queue)
+			.then(observer)
+			.then(loader)
+			.then(generator)
+			.then(scheduler)
+			.then(utils)
+			.then(manager)
+			.then(tools)
+			.then(watcher)
+			.then(diagnostics)
+			.then(server)
+			.then(backports)
+			.then((mikser) => { 
+				if (cluster.isMaster) {
+					console.log('Mikser: Loaded');
+					mikser.loadPlugins().then(() => {
+						mikser.cli.init(true);					
+						mikser.debug.resetWatch()
+						.then(mikser.manager.glob)
+						.then(mikser.manager.clean)
+						.then(mikser.tools.compile)
+						.then(mikser.manager.sync)
+						.then(mikser.server.listen)
+						.then(mikser.scheduler.process)
+						.then(mikser.tools.build)
+						.then(mikser.watcher.start)
+						.then(() => {
+							if (!mikser.options.server && !mikser.options.watch) {
+								mikser.exit();
+							}
+						});
+					});
+				} else {
+					mikser.loadPlugins().then(mikser.joinMaster);
+				}
 			});
-		} else {
-			mikser.loadPlugins().then(mikser.joinMaster);
-		}
-	});
-};
-
+	}
+	return mikser;
+}
