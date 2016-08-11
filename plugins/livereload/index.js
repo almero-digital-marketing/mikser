@@ -17,8 +17,10 @@ module.exports = function (mikser) {
 		.init();
 	mikser.options.forceRefresh = mikser.cli.forceRefresh;
 
-	mikser.config.watcher.output = mikser.config.watcher.output || ['**/*.jpeg', '**/*.jpg', '**/*.gif', '**/*.png', '**/*.svg'];
-	mikser.config.watcher.reload = mikser.config.watcher.reload || ['**/*.css', '**/*.js'];
+	if (mikser.config.watcher) {
+		mikser.config.watcher.output = mikser.config.watcher.output || ['**/*.jpeg', '**/*.jpg', '**/*.gif', '**/*.png', '**/*.svg'];
+		mikser.config.watcher.reload = mikser.config.watcher.reload || ['**/*.css', '**/*.js'];		
+	}
 
 	if (mikser.config.livereload === false) {
 		console.log('Live reload: disabled');
