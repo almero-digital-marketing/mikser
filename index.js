@@ -53,6 +53,7 @@ module.exports = function(options) {
 						mikser.debug.resetWatch()
 						.then(mikser.manager.glob)
 						.then(mikser.manager.clean)
+						.then(mikser.tools.startup)
 						.then(mikser.tools.compile)
 						.then(mikser.manager.sync)
 						.then(mikser.server.listen)
