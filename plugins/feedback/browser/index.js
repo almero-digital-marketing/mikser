@@ -81,7 +81,7 @@ module.exports = function (mikser) {
 			console.log.apply(console, aw.parse(data.message));
 		}		
 		if (data.code !== 0) {
-			mikser.plugins.notification.server('System: <strong>' + data.message + '</strong>');
+			mikser.plugins.notification.server('System: <strong>' + data.message.replace(/\n/g,'<br>') + '</strong>');
 		}
 	}
 
