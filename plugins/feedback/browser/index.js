@@ -166,5 +166,8 @@ module.exports = function (mikser) {
 				}
 			}
 		}
+		else {
+			handleRunMessage(parsedData);
+		}
 	}
 }
