@@ -77,10 +77,8 @@ module.exports = function (mikser) {
 	}
 
 	function handleSystemMessage(data) {
-		if (data.message) {
-			console.log.apply(console, aw.parse(data.message));
-		}		
 		if (data.code !== 0) {
+			console.log(data.message);
 			mikser.plugins.notification.server('System: <strong>' + data.message.replace(/\n/g,'<br>') + '</strong>');
 		}
 	}
