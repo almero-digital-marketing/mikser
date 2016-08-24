@@ -69,7 +69,7 @@ module.exports = function(options) {
 				} else {
 					mikser.loadPlugins().then(mikser.joinMaster);
 				}
-			});
+			}).return(mikser);
 	}
 	return mikser;
 }
