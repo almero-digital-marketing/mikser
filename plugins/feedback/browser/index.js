@@ -76,6 +76,15 @@ module.exports = function (mikser) {
 		}
 	}
 
+	function handleSystemMessage(data) {
+		if (data.message) {
+			console.log.apply(console, aw.parse(data.message));
+		}		
+		if (data.code !== 0) {
+			mikser.plugins.notification.server('System: <strong>' + data.message + '</strong>');
+		}
+	}
+
 	function showSummary() {
 		var messageSulfix = '';
 		var message = 'Mikser generation finished.';
@@ -167,7 +176,7 @@ module.exports = function (mikser) {
 			}
 		}
 		else {
-			handleRunMessage(parsedData);
+			handleSystemMessage(parsedData);
 		}
 	}
 }
