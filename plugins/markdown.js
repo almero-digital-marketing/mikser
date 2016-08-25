@@ -20,7 +20,10 @@ module.exports = function (mikser, context) {
 		}
 
 		context.removeMarkdown = function (content) {
-			return removeMd(content);
+			if (content) {
+				return removeMd(content);
+			}
+			return content;
 		}		
 	} else {
 		mikser.manager.extensions['.md'] = '.html';
