@@ -84,7 +84,7 @@ module.exports = function (mikser) {
 		}
 
 		let viewEngine = (filePath, options, next) => {
-			let viewId = filePath.replace(mikser.config.viewsFolder, '');
+			let viewId = filePath.replace(mikser.config.viewsFolder, '').replace('\\','/');
 			return mikser.generator.renderView(viewId, options).then((content) => {
 				next(null, content);
 			}).catch((err) => {
