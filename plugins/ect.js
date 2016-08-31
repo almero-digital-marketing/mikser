@@ -13,6 +13,7 @@ module.exports = function (mikser, context) {
 	} else {
 		var cache = {}
 		mikser.generator.engines.push({
+			extensions: ['ect','eco'],
 			pattern: '**/*.+(ect|eco)', 
 			render: function(context) {
 				try {

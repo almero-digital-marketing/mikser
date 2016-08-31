@@ -16,6 +16,7 @@ module.exports = function (mikser, context) {
 		}
 	} else {
 		mikser.generator.engines.push({
+			extensions: ['twig'],
 			pattern: '**/*.twig',
 			render: function(context) {
 				if (context.layout && context.layout.template) {

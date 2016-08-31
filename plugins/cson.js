@@ -9,6 +9,7 @@ module.exports = function (mikser, context) {
 		}
 	} else {
 		mikser.parser.engines.push({
+			extensions: ['cson'],
 			pattern: '**/*.+(cson)', 
 			parse: function(content) {
 				return cson.parse(content);

@@ -9,6 +9,7 @@ module.exports = function (mikser, context) {
 		}
 	} else {
 		mikser.parser.engines.push({
+			extensions: ['json','json5'],
 			pattern: '**/*.+(json|json5)', 
 			parse: function(content) {
 				return JSON5.parse(content);

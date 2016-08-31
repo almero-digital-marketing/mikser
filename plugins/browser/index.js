@@ -3,11 +3,13 @@ var express = require('express');
 var path = require('path');
 var fs = require("fs-extra-promise");
 var _ = require('lodash');
+var Promise = require('bluebird');
 
 module.exports = function (mikser) {
 	var debug = mikser.debug('server-borwser');
-	return (app) => {
-		app.get('*', (req, res, next) => {
+
+	mikser.on('mikser.server.listen', (app) => {
+		app.get('*',(req, res, next) => {
 			if (mikser.config.browser) {
 				res.inject = function(content) {
 					if (content) {
@@ -52,7 +54,7 @@ module.exports = function (mikser) {
 			modules.push(configModule);
 
 			let mainModule = {};
-			mainModule[path.join(__dirname, '../browser.js')] = {run: true};
+			mainModule[path.join(__dirname, 'browser.js')] = {run: true};
 			modules.push(mainModule);
 
 			let browserifySettings = browserify.settings.production;
@@ -62,5 +64,6 @@ module.exports = function (mikser) {
 
 			app.use('/mikser/bundle.js', browserify(modules, browserifySettings));				
 		}
-	}
+	});	
+
 }

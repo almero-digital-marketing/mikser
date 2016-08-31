@@ -16,6 +16,7 @@ module.exports = function (mikser, context) {
 	} else {
 		var cache = {}
 		mikser.generator.engines.push({
+			extensions: ['njk'],
 			pattern: '**/*.njk',
 			render: function(context) {
 				try {

@@ -9,6 +9,7 @@ module.exports = function (mikser, context) {
 		}
 	} else {
 		mikser.parser.engines.push({
+			extensions: ['toml'],
 			pattern: '**/*.+(toml)', 
 			parse: function(content) {
 				return toml.parse(content);

@@ -15,6 +15,7 @@ module.exports = function (mikser, context) {
 	} else {
 		var cache = {}
 		mikser.generator.engines.push({
+			extensions: ['ejs'],
 			pattern: '**/*.ejs',
 			render: function(context) {
 				try {

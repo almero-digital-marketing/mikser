@@ -13,6 +13,7 @@ module.exports = function (mikser, context) {
 	} else {
 		var cache = {}
 		mikser.generator.engines.push({
+			extensions: ['jade','pug'],
 			pattern: '**/*.+(jade|pug)', 
 			render: function(context) {
 				try {

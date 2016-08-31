@@ -26,6 +26,7 @@ module.exports = function (mikser, context) {
 		}
 	} else {
 		mikser.parser.engines.push({
+			extensions: ['aml'],
 			pattern: '**/*.+(aml)', 
 			parse: function(content) {
 				let raw = archieml.load(content);

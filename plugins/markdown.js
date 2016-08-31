@@ -28,6 +28,7 @@ module.exports = function (mikser, context) {
 	} else {
 		mikser.manager.extensions['.md'] = '.html';
 		mikser.generator.engines.push({
+			extensions: ['md'],
 			pattern: '**/*.md',
 			render: function(context) {
 				let renderer = new marked.Renderer();

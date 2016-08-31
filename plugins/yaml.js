@@ -9,6 +9,7 @@ module.exports = function (mikser, context) {
 		}
 	} else {
 		mikser.parser.engines.push({
+			extensions: ['yml','yaml'],
 			pattern: '**/*.+(yml|yaml)', 
 			parse: function(content) {
 				return yaml.safeLoad(content);

@@ -11,6 +11,7 @@ module.exports = function (mikser, context) {
 		}
 	} else {
 		mikser.generator.engines.push({
+			extensions: ['swig'],
 			pattern: '**/*.swig',
 			render: function(context) {
 				try {
