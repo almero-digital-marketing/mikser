@@ -20,7 +20,7 @@ var broker = require('./lib/broker');
 var parser = require('./lib/parser');
 var queue = require('./lib/queue');
 var observer = require('./lib/observer');
-var realtime = require('./lib/realtime');
+var engine = require('./lib/engine');
 var backports = require('./lib/backports');
 var _ = require('lodash');
 
@@ -45,7 +45,7 @@ module.exports = function(options) {
 			.then(watcher)
 			.then(diagnostics)
 			.then(server)
-			.then(realtime)
+			.then(engine)
 			.then(backports)
 			.then((mikser) => { 
 				if (cluster.isMaster) {

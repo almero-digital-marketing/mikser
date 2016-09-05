@@ -10,7 +10,7 @@ module.exports = function (mikser) {
 
 	mikser.on('mikser.server.listen', (app) => {
 		if (mikser.config.browser) {
-			mikser.realtime.inject = function(content) {
+			mikser.engine.inject = function(content) {
 				if (content) {
 					return content.replace('</body>','<script src="/mikser/bundle.js" async></script></body>');
 				}
