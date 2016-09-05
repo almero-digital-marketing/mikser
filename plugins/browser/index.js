@@ -9,24 +9,13 @@ module.exports = function (mikser) {
 	var debug = mikser.debug('server-borwser');
 
 	mikser.on('mikser.server.listen', (app) => {
-		app.get('*',(req, res, next) => {
-			if (mikser.config.browser) {
-				res.inject = function(content) {
-					if (content) {
-						debug('Injecting:', req.normalizedUrl);
-						content = content.replace('</body>','<script src="/mikser/bundle.js" async></script></body>');
-						res.send(content);						
-					}
-				}
-			} else {
-				res.inject = function(content) {
-					res.send(content);
+		if (mikser.config.browser) {
+			mikser.realtime.inject = function(content) {
+				if (content) {
+					return content.replace('</body>','<script src="/mikser/bundle.js" async></script></body>');
 				}
 			}
-			return next();
-		});
 
-		if (mikser.config.browser) {
 			var browserify = require('browserify-middleware');
 			mikser.server.ws = require('express-ws')(app);
 
