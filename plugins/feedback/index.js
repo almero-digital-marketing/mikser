@@ -1,6 +1,5 @@
 'use strict'
 
-let WebSocketServer = require('ws').Server;
 let Promise = require('bluebird');
 let cluster = require('cluster');
 let net = require('net');

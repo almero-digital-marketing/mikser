@@ -47,6 +47,7 @@ module.exports = function(options) {
 			.then(server)
 			.then(engine)
 			.then(backports)
+			.then(() => mikser.emit('mikser.init', cluster.isMaster).return(mikser))
 			.then((mikser) => { 
 				if (cluster.isMaster) {
 					console.log('Mikser: Loaded');

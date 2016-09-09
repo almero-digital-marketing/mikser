@@ -17,7 +17,6 @@ module.exports = function (mikser) {
 			}
 
 			var browserify = require('browserify-middleware');
-			mikser.server.ws = require('express-ws')(app);
 
 			let modules = _.uniq(mikser.config.browser).map((pluginName) => {
 				let pluginModule = {};

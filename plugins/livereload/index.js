@@ -1,6 +1,5 @@
 'use strict'
 
-var WebSocketServer = require('ws').Server;
 var S = require('string');
 var path = require('path');
 var Promise = require('bluebird');
