@@ -10,6 +10,16 @@ module.exports = function (mikser) {
 			snipver: 1
 		};
 		var livereload = require('livereload-js');
+		document.addEventListener('LiveReloadConnect', function(e){
+			if (mikser.options.entityId) {
+				LiveReload.connector.socket.send(JSON.stringify({
+					command: 'details', 
+					entityId: mikser.options.entityId, 
+					entityCollection: mikser.options.entityCollection
+				}));
+			}
+		});
+
 		window.addEventListener('beforeunload', function(e){
 			LiveReload.shutDown();
 		}, false);

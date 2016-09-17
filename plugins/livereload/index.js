@@ -46,7 +46,7 @@ module.exports = function (mikser) {
 				let entity = mikser.runtime.findEntity(collection, entityId);
 				if (entity && entity.url) {
 					debug('Client:', client.url, entity.url);
-					if (client.url == entity.url) {
+					if (client.entity && (client.entity._id == entity._id)) {
 						if (refreshTimeout) clearTimeout(refreshTimeout);
 						refreshQueue[clientId] = () => {
 							debug('Refreshing[' + clientId + ']', entity.url);
@@ -145,8 +145,13 @@ module.exports = function (mikser) {
 				}
 				else if (message.command === 'info') {
 					livereload.clients[clientId].url = mikser.utils.getNormalizedUrl(message.url);
-					mikser.server.hot.push(livereload.clients[clientId].url);
 					debug('Live reload connected:', livereload.clients[clientId].url);
+				}
+				else if (message.command === 'details') {
+					let entity = mikser.runtime.findEntity(message.entityCollection, message.entityId);
+					livereload.clients[clientId].entity = entity;
+					mikser.server.hot.push(entity.url);
+					debug('Live entity connected:', livereload.clients[clientId].entity._id);
 				}
 			});
 		});

@@ -4,14 +4,17 @@ var path = require('path');
 var fs = require("fs-extra-promise");
 var _ = require('lodash');
 var Promise = require('bluebird');
+var S = require('string');
 
 module.exports = function (mikser) {
 	var debug = mikser.debug('server-borwser');
 
 	mikser.on('mikser.server.listen', (app) => {
 		if (mikser.config.browser) {
-			mikser.engine.inject = function(content) {
+			mikser.engine.inject = function(content, options) {
+				options = options || {};
 				if (content) {
+					content = content.replace('<body', '<body data-mikser="' + S(JSON.stringify(options)).escapeHTML().s + '"');
 					return content.replace('</body>','<script src="/mikser/bundle.js" async></script></body>');
 				}
 			}
