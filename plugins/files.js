@@ -6,6 +6,10 @@ let rp = require('request-promise');
 
 module.exports = function (mikser, context) {
 
+	function isUrl (path) {
+		return /^http[s]?:\/\//.test(path);
+	}
+
 	context.glob = function (pattern, globFolder) {
 		let globFolders = [mikser.config.filesFolder, mikser.config.sharedFolder];
 		let result = [];
