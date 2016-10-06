@@ -88,7 +88,7 @@ module.exports = function (mikser, context) {
 		if (isUrl(source)) {
 			return context.async(rp(source, {encoding: null}).then((data) => 'base64,' + data.toString('base64')));
 		} else {
-			let source = mikser.utils.findSource(source);
+			source = mikser.utils.findSource(source);
 			return context.async(fs.readFileAsync(source).then((data) => 'base64,' + data.toString('base64')));
 		}
 	}
