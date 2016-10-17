@@ -149,9 +149,11 @@ module.exports = function (mikser) {
 				}
 				else if (message.command === 'details') {
 					let entity = mikser.runtime.findEntity(message.entityCollection, message.entityId);
-					livereload.clients[clientId].entity = entity;
-					mikser.server.hot.push(entity.url);
-					debug('Live entity connected:', livereload.clients[clientId].entity._id);
+					if (entity) {
+						livereload.clients[clientId].entity = entity;
+						mikser.server.hot.push(entity.url);
+						debug('Live entity connected:', livereload.clients[clientId].entity._id);						
+					}
 				}
 			});
 		});
