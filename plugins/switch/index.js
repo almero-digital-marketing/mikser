@@ -5,6 +5,7 @@ var cluster = require('cluster');
 
 module.exports = function(mikser) {
 
+	if (!mikser.config.browser) return Promise.resolve();
 	let plugin = {
 		toggleDebug: (state) => {
 			mikser.options.debug = state;

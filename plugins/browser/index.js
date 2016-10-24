@@ -9,8 +9,8 @@ var S = require('string');
 module.exports = function (mikser) {
 	var debug = mikser.debug('server-borwser');
 
-	mikser.on('mikser.server.listen', (app) => {
-		if (mikser.config.browser) {
+	if (mikser.config.browser) {
+		mikser.on('mikser.server.listen', (app) => {
 			mikser.engine.inject = function(content, options) {
 				options = options || {};
 				if (content) {
@@ -54,7 +54,6 @@ module.exports = function (mikser) {
 			}
 
 			app.use('/mikser/bundle.js', browserify(modules, browserifySettings));				
-		}
-	});	
-
+		});	
+	}
 }

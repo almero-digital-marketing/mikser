@@ -10,6 +10,7 @@ var _ = require('lodash');
 
 module.exports = function (mikser) {
 	if (cluster.isWorker) return;
+	if (!mikser.config.browser) return Promise.resolve();
 
 	mikser.cli
 		.option('-L, --force-refresh', 'force live reload to refresh all the time')

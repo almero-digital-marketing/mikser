@@ -10,6 +10,8 @@ let util = require('util');
 module.exports = function (mikser) {
 
 	let debug = mikser.debug('feedback');
+	if (!mikser.config.browser) return Promise.resolve();
+	
 	let feedback = {
 		server: {
 			broadcast: (data) => {
