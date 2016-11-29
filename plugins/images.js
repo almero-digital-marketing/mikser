@@ -76,11 +76,17 @@ module.exports = function (mikser, context) {
 					alpha = `${alpha*100}%`;
 					info.dissolve(alpha);
 				}
-			},
+			}
 		},
 	};
 
 	config = _.defaultsDeep(mikser.options.images || {}, mikser.config.images || {}, config);
+	if (config.imageMagick) {
+		let im = gm.subClass({ imageMagick: true});
+		config.magic = im;
+	} else {
+		config.magic = gm;
+	}
 
 	function wrapTransforms(imageInfo) {
 		for (let action in config.transforms) {
@@ -143,13 +149,7 @@ module.exports = function (mikser, context) {
 
 	function pushTransforms (imageInfo) {
 		imageInfo.images = imageInfo.images || [];
-		if (config.imageMagick) {
-			let im = gm.subClass({ imageMagick: true});
-			imageInfo.images.push(im());
-		} else {
-			imageInfo.images.push(gm());
-		}
-
+		imageInfo.images.push(config.magic());
 		exposeTransforms(imageInfo);
 		wrapTransforms(imageInfo);
 	}
@@ -285,7 +285,19 @@ module.exports = function (mikser, context) {
 	if (context) {
 		context.image = function(source, destination) {
 			let imageTransform = transform(source, destination);
-			context.process(imageTransform.process);
+			let transformation = context.process(imageTransform.process);
+			imageTransform.imageInfo.size = (map) => {
+				map = map || 'size';
+				if (typeof map == 'string') {
+					let prop = map;
+					map = (value) => value[prop];
+				}
+				return context.processAsync(() => {
+					let magic = config.magic(imageTransform.imageInfo.destination);
+					let getSize = Promise.promisify(magic.size, {context: magic});
+					return getSize().then((value) => map(value));
+				});
+			} 
 			return imageTransform.imageInfo;
 		}
 	}
