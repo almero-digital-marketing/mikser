@@ -15,7 +15,7 @@ module.exports = function (mikser, context) {
 			if (trimmedValue.toLowerCase() == 'true') return true;
 
 			let date = Date.parse(trimmedValue);
-			if (!_.isNaN(date)) return date;
+			if (!_.isNaN(date)) return new Date(date);
 		}
 	}
 
