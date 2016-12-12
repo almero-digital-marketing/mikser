@@ -1,6 +1,7 @@
 'use strict'
 let Promise = require('bluebird');
 var _ = require('lodash');
+let path  = require('path');
 
 module.exports = function (mikser, context) {
 	let debug = mikser.debug('versions');
@@ -21,8 +22,10 @@ module.exports = function (mikser, context) {
 			}
 		}
 
+
 		return Promise.map(_.keys(versions), (name) => {
 			let version = _.cloneDeep(context.entity);
+			delete version.meta.versions;
 			version._id += "." + name;
 			version.meta.href = context.entity.meta.href + '/' + name;
 			if (mikser.config.cleanUrls) {

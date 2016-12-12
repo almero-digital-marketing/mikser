@@ -9,7 +9,7 @@ module.exports = function (mikser, context) {
 	if (context) {
 		context.markdown = function (content) {
 			if (!content) return '';
-			if (typeof content != 'string') {
+			if (typeof content != 'string' && content != undefined) {
 				throw new Error('Argument is not a string');
 			}
 			let renderer = new marked.Renderer();
