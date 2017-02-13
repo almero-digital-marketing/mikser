@@ -37,10 +37,10 @@ module.exports = function (mikser, context) {
 					throw err;
 				}
 			} else {
-				context.process((context) => {
-					mikser.diagnostics.log(context, 'info', `[execute] ${command}`);
+				context.process(() => {
+					mikser.diagnostics.log(this, 'info', `[execute] ${command}`);
 					return mikser.broker.call('mikser.plugins.execute.exec', command).catch((err) => {
-						mikser.diagnostics.log(context, 'error', `[execute] ${err}`);
+						mikser.diagnostics.log(this, 'error', `[execute] ${err}`);
 					});
 				});
 			}
