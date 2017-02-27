@@ -32,7 +32,7 @@ module.exports = function (mikser, context) {
 					mikser.diagnostics.log(context, 'info', `[execute] ${command}`);
 					return execSync(command, {cwd: process.cwd(), encoding: 'utf8'});
 				} catch (err) {
-					let err = new Error('Execute command failed\n' + err);
+					err = new Error('Execute command failed\n' + err);
 					err.origin = 'excute';
 					throw err;
 				}
