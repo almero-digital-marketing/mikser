@@ -25,6 +25,10 @@ module.exports = function (mikser, context) {
 				context[S(use).camelize().s] = require(packagePath);
 				return false;
 			}
+			else {
+				context[S(use).camelize().s] = require(packagePath);
+				return false;
+			}
 		}
 		return true;
 	});
