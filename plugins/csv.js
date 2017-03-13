@@ -1,6 +1,6 @@
 'use strict'
 
-var csv = require('csv-parse');
+var csv = require('csv-parse/lib/sync');
 
 module.exports = function (mikser, context) {
 	if (context) {
