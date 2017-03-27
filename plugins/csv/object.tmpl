@@ -1,0 +1,11 @@
+<table>
+  <tbody>
+  <% for(var record of records) { %>
+    <tr>
+      <% for(var column in record) { %>
+      <td><%- column %></td>
+      <% } %>
+    </tr>
+  <% } %>
+  </tbody>
+</table>
