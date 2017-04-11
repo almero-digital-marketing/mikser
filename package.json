@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "7.6.6",
+  "version": "7.6.7",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -58,7 +58,6 @@
     "node.extend": "^1.1.6",
     "nprogress": "^0.2.0",
     "nunjucks": "^3.0.0",
-    "parse-spawn-args": "^1.0.2",
     "prettysize": "0.0.3",
     "promise-queue": "^2.2.3",
     "pug": "^2.0.0-beta6",
@@ -73,6 +72,7 @@
     "shortcode-parser": "0.0.1",
     "shortid": "^2.2.6",
     "snackbarjs": "^1.1.0",
+    "spawn-args": "^0.2.0",
     "stream-splitter": "^0.3.2",
     "string": "^3.3.3",
     "strip-ansi": "^3.0.1",
