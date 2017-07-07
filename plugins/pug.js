@@ -21,7 +21,9 @@ module.exports = function (mikser, context) {
 					context.href = function() {
 						let args = Array.from(arguments);
 						let found = _href.apply(null, args);
-						found.toJSON = found.toString;
+						if (typeof found != 'string') {
+							found.toJSON = found.toString;
+						}
 						return found;
 					}
 					if (context.layout && context.layout.template) {
