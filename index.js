@@ -51,7 +51,7 @@ module.exports = function(options) {
 			.then((mikser) => { 
 				if (cluster.isMaster) {
 					console.log('Mikser: Loaded');
-					mikser.loadPlugins().then(() => {
+					return mikser.loadPlugins().then(() => {
 						mikser.cli.init(true);					
 						mikser.debug.resetWatch()
 						.then(mikser.manager.glob)
@@ -70,7 +70,7 @@ module.exports = function(options) {
 						});
 					});
 				} else {
-					mikser.loadPlugins().then(mikser.joinMaster);
+					return mikser.loadPlugins().then(mikser.joinMaster);
 				}
 			}).return(mikser);
 	}
