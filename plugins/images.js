@@ -76,7 +76,7 @@ module.exports = function (mikser, context) {
 					alpha = `${alpha*100}%`;
 					info.dissolve(alpha);
 				}
-			}
+			},
 		},
 	};
 
@@ -218,10 +218,18 @@ module.exports = function (mikser, context) {
 			imageInfo.overwrite = false;
 			return imageInfo;
 		}
+		imageInfo.skip = (state) => {
+			imageInfo.skip = state;
+			if (state) imageInfo.destination = source;
+			return imageInfo
+		}
+
 		pushTransforms(imageInfo);
 		
 		return {
 			process: () => {
+				if (imageInfo.skip) return Promise.resolve();
+
 				let sourceFilePath = findSource(source);
 				// full path to file or undefined if file does not exist
 				if (!sourceFilePath) {

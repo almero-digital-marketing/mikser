@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "7.7.7",
+  "version": "7.8.0",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -39,6 +39,7 @@
     "glob-promise": "^3.1.0",
     "gm": "^1.23.0",
     "hasha": "^2.2.0",
+    "import-fresh": "^2.0.0",
     "indent-string": "^3.1.0",
     "jquery": "^3.2.1",
     "js-yaml": "^3.8.3",
