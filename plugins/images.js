@@ -219,7 +219,7 @@ module.exports = function (mikser, context) {
 			return imageInfo;
 		}
 		imageInfo.skip = (state) => {
-			imageInfo.skip = state;
+			imageInfo.skipped = state;
 			if (state) imageInfo.destination = source;
 			return imageInfo
 		}
@@ -228,7 +228,7 @@ module.exports = function (mikser, context) {
 		
 		return {
 			process: () => {
-				if (imageInfo.skip) return Promise.resolve();
+				if (imageInfo.skipped) return Promise.resolve();
 
 				let sourceFilePath = findSource(source);
 				// full path to file or undefined if file does not exist
