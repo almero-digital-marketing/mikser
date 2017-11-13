@@ -216,7 +216,7 @@ module.exports = function (mikser, context) {
 					return mikser.diagnostics.log(this, 'warning', `[videos] File not found at: ${source}`);
 				}
 
-				if ((sourceFilePath.indexOf(mikser.options.workingFolder) !== 0) && !destination) {
+				if ((sourceFilePath.indexOf(mikser.options.workingFolder) !== 0) && !videoInfo.destination) {
 					let err = new Error(`Destination is missing for file ${videoInfo.base}`);
 					err.origin = 'videos';
 					throw err;

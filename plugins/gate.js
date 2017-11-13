@@ -19,6 +19,7 @@ module.exports = function(mikser) {
 	let ping = {};
 
 	function showServerInfo() {
+		if (!mikser.server.isListening) return;		
 		for(let portName of _.keys(mikser.options.gate)) {
 			if (portName != 'server') mikser.diagnostics.log('info', 'Gate[' + portName + ']: http://' + 'm' + base32.encode(mikser.options.gate[portName]) + '.mikser.io/');
 		}

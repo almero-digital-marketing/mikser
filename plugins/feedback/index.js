@@ -15,6 +15,7 @@ module.exports = function (mikser) {
 	let feedback = {
 		server: {
 			broadcast: (data) => {
+				if (!mikser.server.isListening) return;
 				if (typeof data !== 'string') {
 					data.message = stripAnsi(data.message);
 					if (data.level === 'error' || data.level === 'warning') {
@@ -38,6 +39,7 @@ module.exports = function (mikser) {
 
 		mikser.config.browser.push('feedback');
 		mikser.cleanup.push(() => {
+			if (!mikser.server.isListening) return;
 			if (feedback.server) {
 				debug('Closing web socket server');
 				let closeAsync = Promise.promisify(feedback.server.close, { context: feedback.server });
@@ -87,6 +89,7 @@ module.exports = function (mikser) {
 			});
 			feedback.server = mikser.server.ws.getWss('/feedback');
 			feedback.server.broadcast = function broadcast(data) {
+				if (!mikser.server.isListening) return;
 				if (typeof data !== 'string') {
 					// gather errors and warnings from diagnostics module
 					if (data.source === 'diagnostics' && (data.level === 'error' || data.level === 'warning')) {
@@ -142,6 +145,7 @@ module.exports = function (mikser) {
 		});
 
 		mikser.on('mikser.tools.run', (event) => {
+			if (!mikser.server.isListening) return;
 			if (!feedback.commands[event.command]) {
 				feedback.commands[event.command] = { message: '' };
 			}
@@ -150,6 +154,7 @@ module.exports = function (mikser) {
 		});
 
 		mikser.on('mikser.tools.run.finish', (event) => {
+			if (!mikser.server.isListening) return;
 			feedback.commands[event.command] = feedback.commands[event.command] || {}
 			feedback.commands[event.command].code = event.code;
 
@@ -164,6 +169,7 @@ module.exports = function (mikser) {
 	}
 
 	mikser.on('mikser.diagnostics.log', (log) => {
+		if (!mikser.server.isListening) return;
 		if (log.level !== 'info') {
 			debug('Broadcasting log:', log);
 			let feedbackLog = {

@@ -154,15 +154,15 @@ module.exports = function (mikser, context) {
 		wrapTransforms(imageInfo);
 	}
 
-	function transform(source, destination) {
+	function transform(source, destination, entity) {
+		if (destination && typeof destination != 'string' && !entity) {
+			entity = destination;
+			destination = undefined;
+		}
+		if (!entity && context) entity = context.entity;
+
 		if(!source || typeof source !== 'string') {
 			let err = new Error('Undefined source');
-			err.origin = 'images';
-			throw err;
-		}
-
-		if(!destination && !context) {
-			let err = new Error('Undefined destination');
 			err.origin = 'images';
 			throw err;
 		}
@@ -183,7 +183,7 @@ module.exports = function (mikser, context) {
 		if (destination) {
 			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
 				if (context) {
-					imageInfo.destination = mikser.utils.resolveDestination(destination, context.entity.destination);
+					imageInfo.destination = mikser.utils.resolveDestination(destination, entity.destination);
 				} else {
 					imageInfo.destination = path.join(mikser.options.workingFolder, destination);
 				}
@@ -198,7 +198,7 @@ module.exports = function (mikser, context) {
 			}
 		} else {
 			imageInfo.destination = predictDestination(source);
-			imageInfo.destination = mikser.utils.resolveDestination(imageInfo.destination, context.entity.destination);
+			imageInfo.destination = mikser.utils.resolveDestination(imageInfo.destination, entity.destination);
 		}
 
 		if (isNotAllowedExtension(imageInfo.destination)) {
@@ -236,7 +236,7 @@ module.exports = function (mikser, context) {
 					return mikser.diagnostics.log(this, 'warning', `[images] File not found at: ${source}`);
 				}
 
-				if ((sourceFilePath.indexOf(mikser.options.workingFolder) !== 0) && !destination) {
+				if ((sourceFilePath.indexOf(mikser.options.workingFolder) !== 0) && !imageInfo.destination) {
 					let err = new Error(`Destination is missing for file ${imageInfo.base}`);
 					err.origin = 'images';
 					throw err;
