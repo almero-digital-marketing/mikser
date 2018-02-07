@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "7.8.8",
+  "version": "7.9.1",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -90,7 +90,7 @@
     "grunt-contrib-copy": "^1.0.0"
   },
   "scripts": {
-    "prepublish": "grunt"
+    "prepare": "grunt"
   },
   "keywords": [
     "mikser",
