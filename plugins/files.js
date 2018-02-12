@@ -70,6 +70,12 @@ module.exports = function (mikser, context) {
 		});
 	}
 
+	context.copy = function(source, destination) {
+		source = mikser.utils.findSource(copy);
+		destination = mikser.utils.resolveDestination(destination, context.entity.destination);
+		fs.copySync(source, destination);
+	}
+
 	context.stat = function (file) {
 		let source = mikser.utils.findSource(file);
 		if (source) {
