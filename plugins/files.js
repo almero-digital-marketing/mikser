@@ -71,7 +71,7 @@ module.exports = function (mikser, context) {
 	}
 
 	context.copy = function(source, destination) {
-		source = mikser.utils.findSource(copy);
+		source = mikser.utils.findSource(source);
 		destination = mikser.utils.resolveDestination(destination, context.entity.destination);
 		fs.copySync(source, destination);
 	}
