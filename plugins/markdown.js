@@ -16,6 +16,13 @@ module.exports = function (mikser, context) {
 			renderer.heading = function (text, level) {
 				return '<h' + level + '>' + text + '</h' + level + '>';
 			};
+			renderer.link = function (href, title, text) {
+				let target = !href.indexOf('http') ? '_blank' : '';
+				return `<a href="${mikser.runtime.findHref(context.entity, href)}" title="${title}" target="${target}">${text}</a>`
+			}
+			renderer.image = function (href, title) {
+				return `<img src="${mikser.runtime.findHref(context.entity, href)}" alt="${title}" >`
+			}
 			return marked(content, { renderer: renderer });
 		}
 
