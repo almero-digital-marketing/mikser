@@ -18,10 +18,10 @@ module.exports = function (mikser, context) {
 			};
 			renderer.link = function (href, title, text) {
 				let target = !href.indexOf('http') ? '_blank' : '';
-				return `<a href="${mikser.runtime.findHref(context.entity, href)}" title="${title}" target="${target}">${text}</a>`
+				return `<a href="${mikser.runtime.findHref(context.entity, href)}" title="${title || ''}" target="${target || ''}">${text}</a>`
 			}
-			renderer.image = function (href, title) {
-				return `<img src="${mikser.runtime.findHref(context.entity, href)}" alt="${title}" >`
+			renderer.image = function (href, title, text) {
+				return `<img src="${mikser.runtime.findHref(context.entity, href)}"  title="${title || ''}" alt="${text || ''}" >`
 			}
 			return marked(content, { renderer: renderer });
 		}
