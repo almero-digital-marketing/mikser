@@ -200,7 +200,7 @@ module.exports = function (mikser, context) {
 			return videoInfo;
 		}
 		videoInfo.skip = (state) => {
-			videoInfo.skip = state;
+			videoInfo.skipped = state;
 			if (state) videoInfo.destination = source;
 			return videoInfo
 		}
@@ -210,7 +210,7 @@ module.exports = function (mikser, context) {
 
 		return {
 			process: () => {
-				if (videoInfo.skip) return Promise.resolve();
+				if (videoInfo.skipped) return Promise.resolve();
 				let sourceFilePath = mikser.utils.findSource(source);
 				if (!sourceFilePath) {
 					return mikser.diagnostics.log(this, 'warning', `[videos] File not found at: ${source}`);
