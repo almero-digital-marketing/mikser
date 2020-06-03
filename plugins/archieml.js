@@ -9,7 +9,7 @@ module.exports = function (mikser, context) {
 			let trimmedValue = value.trim();
 
 			let number = Number(trimmedValue);
-			if (!_.isNaN(number)) return number;
+			if (!_.isNaN(number) && !_.startsWith(trimmedValue, '0')) return number;
 
 			if (trimmedValue.toLowerCase() == 'false') return false;
 			if (trimmedValue.toLowerCase() == 'true') return true;
