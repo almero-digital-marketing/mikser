@@ -13,6 +13,7 @@
   "bin": {
     "mikser": "./app.js"
   },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
   "dependencies": {
     "ansi-webkit": "^1.0.1",
     "archieml": "^0.4.2",

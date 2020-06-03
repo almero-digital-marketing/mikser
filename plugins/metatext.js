@@ -20,8 +20,8 @@ module.exports = function (mikser, context) {
 			.replaceAll(']','')
 			.replaceAll('|',' ')
 			.replaceAll('_',' ')
-			.replaceAll('~',' ').s;
-	};
+			.replaceAll('~',' ');
+	}
 	context.metatext = function(content) {
 		if (typeof content != 'string') {
 			let err = new Error('Argument is not a string');
@@ -41,6 +41,6 @@ module.exports = function (mikser, context) {
 			.replaceAll(']','</i>')
 			.replaceAll('|','<br>')
 			.replaceAll('_','<hr>')
-			.replaceAll('~','&nbsp;').s;
-	};
+			.replaceAll('~','&nbsp;');
+	}
 };
