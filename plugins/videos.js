@@ -104,7 +104,7 @@ module.exports = function (mikser, context) {
 	}
 
 	function exposeTransforms (videoInfo) {
-		let notForExpose = ['screenshots', 'save', 'run', 'saveToFile', 'pipe', 'exec', 'execute', 'stream', 'writeToStream', 'ffprobe', 'input', 'addInput', 'output', 'addOutput', 'addListener', 'addOutput', 'emit', 'on', 'getAvailableFormats', 'getAvailableCodecs', 'getAvailableEncoders', 'getAvailableFilters'];
+		let notForExpose = ['screenshots', 'save', 'run', 'saveToFile', 'pipe', 'exec', 'execute', 'stream', 'writeToStream', 'ffprobe', 'output', 'addOutput', 'addListener', 'addOutput', 'emit', 'on', 'getAvailableFormats', 'getAvailableCodecs', 'getAvailableEncoders', 'getAvailableFilters'];
 		let commands = _.functionsIn(videoInfo.video);
 		_.remove(commands, (command) => {
 			return command.charAt(0) === '_' || _.includes(notForExpose, command);
@@ -113,7 +113,11 @@ module.exports = function (mikser, context) {
 		for (let command of commands) {
 			if (!config.transforms[command]) {
 				config.transforms[command] = function (info) {
-					info.video[command].apply(info.video, Array.from(arguments).slice(1));
+					try {
+						info.video[command].apply(info.video, Array.from(arguments).slice(1));
+					} catch (err) {
+						console.log('Command error:', command, Array.from(arguments).slice(1), err)
+					}
 				}
 			}
 		}

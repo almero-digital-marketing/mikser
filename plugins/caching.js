@@ -137,35 +137,32 @@ module.exports = function (mikser, context) {
 		return {
 			process: () => {
 				updateCache(cacheInfo);
+				if (cacheInfo.fromCache) return Promise.resolve();
 				if (isUrl(cacheInfo.source)) {
-					if (!cacheInfo.fromCache) {
-						return fs.existsAsync(cacheInfo.destination).then((exists) => {
-							if (exists) {
-								return fs.unlinkAsync(cacheInfo.destination);
-							}
-						}).then(() => {
-							debug('Downloading:', cacheInfo.source);
-							return downloadFile(cacheInfo.source, cacheInfo.destination, cacheInfo.options)
-								.tap(() => console.log('Saved:', cacheInfo.destination));
-						});
-					}
+					return fs.existsAsync(cacheInfo.destination).then((exists) => {
+						if (exists) {
+							return fs.unlinkAsync(cacheInfo.destination);
+						}
+					}).then(() => {
+						debug('Downloading:', cacheInfo.source);
+						return downloadFile(cacheInfo.source, cacheInfo.destination, cacheInfo.options)
+							.tap(() => console.log('Saved:', cacheInfo.destination));
+					});
 				}
 				else {
-					if (!cacheInfo.fromCache) {
-						let sourcePath = mikser.utils.findSource(source);
-						return fs.existsAsync(sourcePath).then((exists) => {
-							if (exists) {
-								return deleteFile(cacheInfo.destination).then(() => {
-									debug(sourcePath.replace(mikser.options.workingFolder, ''), '->', cacheInfo.destination.replace(mikser.options.workingFolder, ''));
-									return fs.copyAsync(sourcePath, cacheInfo.destination, {preserveTimestamps: false});
-								});
-							}
-							else if (!cacheInfo.isOptional) {
-								mikser.diagnostics.log(this, 'error', `[cache] File not found at: ${source}`);
-							}
-							return Promise.resolve();
-						});
-					}
+					let sourcePath = mikser.utils.findSource(source);
+					return fs.existsAsync(sourcePath).then((exists) => {
+						if (exists) {
+							return deleteFile(cacheInfo.destination).then(() => {
+								debug(sourcePath.replace(mikser.options.workingFolder, ''), '->', cacheInfo.destination.replace(mikser.options.workingFolder, ''));
+								return fs.copyAsync(sourcePath, cacheInfo.destination, {preserveTimestamps: false});
+							});
+						}
+						else if (!cacheInfo.isOptional) {
+							mikser.diagnostics.log(this, 'error', `[cache] File not found at: ${source}`);
+						}
+						return Promise.resolve();
+					});
 				}
 			},
 			cacheInfo: cacheInfo
