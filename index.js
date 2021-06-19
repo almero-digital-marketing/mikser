@@ -65,7 +65,9 @@ module.exports = function(options) {
 						.then(mikser.watcher.start)
 						.then(() => {
 							if (!mikser.options.server && !mikser.options.watch) {
-								mikser.exit();
+								return mikser.tools.shutdown().then(() => {
+									mikser.exit();
+								})
 							}
 						});
 					});
