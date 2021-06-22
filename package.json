@@ -1,6 +1,6 @@
 {
   "name": "mikser",
-  "version": "7.11.6",
+  "version": "7.12.3",
   "description": "Real-time static site generator",
   "author": "Almero Digital Marketing (http://almero.com)",
   "repository": {
@@ -46,9 +46,11 @@
     "json.date-extensions": "^1.2.2",
     "json5": "^0.5.1",
     "jsonfile": "^2.4.0",
+    "line-transform-stream": "^0.1.0",
     "livereload-js": "^2.2.2",
     "lodash": "^4.17.4",
     "marked": "^0.3.6",
+    "merge-stream": "^2.0.0",
     "minimatch": "^3.0.3",
     "mjml": "^4.4.1",
     "moment": "^2.18.1",
@@ -137,4 +139,3 @@
   "homepage": "https://github.com/almero-digital-marketing/mikser",
   "license": "MIT"
 }
-
