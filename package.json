@@ -64,7 +64,7 @@
     "nunjucks": "^3.0.0",
     "prettysize": "0.1.0",
     "promise-queue": "^2.2.3",
-    "pug": "^2.0.0-beta6",
+    "pug": "^3.0.1",
     "reconnect-net": "^1.1.1",
     "reconnectingwebsocket": "^1.0.0",
     "remove-markdown": "0.1.0",
