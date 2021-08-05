@@ -29,7 +29,7 @@ module.exports = function (mikser, context) {
 			version._id += "." + name;
 			version.meta.href = context.entity.meta.href + '/' + name;
 			if (mikser.config.cleanUrls) {
-				version.destination = version.destination.replace('index.html', name + '/index.html');
+				version.destination = version.destination.replace(mikser.config.cleanUrlDestination, name + '/' + mikser.config.cleanUrlDestination);
 			} else {
 				let dir = path.dirname(version.destination);
 				let basename = path.basename(version.destination);
