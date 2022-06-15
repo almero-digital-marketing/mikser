@@ -111,7 +111,7 @@ module.exports = function (mikser, context) {
 		}
 
 		if (destination) {
-			if (destination.indexOf(mikser.options.workingFolder) !== 0) {
+			if (destination.indexOf(mikser.options.workingFolder) !== 0 && destination.indexOf(mikser.config.outputFolder) !== 0) {
 				if (context) {
 					cacheInfo.destination = mikser.utils.resolveDestination(destination, context.entity.destination);
 				} else {
@@ -124,6 +124,7 @@ module.exports = function (mikser, context) {
 		} else {
 			cacheInfo.destination = mikser.utils.predictDestination(source);
 			cacheInfo.destination = mikser.utils.resolveDestination(cacheInfo.destination, context.entity.destination);
+
 		}
 
 		if (!mikser.utils.isPathToFile(cacheInfo.destination)) {
