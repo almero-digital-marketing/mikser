@@ -44,7 +44,7 @@
     "jquery": "^3.2.1",
     "js-yaml": "^3.8.3",
     "json.date-extensions": "^1.2.2",
-    "json5": "^0.5.1",
+    "json5": "^2.2.2",
     "jsonfile": "^2.4.0",
     "line-transform-stream": "^0.1.0",
     "livereload-js": "^2.2.2",
