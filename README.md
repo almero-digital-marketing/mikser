@@ -1,5 +1,25 @@
 <p align="center"><a href="https://www.npmjs.com/package/mikser" target="_blank"><img width="300" src="http://almero.pro/mikser.svg"></a></p>
 
+> ## ⚠️ Deprecated — superseded by [`mikser-io`](https://github.com/almero-digital-marketing/mikser-io)
+>
+> This repository is the legacy 7.x line and is **no longer maintained**. Last npm release was `7.12.10` in June 2022. New work — and every project we ship today — lives in [`mikser-io`](https://github.com/almero-digital-marketing/mikser-io), a from-scratch rewrite of the same idea.
+>
+> ### Why `mikser-io` instead of `mikser`
+>
+> - **No MongoDB.** The legacy 7.x line required Mongo (`≥ 2.4`) for the catalog. `mikser-io` keeps the catalog and journal in memory and content as plain `.md` / `.yml` files on disk — no database to install, version, or back up.
+> - **Modern Node + ESM.** `mikser-io` is Node 18+, pure ESM, async/await throughout. The legacy line predates that whole world; integrations were built around Grunt/Gulp and CallbackHell-era plugin APIs.
+> - **Strict 20-phase lifecycle.** Plugins hook into named lifecycle phases (initialize → load → import → process → persist → render → finalize). No plugin orchestrator, no glue code between plugins — the journal is the synchronization primitive.
+> - **Live SSE updates out of the box.** The `api` plugin exposes the catalog over HTTP with a `subscribe` SSE stream. Edit a `.md` file → the browser updates without a refresh, no page reload, no wholesale rebuild.
+> - **Framework SDKs.** First-class clients for Vue 3 ([`mikser-io-sdk-vue`](https://github.com/almero-digital-marketing/mikser-io-sdk-vue)), React 18+/19 ([`mikser-io-sdk-react`](https://github.com/almero-digital-marketing/mikser-io-sdk-react)), and Svelte 5 ([`mikser-io-sdk-svelte`](https://github.com/almero-digital-marketing/mikser-io-sdk-svelte)) — same surface (`useDocument` / `useDocuments` / `useMikserRoutes` / `useMikserStatus`) wrapped in each framework's idiom.
+> - **Typed at the seam.** [`mikser-io-plugin-schemas`](https://github.com/almero-digital-marketing/mikser-io-plugin-schemas) validates front-matter against Zod schemas and emits an `entities.d.ts` file the SDKs consume — typed entity meta per layout, no hand-maintained types.
+> - **Library mode + CLI + server.** `npx mikser` builds; `mikser --watch` is the dev loop; `mikser --server` exposes a live HTTP/SSE API. The same package can also be embedded inside an existing Node app via `useRenderer` / `useCollection` / lifecycle hooks.
+> - **Three deployment shapes.** Pure SPA (runtime everything, live everywhere), Hybrid SSG (prerendered public + SPA editor with live preview), or Islands (mikser-rendered HTML + framework islands). The [Claude Code plugin](https://github.com/almero-digital-marketing/mikser-io-claude-plugin) scaffolds any of them in one command.
+> - **Documented architecture.** Load-bearing decisions live as ADRs in [`mikser-io/documentation/decisions/`](https://github.com/almero-digital-marketing/mikser-io/blob/main/documentation/decisions/) — files-as-source-of-truth, content-layer-not-the-app, plugin-as-factory, compose-via-protocols. You can read them before betting on it.
+>
+> If you're starting a new project, **start with [`mikser-io`](https://github.com/almero-digital-marketing/mikser-io)**. If you have an old `mikser` project still in production, this repo will stay readable but won't receive new releases or fixes.
+
+---
+
 ## Mikser is a real-time static site generator
 Mikser is designed for rapid web site development. It works equally well for small web sites and for large multi domain, multi language sites with thousands of pages and very complex generation logic. 
 
